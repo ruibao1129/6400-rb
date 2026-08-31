@@ -1,0 +1,118 @@
+---
+title: "index"
+format: html
+---
+
+---
+title: "When Every Group Wins but the Average Loses: Simpson’s Paradox"
+author: "Rui Bao"
+date: 2026-08-31
+categories:
+  - statistics
+  - economics
+  - data-science
+---
+
+Imagine that Hospital A has a higher survival rate than Hospital B for both mild and severe cases. It seems obvious that Hospital A must also have a higher survival rate overall.
+
+Surprisingly, that conclusion can be wrong.
+
+This phenomenon is called **Simpson’s paradox**: a relationship that appears within multiple groups can disappear or reverse when the groups are combined. It feels unintuitive because we expect an overall average to preserve a pattern found in every subgroup. However, an average depends not only on the outcomes within each group, but also on how heavily each group is represented.
+
+## A Hospital Example
+
+Consider the following hypothetical data:
+
+| Patient group | Hospital A | Hospital B |
+|---|---:|---:|
+| Mild cases | 90 of 100 survive (90%) | 760 of 900 survive (84.4%) |
+| Severe cases | 300 of 900 survive (33.3%) | 30 of 100 survive (30%) |
+| **All cases** | **390 of 1,000 survive (39%)** | **790 of 1,000 survive (79%)** |
+
+Hospital A has the higher survival rate within both groups. Nevertheless, Hospital B has a much higher overall survival rate.
+
+The following graph makes the reversal visible:
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+#| fig-cap: "Survival rates by patient group and hospital"
+
+rates <- matrix(
+  c(
+    90, 84.4,
+    33.3, 30,
+    39, 79
+  ),
+  nrow = 2
+)
+
+colnames(rates) <- c(
+  "Mild cases",
+  "Severe cases",
+  "Overall"
+)
+
+rownames(rates) <- c(
+  "Hospital A",
+  "Hospital B"
+)
+
+barplot(
+  rates,
+  beside = TRUE,
+  col = c("#1f77b4", "#ff7f0e"),
+  ylim = c(0, 100),
+  ylab = "Survival rate (%)",
+  main = "Simpson's Paradox in Hospital Survival Rates",
+  legend.text = TRUE,
+  args.legend = list(x = "topright")
+)
+```
+
+## Where Does the Reversal Come From?
+
+There is no mathematical contradiction. Hospital A treats mostly severe cases, while Hospital B treats mostly mild cases. Because severe cases are less likely to survive regardless of the hospital, Hospital A’s overall rate is pulled downward.
+
+An overall survival rate is a weighted average:
+
+$$
+r_{\text{overall}}
+=
+w_{\text{mild}}r_{\text{mild}}
++
+w_{\text{severe}}r_{\text{severe}}.
+$$
+
+Here, \(r\) represents a group’s survival rate and \(w\) represents that group’s share of the hospital’s patients.
+
+For Hospital A:
+
+$$
+0.10(0.90)+0.90(0.333)\approx 0.39.
+$$
+
+For Hospital B:
+
+$$
+0.90(0.844)+0.10(0.30)\approx 0.79.
+$$
+
+The two overall rates use very different weights. Hospital A’s average is dominated by severe cases, whereas Hospital B’s average is dominated by mild cases. The aggregate comparison therefore mixes together two separate questions: how successfully each hospital treats a given type of patient, and what types of patients each hospital receives.
+
+## Why Economists and Data Scientists Should Care
+
+Simpson’s paradox illustrates the importance of **confounding variables**. A confounding variable is related both to the comparison being made and to the outcome being studied. Here, illness severity is related to hospital choice and to the probability of survival. Ignoring severity produces a misleading comparison.
+
+Similar reversals appear in economics. A region’s average wage can rise even if wages fall within every occupation, provided that employment shifts toward higher-paying occupations. A university can have a lower overall admission rate while having higher admission rates within individual departments. An investment strategy may appear successful in aggregate only because it was used more often during favorable market conditions.
+
+However, the lesson is not simply to divide data into as many groups as possible. Whether we should control for a variable depends on the question and the causal relationships among variables. If illness severity existed before hospital selection, adjusting for it may create a fairer comparison. Controlling for a variable caused by the treatment itself, however, could hide part of the treatment’s true effect.
+
+## The Main Lesson
+
+Whenever an average is presented, we should ask:
+
+**An average of what, and with what weights?**
+
+Aggregated statistics are not necessarily incorrect, but they may answer a different question from the one we care about. Simpson’s paradox reminds us that data do not interpret themselves. Good analysis requires understanding how the data were generated, identifying relevant subgroups, and deciding which comparisons are genuinely meaningful.

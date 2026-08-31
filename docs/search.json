@@ -1,0 +1,121 @@
+[
+  {
+    "objectID": "bio.html",
+    "href": "bio.html",
+    "title": "About Me",
+    "section": "",
+    "text": "I am a Master of Applied Economics and Data Science (MAEDS) student at the University of Pennsylvania, with a background in Economics from the University of Florida. My interests lie at the intersection of economics, data analytics, finance, and strategic decision-making.\nThrough experience in consulting, investment research, and wealth management, I have developed strong analytical and research skills. I enjoy transforming complex data into actionable insights and using quantitative methods to address real-world business and financial challenges."
+  },
+  {
+    "objectID": "bio.html#education",
+    "href": "bio.html#education",
+    "title": "About Me",
+    "section": "Education",
+    "text": "Education\nMaster of Applied Economics and Data Science\nUniversity of Pennsylvania\nExpected 2027\nBachelor’s Degree in Economics\nUniversity of Florida"
+  },
+  {
+    "objectID": "bio.html#professional-interests",
+    "href": "bio.html#professional-interests",
+    "title": "About Me",
+    "section": "Professional Interests",
+    "text": "Professional Interests\n\nData analytics\nBusiness analytics\nFinancial analysis\nConsulting\nApplied economics\nInvestment and market research"
+  },
+  {
+    "objectID": "bio.html#technical-and-analytical-skills",
+    "href": "bio.html#technical-and-analytical-skills",
+    "title": "About Me",
+    "section": "Technical and Analytical Skills",
+    "text": "Technical and Analytical Skills\n\nR programming\nStatistical analysis\nEconometrics\nData visualization\nQuantitative research\nMarket and industry analysis\nFinancial evaluation\nStrategic problem-solving"
+  },
+  {
+    "objectID": "bio.html#career-goals",
+    "href": "bio.html#career-goals",
+    "title": "About Me",
+    "section": "Career Goals",
+    "text": "Career Goals\nI am currently seeking internship and full-time opportunities where I can apply economics, data analytics, and quantitative methods to meaningful business and financial problems. I am especially interested in roles that combine analytical research, strategic thinking, and data-driven decision-making."
+  },
+  {
+    "objectID": "bio.html#contact",
+    "href": "bio.html#contact",
+    "title": "About Me",
+    "section": "Contact",
+    "text": "Contact\nEmail: ruibao@sas.upenn.edu\nGitHub: github.com/ruibao1129\nLinkedIn: linkedin.com/in/rui-bao-0210802aa"
+  },
+  {
+    "objectID": "blog/index.html",
+    "href": "blog/index.html",
+    "title": "Blog",
+    "section": "",
+    "text": "When Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMy Second Blog Post\n\n\n\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "blog/posts/post1/index.html",
+    "href": "blog/posts/post1/index.html",
+    "title": "When Every Group Wins but the Average Loses: Simpson’s Paradox",
+    "section": "",
+    "text": "Imagine that Hospital A has a higher survival rate than Hospital B for both mild and severe cases. It seems obvious that Hospital A must also have a higher survival rate overall.\nSurprisingly, that conclusion can be wrong.\nThis phenomenon is called Simpson’s paradox: a relationship that appears within multiple groups can disappear or reverse when the groups are combined. It feels unintuitive because we expect an overall average to preserve a pattern found in every subgroup. However, an average depends not only on the outcomes within each group, but also on how heavily each group is represented."
+  },
+  {
+    "objectID": "blog/posts/post1/index.html#a-hospital-example",
+    "href": "blog/posts/post1/index.html#a-hospital-example",
+    "title": "When Every Group Wins but the Average Loses: Simpson’s Paradox",
+    "section": "A Hospital Example",
+    "text": "A Hospital Example\nConsider the following hypothetical data:\n\n\n\n\n\n\n\n\nPatient group\nHospital A\nHospital B\n\n\n\n\nMild cases\n90 of 100 survive (90%)\n760 of 900 survive (84.4%)\n\n\nSevere cases\n300 of 900 survive (33.3%)\n30 of 100 survive (30%)\n\n\nAll cases\n390 of 1,000 survive (39%)\n790 of 1,000 survive (79%)\n\n\n\nHospital A has the higher survival rate within both groups. Nevertheless, Hospital B has a much higher overall survival rate.\nThe following graph makes the reversal visible:\n\n\n\n\n\nSurvival rates by patient group and hospital"
+  },
+  {
+    "objectID": "blog/posts/post1/index.html#where-does-the-reversal-come-from",
+    "href": "blog/posts/post1/index.html#where-does-the-reversal-come-from",
+    "title": "When Every Group Wins but the Average Loses: Simpson’s Paradox",
+    "section": "Where Does the Reversal Come From?",
+    "text": "Where Does the Reversal Come From?\nThere is no mathematical contradiction. Hospital A treats mostly severe cases, while Hospital B treats mostly mild cases. Because severe cases are less likely to survive regardless of the hospital, Hospital A’s overall rate is pulled downward.\nAn overall survival rate is a weighted average:\n\\[\nr_{\\text{overall}}\n=\nw_{\\text{mild}}r_{\\text{mild}}\n+\nw_{\\text{severe}}r_{\\text{severe}}.\n\\]\nHere, (r) represents a group’s survival rate and (w) represents that group’s share of the hospital’s patients.\nFor Hospital A:\n\\[\n0.10(0.90)+0.90(0.333)\\approx 0.39.\n\\]\nFor Hospital B:\n\\[\n0.90(0.844)+0.10(0.30)\\approx 0.79.\n\\]\nThe two overall rates use very different weights. Hospital A’s average is dominated by severe cases, whereas Hospital B’s average is dominated by mild cases. The aggregate comparison therefore mixes together two separate questions: how successfully each hospital treats a given type of patient, and what types of patients each hospital receives."
+  },
+  {
+    "objectID": "blog/posts/post1/index.html#why-economists-and-data-scientists-should-care",
+    "href": "blog/posts/post1/index.html#why-economists-and-data-scientists-should-care",
+    "title": "When Every Group Wins but the Average Loses: Simpson’s Paradox",
+    "section": "Why Economists and Data Scientists Should Care",
+    "text": "Why Economists and Data Scientists Should Care\nSimpson’s paradox illustrates the importance of confounding variables. A confounding variable is related both to the comparison being made and to the outcome being studied. Here, illness severity is related to hospital choice and to the probability of survival. Ignoring severity produces a misleading comparison.\nSimilar reversals appear in economics. A region’s average wage can rise even if wages fall within every occupation, provided that employment shifts toward higher-paying occupations. A university can have a lower overall admission rate while having higher admission rates within individual departments. An investment strategy may appear successful in aggregate only because it was used more often during favorable market conditions.\nHowever, the lesson is not simply to divide data into as many groups as possible. Whether we should control for a variable depends on the question and the causal relationships among variables. If illness severity existed before hospital selection, adjusting for it may create a fairer comparison. Controlling for a variable caused by the treatment itself, however, could hide part of the treatment’s true effect."
+  },
+  {
+    "objectID": "blog/posts/post1/index.html#the-main-lesson",
+    "href": "blog/posts/post1/index.html#the-main-lesson",
+    "title": "When Every Group Wins but the Average Loses: Simpson’s Paradox",
+    "section": "The Main Lesson",
+    "text": "The Main Lesson\nWhenever an average is presented, we should ask:\nAn average of what, and with what weights?\nAggregated statistics are not necessarily incorrect, but they may answer a different question from the one we care about. Simpson’s paradox reminds us that data do not interpret themselves. Good analysis requires understanding how the data were generated, identifying relevant subgroups, and deciding which comparisons are genuinely meaningful."
+  },
+  {
+    "objectID": "resume.html",
+    "href": "resume.html",
+    "title": "Resume",
+    "section": "",
+    "text": "Download my resume here:"
+  },
+  {
+    "objectID": "resume.html#resume-pdf",
+    "href": "resume.html#resume-pdf",
+    "title": "Resume",
+    "section": "Resume PDF",
+    "text": "Resume PDF"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Rui Bao",
+    "section": "",
+    "text": "Rui Bao\nUniversity of Pennsylvania\nI am a Master of Applied Economics and Data Science (MAEDS) student at the University of Pennsylvania, with a bachelor’s degree in Economics from the University of Florida. My interests lie at the intersection of economics, data analytics, and finance, where I use quantitative methods to turn complex information into practical insights.\nThrough experience in consulting, investment research, and wealth management, I have developed skills in market research, industry analysis, financial evaluation, and strategic problem-solving. I also value social responsibility and enjoy collaborating with people from diverse backgrounds.\nI am currently exploring internship and full-time opportunities in data analytics, business analytics, financial analysis, consulting, and applied economics. I welcome opportunities to connect, learn, and contribute to meaningful work.\n\nQuick Links"
+  },
+  {
+    "objectID": "blog/posts/post2/index.html",
+    "href": "blog/posts/post2/index.html",
+    "title": "My Second Blog Post",
+    "section": "",
+    "text": "This is my second blog post."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
+  }
+]

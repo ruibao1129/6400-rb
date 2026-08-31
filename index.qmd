@@ -1,0 +1,38 @@
+---
+title: ""
+---
+
+::::: columns
+
+::: {.column width="35%"}
+
+![](images/profile.png){width="100%"}
+
+:::
+
+::: {.column width="65%"}
+
+![](images/UniversityofPennsylvania_FullLogo_RGB.png){width="250px"}
+
+# Rui Bao
+
+University of Pennsylvania
+
+I am a Master of Applied Economics and Data Science (MAEDS) student at the University of Pennsylvania, with a bachelor's degree in Economics from the University of Florida. My interests lie at the intersection of economics, data analytics, and finance, where I use quantitative methods to turn complex information into practical insights.
+
+Through experience in consulting, investment research, and wealth management, I have developed skills in market research, industry analysis, financial evaluation, and strategic problem-solving. I also value social responsibility and enjoy collaborating with people from diverse backgrounds.
+
+I am currently exploring internship and full-time opportunities in data analytics, business analytics, financial analysis, consulting, and applied economics. I welcome opportunities to connect, learn, and contribute to meaningful work.
+
+### Quick Links
+
+<div>
+  <a href="https://github.com/ruibao1129"><i class="bi bi-github fs-3"></i></a>
+  <a href="https://linkedin.com/in/rui-bao-0210802aa"><i class="bi bi-linkedin fs-3"></i></a>
+  <a href="resume.qmd"><i class="bi bi-file-earmark-person-fill fs-3"></i></a>
+  <a href="mailto:ruibao@sas.upenn.edu"><i class="bi bi-envelope-fill fs-3"></i></a>
+</div>
+
+:::
+
+:::::

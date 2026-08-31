@@ -1,0 +1,52 @@
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+---
+title: "About Me"
+---
+
+I am a Master of Applied Economics and Data Science (MAEDS) student at the University of Pennsylvania, with a background in Economics from the University of Florida. My interests lie at the intersection of economics, data analytics, finance, and strategic decision-making.
+
+Through experience in consulting, investment research, and wealth management, I have developed strong analytical and research skills. I enjoy transforming complex data into actionable insights and using quantitative methods to address real-world business and financial challenges.
+
+## Education
+
+**Master of Applied Economics and Data Science**\
+University of Pennsylvania\
+Expected 2027
+
+**Bachelor's Degree in Economics**\
+University of Florida
+
+## Professional Interests
+
+-   Data analytics
+-   Business analytics
+-   Financial analysis
+-   Consulting
+-   Applied economics
+-   Investment and market research
+
+## Technical and Analytical Skills
+
+-   R programming
+-   Statistical analysis
+-   Econometrics
+-   Data visualization
+-   Quantitative research
+-   Market and industry analysis
+-   Financial evaluation
+-   Strategic problem-solving
+
+## Career Goals
+
+I am currently seeking internship and full-time opportunities where I can apply economics, data analytics, and quantitative methods to meaningful business and financial problems. I am especially interested in roles that combine analytical research, strategic thinking, and data-driven decision-making.
+
+## Contact
+
+Email: [ruibao\@sas.upenn.edu](mailto:ruibao@sas.upenn.edu)
+
+GitHub: [github.com/ruibao1129](https://github.com/ruibao1129)
+
+LinkedIn: [linkedin.com/in/rui-bao-0210802aa](https://linkedin.com/in/rui-bao-0210802aa)
