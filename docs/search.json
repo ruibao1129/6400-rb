@@ -46,7 +46,7 @@
     "href": "blog/index.html",
     "title": "Blog",
     "section": "",
-    "text": "When Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMy Second Blog Post\n\n\n\n\n\n\n\n\n\n\n\nJun 16, 2026\n\n\n\n\n\n\nNo matching items"
+    "text": "When Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDo Teams That Score More Goals Win More Games in the NHL?\n\n\n\n\n\n\n\n\n\n\n\nSep 21, 2026\n\n\nRui Bao\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "blog/posts/post1/index.html",
@@ -107,9 +107,9 @@
   {
     "objectID": "blog/posts/post2/index.html",
     "href": "blog/posts/post2/index.html",
-    "title": "My Second Blog Post",
+    "title": "Do Teams That Score More Goals Win More Games in the NHL?",
     "section": "",
-    "text": "This is my second blog post."
+    "text": "When looking at a hockey team’s performance, one of the first statistics people notice is how many goals the team scores. It seems reasonable to think that teams that score more goals should also win more games. But scoring is only one side of the game. A team can score a lot and still give up just as many goals.\nThis made me interested in a simple question: Does scoring more goals actually lead to a higher winning percentage in the NHL? I also wanted to see whether goal differential, which takes both scoring and goals allowed into account, gives us a better picture of team performance.\nTo answer this question, I used rvest in R to scrape historical NHL team statistics from Scrape This Site. The site is a public web-scraping sandbox, so the data can be accessed without a login, CAPTCHA, or paywall."
   },
   {
     "objectID": "about.html",
@@ -117,5 +117,54 @@
     "title": "About",
     "section": "",
     "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#introduction",
+    "href": "blog/posts/post2/index.html#introduction",
+    "title": "Do Teams That Score More Goals Win More Games in the NHL?",
+    "section": "",
+    "text": "When looking at a hockey team’s performance, one of the first statistics people notice is how many goals the team scores. It seems reasonable to think that teams that score more goals should also win more games. But scoring is only one side of the game. A team can score a lot and still give up just as many goals.\nThis made me interested in a simple question: Does scoring more goals actually lead to a higher winning percentage in the NHL? I also wanted to see whether goal differential, which takes both scoring and goals allowed into account, gives us a better picture of team performance.\nTo answer this question, I used rvest in R to scrape historical NHL team statistics from Scrape This Site. The site is a public web-scraping sandbox, so the data can be accessed without a login, CAPTCHA, or paywall."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#scraping-the-data",
+    "href": "blog/posts/post2/index.html#scraping-the-data",
+    "title": "Do Teams That Score More Goals Win More Games in the NHL?",
+    "section": "Scraping the Data",
+    "text": "Scraping the Data\nThe hockey data are spread across multiple pages. Instead of copying the tables manually, I created a function that reads each page and extracts the team statistics.\n\nlibrary(rvest)\nlibrary(tidyverse)\n\nscrape_hockey_page &lt;- function(page_number) {\n  \n  url &lt;- paste0(\n    \"https://www.scrapethissite.com/pages/forms/?page_num=\",\n    page_number\n  )\n  \n  page &lt;- read_html(url)\n  \n  rows &lt;- page |&gt;\n    html_elements(\"tr.team\")\n  \n  data &lt;- tibble(\n    team = rows |&gt;\n      html_element(\".name\") |&gt;\n      html_text2(),\n    \n    year = rows |&gt;\n      html_element(\".year\") |&gt;\n      html_text2(),\n    \n    wins = rows |&gt;\n      html_element(\".wins\") |&gt;\n      html_text2(),\n    \n    losses = rows |&gt;\n      html_element(\".losses\") |&gt;\n      html_text2(),\n    \n    win_pct = rows |&gt;\n      html_element(\".pct\") |&gt;\n      html_text2(),\n    \n    goals_for = rows |&gt;\n      html_element(\".gf\") |&gt;\n      html_text2(),\n    \n    goals_against = rows |&gt;\n      html_element(\".ga\") |&gt;\n      html_text2()\n  )\n  \n  Sys.sleep(0.2)\n  \n  return(data)\n}\n\nhockey_raw &lt;- map_dfr(1:24, scrape_hockey_page)\n\nhead(hockey_raw)\n\n# A tibble: 6 × 7\n  team               year  wins  losses win_pct goals_for goals_against\n  &lt;chr&gt;              &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;        \n1 Boston Bruins      1990  44    24     0.55    299       264          \n2 Buffalo Sabres     1990  31    30     0.388   292       278          \n3 Calgary Flames     1990  46    26     0.575   344       263          \n4 Chicago Blackhawks 1990  49    23     0.613   284       211          \n5 Detroit Red Wings  1990  34    38     0.425   273       298          \n6 Edmonton Oilers    1990  37    37     0.463   272       272          \n\n\nI added a short pause between page requests so that the website is not being requested too quickly."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#cleaning-the-data",
+    "href": "blog/posts/post2/index.html#cleaning-the-data",
+    "title": "Do Teams That Score More Goals Win More Games in the NHL?",
+    "section": "Cleaning the Data",
+    "text": "Cleaning the Data\nThe information collected from the website is initially stored as text. Before doing any calculations, I converted the numerical columns into numbers. I also created a new variable called goal_diff, which is goals scored minus goals allowed.\n\nhockey &lt;- hockey_raw |&gt;\n  mutate(\n    year = as.numeric(year),\n    wins = as.numeric(wins),\n    losses = as.numeric(losses),\n    win_pct = as.numeric(win_pct),\n    goals_for = as.numeric(goals_for),\n    goals_against = as.numeric(goals_against),\n    goal_diff = goals_for - goals_against\n  ) |&gt;\n  drop_na()\n\nhead(hockey)\n\n# A tibble: 6 × 8\n  team               year  wins losses win_pct goals_for goals_against goal_diff\n  &lt;chr&gt;             &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;\n1 Boston Bruins      1990    44     24   0.55        299           264        35\n2 Buffalo Sabres     1990    31     30   0.388       292           278        14\n3 Calgary Flames     1990    46     26   0.575       344           263        81\n4 Chicago Blackhaw…  1990    49     23   0.613       284           211        73\n5 Detroit Red Wings  1990    34     38   0.425       273           298       -25\n6 Edmonton Oilers    1990    37     37   0.463       272           272         0\n\n\nA positive goal differential means that a team scored more goals than it allowed during that season, while a negative number means the opposite."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#goals-scored-and-winning-percentage",
+    "href": "blog/posts/post2/index.html#goals-scored-and-winning-percentage",
+    "title": "Do Teams That Score More Goals Win More Games in the NHL?",
+    "section": "Goals Scored and Winning Percentage",
+    "text": "Goals Scored and Winning Percentage\nFirst, I compared total goals scored with winning percentage.\n\nggplot(hockey, aes(x = goals_for, y = win_pct)) +\n  geom_point(alpha = 0.5) +\n  geom_smooth(method = \"lm\", se = FALSE) +\n  labs(\n    title = \"Goals Scored and NHL Winning Percentage\",\n    x = \"Goals Scored\",\n    y = \"Winning Percentage\"\n  ) +\n  theme_minimal()\n\n`geom_smooth()` using formula = 'y ~ x'\n\n\n\n\n\n\n\n\n\nThe graph shows a positive relationship between scoring and winning percentage. Teams that score more goals generally tend to win a larger share of their games. However, the points are fairly spread out around the trend line. Teams with similar numbers of goals can still have noticeably different winning percentages.\nThis makes sense because goals scored ignore what happens on defense. Scoring 250 goals is much less impressive if a team also allows 260."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#is-goal-differential-more-useful",
+    "href": "blog/posts/post2/index.html#is-goal-differential-more-useful",
+    "title": "Do Teams That Score More Goals Win More Games in the NHL?",
+    "section": "Is Goal Differential More Useful?",
+    "text": "Is Goal Differential More Useful?\nNext, I compared goal differential with winning percentage.\n\nggplot(hockey, aes(x = goal_diff, y = win_pct)) +\n  geom_point(alpha = 0.5) +\n  geom_smooth(method = \"lm\", se = FALSE) +\n  labs(\n    title = \"Goal Differential and NHL Winning Percentage\",\n    x = \"Goal Differential\",\n    y = \"Winning Percentage\"\n  ) +\n  theme_minimal()\n\n`geom_smooth()` using formula = 'y ~ x'\n\n\n\n\n\n\n\n\n\nThe relationship here is much clearer. Teams with large positive goal differentials tend to have higher winning percentages, while teams that allow substantially more goals than they score tend to have lower winning percentages.\nTo make the comparison more direct, I calculated the correlations between the two measures and winning percentage.\n\ncomparison &lt;- tibble(\n  measure = c(\"Goals Scored\", \"Goal Differential\"),\n  correlation_with_win_pct = c(\n    cor(hockey$goals_for, hockey$win_pct),\n    cor(hockey$goal_diff, hockey$win_pct)\n  )\n)\n\ncomparison\n\n# A tibble: 2 × 2\n  measure           correlation_with_win_pct\n  &lt;chr&gt;                                &lt;dbl&gt;\n1 Goals Scored                         0.480\n2 Goal Differential                    0.887\n\n\nThe correlation values give a simple way to compare the two relationships. A larger positive correlation means that the statistic moves more closely with winning percentage.In this dataset, the correlation between goals scored and winning percentage is about 0.48, while the correlation between goal differential and winning percentage is about 0.89. This suggests that goal differential is much more closely associated with winning percentage than scoring alone."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#a-practical-example",
+    "href": "blog/posts/post2/index.html#a-practical-example",
+    "title": "Do Teams That Score More Goals Win More Games in the NHL?",
+    "section": "A Practical Example",
+    "text": "A Practical Example\nTo see what successful seasons tend to look like, I also looked at the team-seasons with the highest winning percentages in the scraped data.\n\ntop_seasons &lt;- hockey |&gt;\n  arrange(desc(win_pct)) |&gt;\n  select(\n    team,\n    year,\n    wins,\n    losses,\n    win_pct,\n    goals_for,\n    goals_against,\n    goal_diff\n  ) |&gt;\n  slice_head(n = 10)\n\ntop_seasons\n\n# A tibble: 10 × 8\n   team              year  wins losses win_pct goals_for goals_against goal_diff\n   &lt;chr&gt;            &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;\n 1 Detroit Red Win…  1995    62     13   0.756       325           181       144\n 2 Detroit Red Win…  2005    58     16   0.707       305           209        96\n 3 Detroit Red Win…  1994    33     11   0.688       180           117        63\n 4 Pittsburgh Peng…  1992    56     21   0.667       367           268        99\n 5 Detroit Red Win…  2007    54     21   0.659       257           184        73\n 6 Washington Capi…  2009    54     15   0.659       318           233        85\n 7 Vancouver Canuc…  2010    54     19   0.659       262           185        77\n 8 Dallas Stars      2005    53     23   0.646       265           218        47\n 9 Buffalo Sabres    2006    53     22   0.646       308           242        66\n10 Boston Bruins     2008    53     19   0.646       274           196        78\n\n\nThis table makes it possible to look beyond scoring alone. A high-performing team does not simply need to produce goals; the difference between goals scored and goals allowed is also important."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#takeaway",
+    "href": "blog/posts/post2/index.html#takeaway",
+    "title": "Do Teams That Score More Goals Win More Games in the NHL?",
+    "section": "Takeaway",
+    "text": "Takeaway\nThe scraped NHL data support the basic idea that scoring more goals is associated with winning more games, but goals scored alone do not tell the whole story. Goal differential gives a more complete measure because it includes both offense and defense.\nIf I wanted to quickly compare two NHL teams based on a small number of statistics, I would look at goal differential before looking only at total goals scored. A team that scores frequently but also allows many goals may not perform as well as its offensive numbers initially suggest.\nThis does not mean goal differential explains everything about winning. Team quality also depends on factors such as goaltending, special teams, injuries, and the strength of opponents. In addition, this is a descriptive analysis, so the relationship should not be interpreted as proof that increasing goal differential by a certain amount directly causes a specific increase in winning percentage.\nStill, the analysis gives a useful practical rule: when evaluating overall team performance, considering both sides of scoring provides more information than focusing on offense alone. Web scraping made it possible to collect the historical team statistics across many pages and turn them into a dataset that can answer this question directly."
   }
 ]
