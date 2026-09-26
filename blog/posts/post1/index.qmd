@@ -1,16 +1,9 @@
 ---
-title: "index"
-format: html
----
-
----
 title: "When Every Group Wins but the Average Loses: Simpson’s Paradox"
 author: "Rui Bao"
-date: 2026-08-31
-categories:
-  - statistics
-  - economics
-  - data-science
+date: "2026-08-31"
+categories: [statistics, economics, data-science]
+format: html
 ---
 
 Imagine that Hospital A has a higher survival rate than Hospital B for both mild and severe cases. It seems obvious that Hospital A must also have a higher survival rate overall.
@@ -23,16 +16,15 @@ This phenomenon is called **Simpson’s paradox**: a relationship that appears w
 
 Consider the following hypothetical data:
 
-| Patient group | Hospital A | Hospital B |
-|---|---:|---:|
-| Mild cases | 90 of 100 survive (90%) | 760 of 900 survive (84.4%) |
-| Severe cases | 300 of 900 survive (33.3%) | 30 of 100 survive (30%) |
+| Patient group |                     Hospital A |                     Hospital B |
+| ------------- | -----------------------------: | -----------------------------: |
+| Mild cases    |        90 of 100 survive (90%) |     760 of 900 survive (84.4%) |
+| Severe cases  |     300 of 900 survive (33.3%) |        30 of 100 survive (30%) |
 | **All cases** | **390 of 1,000 survive (39%)** | **790 of 1,000 survive (79%)** |
 
 Hospital A has the higher survival rate within both groups. Nevertheless, Hospital B has a much higher overall survival rate.
 
 The following graph makes the reversal visible:
-
 ```{r}
 #| echo: false
 #| fig-width: 8
@@ -78,14 +70,15 @@ There is no mathematical contradiction. Hospital A treats mostly severe cases, w
 An overall survival rate is a weighted average:
 
 $$
-r_{\text{overall}}
-=
-w_{\text{mild}}r_{\text{mild}}
-+
-w_{\text{severe}}r_{\text{severe}}.
+r\_{\text{overall}}
+===================
+
+w\_{\text{mild}}r\_{\text{mild}}
+\+
+w\_{\text{severe}}r\_{\text{severe}}.
 $$
 
-Here, \(r\) represents a group’s survival rate and \(w\) represents that group’s share of the hospital’s patients.
+Here, (r) represents a group’s survival rate and (w) represents that group’s share of the hospital’s patients.
 
 For Hospital A:
 

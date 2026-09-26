@@ -46,7 +46,7 @@
     "href": "blog/index.html",
     "title": "Blog",
     "section": "",
-    "text": "When Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDo Teams That Score More Goals Win More Games in the NHL?\n\n\n\n\n\n\n\n\n\n\n\nSep 21, 2026\n\n\nRui Bao\n\n\n\n\n\n\nNo matching items"
+    "text": "The College Wage Premium: Large, but Not Steadily Growing\n\n\n\n\n\n\n\n\n\n\n\nSep 25, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nDo Teams That Score More Goals Win More Games in the NHL?\n\n\n\n\n\n\n\n\n\n\n\nSep 21, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nWhen Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\nAug 31, 2026\n\n\nRui Bao\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "blog/posts/post1/index.html",
@@ -67,7 +67,7 @@
     "href": "blog/posts/post1/index.html#where-does-the-reversal-come-from",
     "title": "When Every Group Wins but the Average Loses: Simpson’s Paradox",
     "section": "Where Does the Reversal Come From?",
-    "text": "Where Does the Reversal Come From?\nThere is no mathematical contradiction. Hospital A treats mostly severe cases, while Hospital B treats mostly mild cases. Because severe cases are less likely to survive regardless of the hospital, Hospital A’s overall rate is pulled downward.\nAn overall survival rate is a weighted average:\n\\[\nr_{\\text{overall}}\n=\nw_{\\text{mild}}r_{\\text{mild}}\n+\nw_{\\text{severe}}r_{\\text{severe}}.\n\\]\nHere, (r) represents a group’s survival rate and (w) represents that group’s share of the hospital’s patients.\nFor Hospital A:\n\\[\n0.10(0.90)+0.90(0.333)\\approx 0.39.\n\\]\nFor Hospital B:\n\\[\n0.90(0.844)+0.10(0.30)\\approx 0.79.\n\\]\nThe two overall rates use very different weights. Hospital A’s average is dominated by severe cases, whereas Hospital B’s average is dominated by mild cases. The aggregate comparison therefore mixes together two separate questions: how successfully each hospital treats a given type of patient, and what types of patients each hospital receives."
+    "text": "Where Does the Reversal Come From?\nThere is no mathematical contradiction. Hospital A treats mostly severe cases, while Hospital B treats mostly mild cases. Because severe cases are less likely to survive regardless of the hospital, Hospital A’s overall rate is pulled downward.\nAn overall survival rate is a weighted average:\n$$ r_{} ===================\nw_{}r_{} + w_{}r_{}. $$\nHere, (r) represents a group’s survival rate and (w) represents that group’s share of the hospital’s patients.\nFor Hospital A:\n\\[\n0.10(0.90)+0.90(0.333)\\approx 0.39.\n\\]\nFor Hospital B:\n\\[\n0.90(0.844)+0.10(0.30)\\approx 0.79.\n\\]\nThe two overall rates use very different weights. Hospital A’s average is dominated by severe cases, whereas Hospital B’s average is dominated by mild cases. The aggregate comparison therefore mixes together two separate questions: how successfully each hospital treats a given type of patient, and what types of patients each hospital receives."
   },
   {
     "objectID": "blog/posts/post1/index.html#why-economists-and-data-scientists-should-care",
@@ -166,5 +166,61 @@
     "title": "Do Teams That Score More Goals Win More Games in the NHL?",
     "section": "Takeaway",
     "text": "Takeaway\nThe scraped NHL data support the basic idea that scoring more goals is associated with winning more games, but goals scored alone do not tell the whole story. Goal differential gives a more complete measure because it includes both offense and defense.\nIf I wanted to quickly compare two NHL teams based on a small number of statistics, I would look at goal differential before looking only at total goals scored. A team that scores frequently but also allows many goals may not perform as well as its offensive numbers initially suggest.\nThis does not mean goal differential explains everything about winning. Team quality also depends on factors such as goaltending, special teams, injuries, and the strength of opponents. In addition, this is a descriptive analysis, so the relationship should not be interpreted as proof that increasing goal differential by a certain amount directly causes a specific increase in winning percentage.\nStill, the analysis gives a useful practical rule: when evaluating overall team performance, considering both sides of scoring provides more information than focusing on offense alone. Web scraping made it possible to collect the historical team statistics across many pages and turn them into a dataset that can answer this question directly."
+  },
+  {
+    "objectID": "blog/posts/post3/index.html",
+    "href": "blog/posts/post3/index.html",
+    "title": "The College Wage Premium: Large, but Not Steadily Growing",
+    "section": "",
+    "text": "Does a college degree provide a larger wage advantage today than it did two decades ago? This question matters for understanding both education and inequality. A large wage gap does not necessarily mean that the gap is growing, or that graduates are experiencing strong wage growth.\nUsing IPUMS Current Population Survey (CPS) microdata, I examine the college wage premium among workers aged 25–54 in May of each year from 2003 through 2024. Three visualizations tell a consistent story: the education wage gap remains substantial, but its evolution is uneven and differs between men and women."
+  },
+  {
+    "objectID": "blog/posts/post3/index.html#data-and-measurement",
+    "href": "blog/posts/post3/index.html#data-and-measurement",
+    "title": "The College Wage Premium: Large, but Not Steadily Growing",
+    "section": "Data and Measurement",
+    "text": "Data and Measurement\nThe analysis includes 171,391 person-month observations with at least a high-school diploma. I exclude self-employed workers and observations without valid positive earnings or usual working hours.\nThe high-school comparison group includes workers whose highest qualification is a high-school diploma or equivalent, with no college education.\nHourly earnings equal weekly earnings divided by usual hours at the main job. This measure includes both hourly and salaried employees. I adjust earnings to May 2024 dollars using the BLS Consumer Price Index.\nAll medians use EARNWT, the CPS earnings-study weight. These weights make the estimates reflect the represented population rather than treating every sample observation equally. The results describe May snapshots, not annual averages."
+  },
+  {
+    "objectID": "blog/posts/post3/index.html#the-education-wage-gap-remains-large",
+    "href": "blog/posts/post3/index.html#the-education-wage-gap-remains-large",
+    "title": "The College Wage Premium: Large, but Not Steadily Growing",
+    "section": "1. The Education Wage Gap Remains Large",
+    "text": "1. The Education Wage Gap Remains Large\n\n\n\n\n\n\n\n\nFigure 1: Weighted median real hourly earnings by education, May 2003–2024.\n\n\n\n\n\nWorkers with a bachelor’s degree or higher consistently earn more than the other groups. In 2024, their median hourly earnings were $38.00, compared with $21.65 for high-school graduates and $24.05 for workers with some college or an associate degree.\nHowever, a large gap does not imply strong real wage growth. The college group’s median was already $37.65 in 2003, measured in the same dollars. The high-school median was $21.98. Both endpoints show relatively little change in purchasing power."
+  },
+  {
+    "objectID": "blog/posts/post3/index.html#has-the-college-premium-increased",
+    "href": "blog/posts/post3/index.html#has-the-college-premium-increased",
+    "title": "The College Wage Premium: Large, but Not Steadily Growing",
+    "section": "2. Has the College Premium Increased?",
+    "text": "2. Has the College Premium Increased?\nI calculate the college wage premium as:\n\\[\n\\text{College premium}\n=\n\\left(\n\\frac{\\text{Median hourly earnings: bachelor's or higher}}\n{\\text{Median hourly earnings: high school}}\n-1\n\\right)\\times 100.\n\\]\n\n\n\n\n\n\n\n\nFigure 2: College wage premium calculated from weighted median hourly earnings.\n\n\n\n\n\nThe premium increased from 71.3% in 2003 to 75.5% in 2024. However, the path was not steadily upward: it reached 84.5% in 2022 before declining.\nThe spike around 2020 also deserves caution. Changes in who remains employed can increase observed median earnings even without individual workers receiving raises. These repeated cross-sections do not measure the same workers’ wage growth.\nThe endpoint comparison is sensitive to the sample definition. Among workers usually working at least 35 hours per week, the premium changed from 71.9% to 70.4%. The lasting education gap is therefore clearer than evidence of a widening gap."
+  },
+  {
+    "objectID": "blog/posts/post3/index.html#different-patterns-for-men-and-women",
+    "href": "blog/posts/post3/index.html#different-patterns-for-men-and-women",
+    "title": "The College Wage Premium: Large, but Not Steadily Growing",
+    "section": "3. Different Patterns for Men and Women",
+    "text": "3. Different Patterns for Men and Women\n\n\n\n\n\n\n\n\nFigure 3: Within-sex college wage premiums in May 2003 and May 2024.\n\n\n\n\n\nThe women’s premium rose from 76.1% to 82.1%, while the men’s premium declined from 71.5% to 66.7%.\nA higher women’s premium does not mean women earn more than men. Each comparison uses high-school graduates of the same sex as its reference group. Occupation, experience, and employment selection could contribute to these differences."
+  },
+  {
+    "objectID": "blog/posts/post3/index.html#limitations-and-takeaway",
+    "href": "blog/posts/post3/index.html#limitations-and-takeaway",
+    "title": "The College Wage Premium: Large, but Not Steadily Growing",
+    "section": "Limitations and Takeaway",
+    "text": "Limitations and Takeaway\nThese are descriptive wage gaps, not causal estimates of attending college. The college group includes graduate degrees, and its composition can change over time. The analysis also excludes workers with missing earnings or variable usual hours.\nCPS earnings rounding and topcoding changed in 2023–2024. I use the harmonized rounded series and a common weekly cap of $2,884.61; this cap leaves the overall education-group medians unchanged. Imputed earnings remain included because allocation flags were not downloaded.\nFinally, single-month estimates contain sampling noise, and I have not estimated confidence intervals. Small changes should not be interpreted as statistically established differences.\nThe main finding is an enduring college wage advantage, rather than a steadily growing one. Its apparent change depends on which workers we compare."
+  },
+  {
+    "objectID": "blog/posts/post3/index.html#sources",
+    "href": "blog/posts/post3/index.html#sources",
+    "title": "The College Wage Premium: Large, but Not Steadily Growing",
+    "section": "Sources",
+    "text": "Sources\n\nIPUMS CPS, University of Minnesota. Underlying CPS data are provided by the U.S. Census Bureau and Bureau of Labor Statistics.\nIPUMS weekly earnings documentation.\nIPUMS earnings weights.\nBLS CPI-U, series CUUR0000SA0."
+  },
+  {
+    "objectID": "blog/posts/post3/index.html#code-and-reproducibility",
+    "href": "blog/posts/post3/index.html#code-and-reproducibility",
+    "title": "The College Wage Premium: Large, but Not Steadily Growing",
+    "section": "Code and Reproducibility",
+    "text": "Code and Reproducibility\nThe GitHub repository contains the complete Quarto source, saved figures, result tables, and a README with data-download and replication instructions. All figures and reported statistics are generated from code. Obtain the original microdata through IPUMS CPS using the sample and variable selections documented in the README."
   }
 ]

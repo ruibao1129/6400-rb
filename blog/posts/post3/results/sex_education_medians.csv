@@ -1,0 +1,133 @@
+YEAR,sex,education,median_wage,sample_n
+2003,Men,Some college / associate,28.2405367847412,1355
+2003,Men,High school,24.95056179231,1676
+2003,Women,Some college / associate,22.2501198910082,1469
+2003,Women,Bachelor's or higher,34.2309536784741,1649
+2003,Women,High school,19.4382915531335,1537
+2003,Men,Bachelor's or higher,42.7886920980926,1637
+2004,Men,High school,24.9129296668429,1616
+2004,Women,High school,19.118366766555,1465
+2004,Women,Bachelor's or higher,33.5494119513485,1661
+2004,Men,Some college / associate,28.7661294553147,1305
+2004,Women,Some college / associate,22.836852194606,1516
+2004,Men,Bachelor's or higher,41.5215494447382,1547
+2005,Men,Bachelor's or higher,42.3282294238683,1480
+2005,Men,High school,24.2337191358025,1552
+2005,Women,Some college / associate,22.2950216049383,1467
+2005,Women,Bachelor's or higher,33.6040905349794,1692
+2005,Women,High school,18.2560684156379,1403
+2005,Men,Some college / associate,27.400258436214,1264
+2006,Men,Bachelor's or higher,40.3249086419753,1517
+2006,Men,High school,23.2643703703704,1504
+2006,Women,High school,17.9911130864198,1347
+2006,Women,Some college / associate,21.713412345679,1494
+2006,Women,Bachelor's or higher,32.2599269135803,1646
+2006,Men,Some college / associate,26.8625929876543,1200
+2007,Men,High school,22.6883241136582,1487
+2007,Women,High school,18.1238092032181,1310
+2007,Men,Bachelor's or higher,41.5337294240415,1532
+2007,Women,Some college / associate,21.7485710438617,1396
+2007,Women,Bachelor's or higher,32.6983724374727,1634
+2007,Men,Some college / associate,27.4603169745729,1222
+2008,Women,High school,18.1222649470069,1206
+2008,Men,Some college / associate,26.4585068226301,1200
+2008,Women,Some college / associate,21.7467179364083,1327
+2008,Men,High school,24.4288131485653,1445
+2008,Men,Bachelor's or higher,41.8261874976919,1561
+2008,Women,Bachelor's or higher,31.6374474274858,1699
+2009,Women,Some college / associate,21.2947053157265,1372
+2009,Men,Some college / associate,27.5362568737842,1187
+2009,Men,Bachelor's or higher,42.4262328129416,1501
+2009,Women,Bachelor's or higher,31.7951979369295,1662
+2009,Men,High school,24.0116159939399,1401
+2009,Women,High school,19.499749312102,1146
+2010,Women,Some college / associate,21.5926216208784,1382
+2010,Men,High school,23.3920067559516,1383
+2010,Women,High school,17.2740972967027,1179
+2010,Men,Some college / associate,27.7105310801272,1216
+2010,Men,Bachelor's or higher,41.5298089174894,1483
+2010,Women,Bachelor's or higher,34.1369065625315,1599
+2011,Men,Bachelor's or higher,40.0988239277053,1476
+2011,Women,Bachelor's or higher,32.1068572870015,1672
+2011,Women,Some college / associate,20.848608627923,1350
+2011,Men,Some college / associate,26.7557144058346,1159
+2011,Women,High school,17.3738405232692,1029
+2011,Men,High school,23.7674138358323,1334
+2012,Men,Bachelor's or higher,41.3401529491112,1519
+2012,Women,Bachelor's or higher,32.2521523834389,1740
+2012,Men,Some college / associate,26.6490242151296,1147
+2012,Women,Some college / associate,20.4992493962535,1260
+2012,Women,High school,17.7660161434197,1002
+2012,Men,High school,23.6424676370124,1274
+2013,Women,Bachelor's or higher,32.4255058060916,1708
+2013,Men,Bachelor's or higher,40.447616390135,1528
+2013,Men,Some college / associate,25.6168237137522,1189
+2013,Men,High school,22.0439509326236,1280
+2013,Women,Some college / associate,20.2238081950675,1248
+2013,Women,High school,17.0554115778403,1014
+2014,Women,Bachelor's or higher,32.3882281070478,1797
+2014,Men,Bachelor's or higher,40.6613081126524,1510
+2014,Men,Some college / associate,25.4133175704077,1087
+2014,Women,Some college / associate,19.8319222829387,1191
+2014,Men,High school,21.7828436317781,1244
+2014,Women,High school,17.4922835224884,939
+2015,Men,Bachelor's or higher,39.0340143301351,1589
+2015,Women,Bachelor's or higher,31.7628285780366,1932
+2015,Women,Some college / associate,20.3387758878072,1212
+2015,Women,High school,17.2068308067534,951
+2015,Men,High school,23.1122453270537,1230
+2015,Men,Some college / associate,26.0838197262463,1154
+2016,Women,Some college / associate,19.8720753947275,1225
+2016,Men,Some college / associate,26.1474676246415,1100
+2016,Women,Bachelor's or higher,33.9917079120339,1843
+2016,Men,High school,22.6175594953149,1288
+2016,Women,High school,18.303227337249,919
+2016,Men,Bachelor's or higher,41.5091048541184,1609
+2017,Women,High school,17.966379687251,872
+2017,Women,Some college / associate,20.9179992072994,1162
+2017,Men,Some college / associate,26.4362443969551,1101
+2017,Men,Bachelor's or higher,41.9993291390283,1631
+2017,Women,Bachelor's or higher,35.932759374502,1849
+2017,Men,High school,23.7650524963638,1228
+2018,Women,Bachelor's or higher,32.2073397777319,1835
+2018,Men,Bachelor's or higher,39.0108282191519,1635
+2018,Men,Some college / associate,27.0267017902285,1108
+2018,Women,Some college / associate,21.2218905512187,1117
+2018,Men,High school,22.7823236799847,1140
+2018,Women,High school,18.7251975451929,862
+2019,Men,High school,23.5467129000515,1135
+2019,Men,Bachelor's or higher,42.3104997422801,1566
+2019,Women,Bachelor's or higher,33.0512454508536,1782
+2019,Women,High school,18.3958694531653,795
+2019,Men,Some college / associate,26.9806085313091,1050
+2019,Women,Some college / associate,21.2165694359839,1027
+2020,Men,High school,25.356397965631,903
+2020,Women,High school,18.9131779994852,585
+2020,Men,Some college / associate,28.2962701935303,796
+2020,Men,Bachelor's or higher,45.3230301801134,1476
+2020,Women,Some college / associate,22.0490417092444,812
+2020,Women,Bachelor's or higher,37.0546395391468,1664
+2021,Men,Some college / associate,26.9507007931054,812
+2021,Women,Some college / associate,21.4088900239603,892
+2021,Men,Bachelor's or higher,44.7233851545039,1522
+2021,Women,Bachelor's or higher,33.659208566281,1722
+2021,Women,High school,18.6671520644886,690
+2021,Men,High school,23.3339400806107,1032
+2022,Women,Some college / associate,21.1029749295235,772
+2022,Women,High school,18.1051490612256,690
+2022,Men,Some college / associate,25.8414738826395,809
+2022,Women,Bachelor's or higher,34.6159879396598,1634
+2022,Men,High school,23.6387702876536,961
+2022,Men,Bachelor's or higher,43.6959087135415,1400
+2023,Men,High school,23.2824720055647,922
+2023,Women,Bachelor's or higher,34.8532973067173,1613
+2023,Men,Bachelor's or higher,42.0821293407031,1389
+2023,Women,Some college / associate,20.653805811388,691
+2023,Men,Some college / associate,27.3146581855606,756
+2023,Women,High school,18.5884252302492,648
+2024,Men,Some college / associate,25.95,716
+2024,Women,Bachelor's or higher,34.6,1640
+2024,Men,Bachelor's or higher,41.6666666666667,1409
+2024,Women,Some college / associate,21.8181818181818,739
+2024,Women,High school,19,606
+2024,Men,High school,25,917

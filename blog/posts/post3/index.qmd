@@ -1,0 +1,419 @@
+
+---
+title: "The College Wage Premium: Large, but Not Steadily Growing"
+author: "Rui Bao"
+date: "2026-09-25"
+categories:
+  - economics
+  - education
+  - data-visualization
+format: html
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+Does a college degree provide a larger wage advantage today than it did two decades ago? This question matters for understanding both education and inequality. A large wage gap does not necessarily mean that the gap is growing, or that graduates are experiencing strong wage growth.
+
+Using IPUMS Current Population Survey (CPS) microdata, I examine the college wage premium among workers aged 25–54 in May of each year from 2003 through 2024. Three visualizations tell a consistent story: the education wage gap remains substantial, but its evolution is uneven and differs between men and women.
+
+```{r}
+#| label: setup
+#| include: false
+
+library(data.table)
+library(ggplot2)
+
+# Project-relative input; see README.md for download instructions.
+data_file <- "data/raw/cps_00001.csv.gz"
+
+if (!file.exists(data_file)) {
+  stop("Place your IPUMS extract at data/raw/cps_00001.csv.gz. See README.md.")
+}
+
+variables <- c(
+  "YEAR", "MONTH", "AGE", "SEX", "EMPSTAT",
+  "CLASSWKR", "EDUC", "EARNWT", "EARNWEEK2", "UHRSWORK1"
+)
+
+# Decompress in small blocks with base R, then read selected columns.
+# This works on macOS, Windows, and Linux without an extra package.
+read_extract <- function(path, columns) {
+  temporary_csv <- tempfile(fileext = ".csv")
+  on.exit(unlink(temporary_csv), add = TRUE)
+  decompress <- function() {
+    input <- gzfile(path, "rb")
+    on.exit(close(input), add = TRUE)
+    output <- file(temporary_csv, "wb")
+    on.exit(close(output), add = TRUE)
+    repeat {
+      block <- readBin(input, what = "raw", n = 1048576)
+      if (!length(block)) break
+      writeBin(block, output)
+    }
+  }
+  decompress()
+  fread(temporary_csv, select = columns)
+}
+cps <- read_extract(data_file, variables)
+
+stopifnot(
+  all(cps$MONTH == 5),
+  setequal(unique(cps$YEAR), 2003:2024)
+)
+
+# Employed civilian wage/salary workers with valid earnings,
+# positive earnings weights, and valid usual main-job hours.
+workers <- cps[
+  AGE >= 25 & AGE <= 54 &
+    EMPSTAT %in% c(10, 12) &
+    CLASSWKR %in% 20:28 &
+    is.finite(EARNWT) & EARNWT > 0 &
+    EARNWEEK2 > 0 & EARNWEEK2 < 999999.99 &
+    UHRSWORK1 >= 1 & UHRSWORK1 <= 99 &
+    SEX %in% c(1, 2)
+]
+
+workers[, education := fcase(
+  EDUC == 73, "High school",
+  EDUC %in% c(81, 91, 92), "Some college / associate",
+  EDUC %in% c(111, 123, 124, 125), "Bachelor's or higher",
+  default = NA_character_
+)]
+
+workers <- workers[!is.na(education)]
+workers[, sex := fifelse(SEX == 1, "Men", "Women")]
+
+# Common nominal weekly cap for comparability.
+workers[, hourly_uncapped := EARNWEEK2 / UHRSWORK1]
+workers[, hourly := pmin(EARNWEEK2, 2884.61) / UHRSWORK1]
+
+# May CPI-U: BLS series CUUR0000SA0.
+# Not seasonally adjusted; 1982–84 = 100.
+cpi <- data.table(
+  YEAR = 2003:2024,
+  CPI = c(
+    183.500, 189.100, 194.400, 202.500,
+    207.949, 216.632, 213.856, 218.178,
+    225.964, 229.815, 232.945, 237.900,
+    237.805, 240.229, 244.733, 251.588,
+    256.092, 256.394, 269.195, 292.296,
+    304.127, 314.069
+  )
+)
+
+base_cpi <- cpi[YEAR == 2024, CPI]
+workers <- merge(workers, cpi, by = "YEAR", all.x = TRUE)
+stopifnot(!anyNA(workers$CPI))
+
+workers[, real_hourly := hourly * base_cpi / CPI]
+
+# First observation reaching half the cumulative weight.
+weighted_median <- function(x, w) {
+  valid <- is.finite(x) & is.finite(w) & w > 0
+  x <- x[valid]
+  w <- w[valid]
+
+  if (length(x) == 0) return(NA_real_)
+
+  index <- order(x)
+  x <- x[index]
+  w <- w[index]
+
+  x[which(cumsum(w) >= sum(w) / 2)[1]]
+}
+
+education_summary <- workers[, .(
+  median_wage = weighted_median(real_hourly, EARNWT),
+  sample_n = .N
+), by = .(YEAR, education)]
+
+setorder(education_summary, YEAR, education)
+
+college_premium <- dcast(
+  education_summary,
+  YEAR ~ education,
+  value.var = "median_wage"
+)
+
+college_premium[, premium :=
+  100 * (`Bachelor's or higher` / `High school` - 1)
+]
+
+sex_summary <- workers[, .(
+  median_wage = weighted_median(real_hourly, EARNWT),
+  sample_n = .N
+), by = .(YEAR, sex, education)]
+
+sex_premium <- dcast(
+  sex_summary,
+  YEAR + sex ~ education,
+  value.var = "median_wage"
+)
+
+sex_premium[, premium :=
+  100 * (`Bachelor's or higher` / `High school` - 1)
+]
+
+# Sensitivity: full-time workers.
+full_time <- workers[UHRSWORK1 >= 35, .(
+  median_wage = weighted_median(real_hourly, EARNWT)
+), by = .(YEAR, education)]
+
+full_time <- dcast(
+  full_time,
+  YEAR ~ education,
+  value.var = "median_wage"
+)
+
+full_time[, premium :=
+  100 * (`Bachelor's or higher` / `High school` - 1)
+]
+
+# Sensitivity: effect of the common earnings cap.
+topcode_check <- workers[, .(
+  capped = weighted_median(hourly, EARNWT),
+  uncapped = weighted_median(hourly_uncapped, EARNWT)
+), by = .(YEAR, education)]
+
+# Helpers: insert computed values directly into the article.
+premium_at <- function(year) {
+  sprintf("%.1f", college_premium[YEAR == year, premium])
+}
+
+wage_at <- function(year, group) {
+  sprintf(
+    "%.2f",
+    education_summary[
+      YEAR == year & education == group,
+      median_wage
+    ]
+  )
+}
+
+sex_premium_at <- function(year, group) {
+  sprintf(
+    "%.1f",
+    sex_premium[YEAR == year & sex == group, premium]
+  )
+}
+
+# Save results for reproducibility.
+dir.create("results", showWarnings = FALSE)
+dir.create("figures", showWarnings = FALSE)
+
+fwrite(education_summary, "results/education_medians.csv")
+fwrite(college_premium, "results/college_premium.csv")
+fwrite(sex_summary, "results/sex_education_medians.csv")
+fwrite(sex_premium, "results/sex_premium.csv")
+fwrite(full_time, "results/full_time_sensitivity.csv")
+fwrite(topcode_check, "results/topcode_sensitivity.csv")
+fwrite(cpi, "results/cpi_may.csv")
+
+# Shared chart formatting.
+theme_set(
+  theme_minimal(base_size = 12) +
+    theme(
+      panel.grid.minor = element_blank(),
+      legend.position = "top",
+      plot.title = element_text(face = "bold"),
+      plot.caption = element_text(hjust = 0, size = 9)
+    )
+)
+
+education_colors <- c(
+  "High school" = "#D27735",
+  "Some college / associate" = "#659B91",
+  "Bachelor's or higher" = "#245E85"
+)
+
+source_note <- paste(
+  "Source: IPUMS CPS, May samples; weighted using EARNWT.",
+  "Employed wage/salary workers aged 25–54.",
+  sep = "\n"
+)
+```
+
+## Data and Measurement
+
+The analysis includes `r format(nrow(workers), big.mark = ",")` person-month observations with at least a high-school diploma. I exclude self-employed workers and observations without valid positive earnings or usual working hours.
+
+The high-school comparison group includes workers whose highest qualification is a high-school diploma or equivalent, with no college education.
+
+Hourly earnings equal weekly earnings divided by usual hours at the main job. This measure includes both hourly and salaried employees. I adjust earnings to May 2024 dollars using the BLS Consumer Price Index.
+
+All medians use **EARNWT**, the CPS earnings-study weight. These weights make the estimates reflect the represented population rather than treating every sample observation equally. The results describe May snapshots, not annual averages.
+
+## 1. The Education Wage Gap Remains Large
+
+```{r}
+#| label: fig-wages
+#| fig-width: 9
+#| fig-height: 5.5
+#| fig-cap: "Weighted median real hourly earnings by education, May 2003–2024."
+
+figure1 <- ggplot(
+  education_summary,
+  aes(YEAR, median_wage, color = education)
+) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 1.5) +
+  scale_color_manual(values = education_colors) +
+  scale_x_continuous(
+    breaks = c(2003, 2007, 2011, 2015, 2019, 2024)
+  ) +
+  scale_y_continuous(
+    labels = function(x) paste0("$", x)
+  ) +
+  labs(
+    title = "The wage ladder by education",
+    subtitle = "Median hourly earnings in May 2024 dollars",
+    x = NULL,
+    y = NULL,
+    color = NULL,
+    caption = source_note
+  )
+
+ggsave(
+  "figures/figure1.png", figure1,
+  width = 9, height = 5.5, dpi = 300, bg = "white"
+)
+
+knitr::include_graphics("figures/figure1.png")
+```
+
+Workers with a bachelor's degree or higher consistently earn more than the other groups. In 2024, their median hourly earnings were $`r wage_at(2024, "Bachelor's or higher")`, compared with $`r wage_at(2024, "High school")` for high-school graduates and $`r wage_at(2024, "Some college / associate")` for workers with some college or an associate degree.
+
+However, a large gap does not imply strong real wage growth. The college group's median was already $`r wage_at(2003, "Bachelor's or higher")` in 2003, measured in the same dollars. The high-school median was $`r wage_at(2003, "High school")`. Both endpoints show relatively little change in purchasing power.
+
+## 2. Has the College Premium Increased?
+
+I calculate the college wage premium as:
+
+$$
+\text{College premium}
+=
+\left(
+\frac{\text{Median hourly earnings: bachelor's or higher}}
+{\text{Median hourly earnings: high school}}
+-1
+\right)\times 100.
+$$
+
+```{r}
+#| label: fig-premium
+#| fig-width: 9
+#| fig-height: 5.5
+#| fig-cap: "College wage premium calculated from weighted median hourly earnings."
+
+figure2 <- ggplot(
+  college_premium,
+  aes(YEAR, premium)
+) +
+  geom_line(color = "#245E85", linewidth = 1.1) +
+  geom_point(color = "#245E85", size = 2) +
+  geom_text(
+    data = college_premium[YEAR %in% c(2003, 2024)],
+    aes(label = sprintf("%.1f%%", premium)),
+    vjust = -1,
+    color = "#245E85"
+  ) +
+  scale_x_continuous(
+    breaks = c(2003, 2007, 2011, 2015, 2019, 2024),
+    expand = expansion(mult = 0.06)
+  ) +
+  scale_y_continuous(
+    limits = c(0, 100),
+    labels = function(x) paste0(x, "%")
+  ) +
+  labs(
+    title = "A large but fluctuating college premium",
+    x = NULL,
+    y = "College wage premium",
+    caption = source_note
+  )
+
+ggsave(
+  "figures/figure2.png", figure2,
+  width = 9, height = 5.5, dpi = 300, bg = "white"
+)
+
+knitr::include_graphics("figures/figure2.png")
+```
+
+The premium increased from `r premium_at(2003)`% in 2003 to `r premium_at(2024)`% in 2024. However, the path was not steadily upward: it reached `r premium_at(2022)`% in 2022 before declining.
+
+The spike around 2020 also deserves caution. Changes in who remains employed can increase observed median earnings even without individual workers receiving raises. These repeated cross-sections do not measure the same workers' wage growth.
+
+The endpoint comparison is sensitive to the sample definition. Among workers usually working at least 35 hours per week, the premium changed from `r sprintf("%.1f", full_time[YEAR == 2003, premium])`% to `r sprintf("%.1f", full_time[YEAR == 2024, premium])`%. The lasting education gap is therefore clearer than evidence of a widening gap.
+
+## 3. Different Patterns for Men and Women
+
+```{r}
+#| label: fig-sex
+#| fig-width: 9
+#| fig-height: 5.5
+#| fig-cap: "Within-sex college wage premiums in May 2003 and May 2024."
+
+figure3 <- ggplot(
+  sex_premium[YEAR %in% c(2003, 2024)],
+  aes(factor(YEAR), premium, fill = sex)
+) +
+  geom_col(
+    position = position_dodge(0.75),
+    width = 0.65
+  ) +
+  geom_text(
+    aes(label = sprintf("%.1f%%", premium)),
+    position = position_dodge(0.75),
+    vjust = -0.5
+  ) +
+  scale_fill_manual(
+    values = c("Men" = "#245E85", "Women" = "#A34E72")
+  ) +
+  scale_y_continuous(
+    limits = c(0, 110),
+    labels = function(x) paste0(x, "%")
+  ) +
+  labs(
+    title = "The college premium differs by sex",
+    subtitle = "College versus high school within each sex",
+    x = NULL,
+    y = "College wage premium",
+    fill = NULL,
+    caption = source_note
+  )
+
+ggsave(
+  "figures/figure3.png", figure3,
+  width = 9, height = 5.5, dpi = 300, bg = "white"
+)
+
+knitr::include_graphics("figures/figure3.png")
+```
+
+The women's premium rose from `r sex_premium_at(2003, "Women")`% to `r sex_premium_at(2024, "Women")`%, while the men's premium declined from `r sex_premium_at(2003, "Men")`% to `r sex_premium_at(2024, "Men")`%.
+
+A higher women's premium does not mean women earn more than men. Each comparison uses high-school graduates of the same sex as its reference group. Occupation, experience, and employment selection could contribute to these differences.
+
+## Limitations and Takeaway
+
+These are descriptive wage gaps, not causal estimates of attending college. The college group includes graduate degrees, and its composition can change over time. The analysis also excludes workers with missing earnings or variable usual hours.
+
+CPS earnings rounding and topcoding changed in 2023–2024. I use the harmonized rounded series and a common weekly cap of $2,884.61; this cap leaves the overall education-group medians unchanged. Imputed earnings remain included because allocation flags were not downloaded.
+
+Finally, single-month estimates contain sampling noise, and I have not estimated confidence intervals. Small changes should not be interpreted as statistically established differences.
+
+**The main finding is an enduring college wage advantage, rather than a steadily growing one.** Its apparent change depends on which workers we compare.
+
+## Code and Reproducibility
+
+The [GitHub repository](https://github.com/ruibao1129/6400-rb/tree/main/blog/posts/post3) contains the complete Quarto source, saved figures, result tables, and a README with data-download and replication instructions. All figures and reported statistics are generated from code. Obtain the original microdata through IPUMS CPS using the sample and variable selections documented in the README.
+
+## Sources
+
+- [IPUMS CPS, University of Minnesota](https://cps.ipums.org/cps/). Underlying CPS data are provided by the U.S. Census Bureau and Bureau of Labor Statistics.
+- [IPUMS weekly earnings documentation](https://cps.ipums.org/cps-action/variables/EARNWEEK2).
+- [IPUMS earnings weights](https://cps.ipums.org/cps-action/variables/EARNWT).
+- [BLS CPI-U, series CUUR0000SA0](https://data.bls.gov/timeseries/CUUR0000SA0?years_option=all_years).
