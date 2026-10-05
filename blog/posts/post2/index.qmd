@@ -1,198 +1,207 @@
 ---
 title: "Do Teams That Score More Goals Win More Games in the NHL?"
 author: "Rui Bao"
-date: 2026-09-21
-categories:
-  - web-scraping
-  - sports
-  - data-analysis
+date: "2026-09-21"
+categories: [web-scraping, sports, data-analysis]
+format:
+  html:
+    toc: false
+    code-fold: true
+    code-summary: "Show R code"
+execute:
+  warning: false
+  message: false
 ---
 
-## Introduction
+```{r}
+#| label: setup
+#| include: false
+post_dir <- dirname(normalizePath(knitr::current_input(dir = TRUE)))
+knitr::opts_knit$set(root.dir = post_dir)
+knitr::opts_chunk$set(fig.width = 8, fig.height = 5)
+```
 
-When looking at a hockey team's performance, one of the first statistics people notice is how many goals the team scores. It seems reasonable to think that teams that score more goals should also win more games. But scoring is only one side of the game. A team can score a lot and still give up just as many goals.
+## What I wanted to compare
 
-This made me interested in a simple question: **Does scoring more goals actually lead to a higher winning percentage in the NHL?** I also wanted to see whether goal differential, which takes both scoring and goals allowed into account, gives us a better picture of team performance.
+A team that scores a lot of goals looks strong on offense. But if it also gives up a lot of goals, those numbers may not tell us much about how often it wins. I wanted to compare two simple measures: total goals scored and goal differential, which is goals scored minus goals allowed. **Which one is more closely associated with NHL winning percentage?**
 
-To answer this question, I used `rvest` in R to scrape historical NHL team statistics from Scrape This Site. The site is a public web-scraping sandbox, so the data can be accessed without a login, CAPTCHA, or paywall.
+This is useful for a quick comparison of teams. If I only have time to look at a few statistics, I want to know whether scoring alone leaves out too much information.
 
-## Scraping the Data
+## Getting the data
 
-The hockey data are spread across multiple pages. Instead of copying the tables manually, I created a function that reads each page and extracts the team statistics.
+I used `rvest` to collect team statistics from the [hockey pages on Scrape This Site](https://www.scrapethissite.com/pages/forms/). This is a public scraping practice site. The code uses the first 24 pages, matching my original analysis, rather than assuming they cover every available record. It pauses one second between new page requests and saves each page locally. Later renders use those saved pages. No login, CAPTCHA, or paywall is bypassed.
 
 ```{r}
-#| message: false
-#| warning: false
-
+#| label: analysis
 library(rvest)
-library(tidyverse)
+library(dplyr)
+library(readr)
+library(ggplot2)
 
-scrape_hockey_page <- function(page_number) {
-  
-  url <- paste0(
-    "https://www.scrapethissite.com/pages/forms/?page_num=",
-    page_number
-  )
-  
-  page <- read_html(url)
-  
-  rows <- page |>
-    html_elements("tr.team")
-  
-  data <- tibble(
-    team = rows |>
-      html_element(".name") |>
-      html_text2(),
-    
-    year = rows |>
-      html_element(".year") |>
-      html_text2(),
-    
-    wins = rows |>
-      html_element(".wins") |>
-      html_text2(),
-    
-    losses = rows |>
-      html_element(".losses") |>
-      html_text2(),
-    
-    win_pct = rows |>
-      html_element(".pct") |>
-      html_text2(),
-    
-    goals_for = rows |>
-      html_element(".gf") |>
-      html_text2(),
-    
-    goals_against = rows |>
-      html_element(".ga") |>
-      html_text2()
-  )
-  
-  Sys.sleep(0.2)
-  
-  return(data)
+for (folder in c("data/raw", "data/clean", "figures", "results")) {
+  dir.create(folder, recursive = TRUE, showWarnings = FALSE)
 }
 
-hockey_raw <- map_dfr(1:24, scrape_hockey_page)
+page_numbers <- 1:24
 
-head(hockey_raw)
-```
+scrape_hockey_page <- function(page_number) {
+  url <- paste0("https://www.scrapethissite.com/pages/forms/?page_num=",
+                page_number)
+  file <- file.path("data/raw", sprintf("page_%02d.html", page_number))
+  record_file <- paste0(file, ".csv")
 
-I added a short pause between page requests so that the website is not being requested too quickly.
+  if (!file.exists(file)) {
+    Sys.sleep(1)
+    page <- read_html(url)
+    # Stop on unexpected content rather than trying to evade access controls.
+    if (length(html_elements(page, "tr.team")) == 0) {
+      stop("No team rows on page ", page_number,
+           ". Check the site manually; do not bypass access restrictions.")
+    }
+    xml2::write_html(page, file)
+    write_csv(tibble(page_number = page_number, source_url = url,
+                     retrieved_at = format(Sys.time(), "%Y-%m-%d %H:%M:%S %Z")),
+              record_file)
+  } else {
+    page <- read_html(file)
+  }
 
-## Cleaning the Data
+  if (!file.exists(record_file)) {
+    stop("Missing retrieval record for ", file)
+  }
+  rows <- html_elements(page, "tr.team")
+  if (length(rows) == 0) stop("No team rows in ", file)
+  field <- function(selector) html_text2(html_element(rows, selector))
 
-The information collected from the website is initially stored as text. Before doing any calculations, I converted the numerical columns into numbers. I also created a new variable called `goal_diff`, which is goals scored minus goals allowed.
-
-```{r}
-hockey <- hockey_raw |>
-  mutate(
-    year = as.numeric(year),
-    wins = as.numeric(wins),
-    losses = as.numeric(losses),
-    win_pct = as.numeric(win_pct),
-    goals_for = as.numeric(goals_for),
-    goals_against = as.numeric(goals_against),
-    goal_diff = goals_for - goals_against
-  ) |>
-  drop_na()
-
-head(hockey)
-```
-
-A positive goal differential means that a team scored more goals than it allowed during that season, while a negative number means the opposite.
-
-## Goals Scored and Winning Percentage
-
-First, I compared total goals scored with winning percentage.
-
-```{r}
-#| fig-width: 7
-#| fig-height: 5
-
-ggplot(hockey, aes(x = goals_for, y = win_pct)) +
-  geom_point(alpha = 0.5) +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(
-    title = "Goals Scored and NHL Winning Percentage",
-    x = "Goals Scored",
-    y = "Winning Percentage"
-  ) +
-  theme_minimal()
-```
-
-The graph shows a positive relationship between scoring and winning percentage. Teams that score more goals generally tend to win a larger share of their games. However, the points are fairly spread out around the trend line. Teams with similar numbers of goals can still have noticeably different winning percentages.
-
-This makes sense because goals scored ignore what happens on defense. Scoring 250 goals is much less impressive if a team also allows 260.
-
-## Is Goal Differential More Useful?
-
-Next, I compared goal differential with winning percentage.
-
-```{r}
-#| fig-width: 7
-#| fig-height: 5
-
-ggplot(hockey, aes(x = goal_diff, y = win_pct)) +
-  geom_point(alpha = 0.5) +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(
-    title = "Goal Differential and NHL Winning Percentage",
-    x = "Goal Differential",
-    y = "Winning Percentage"
-  ) +
-  theme_minimal()
-```
-
-The relationship here is much clearer. Teams with large positive goal differentials tend to have higher winning percentages, while teams that allow substantially more goals than they score tend to have lower winning percentages.
-
-To make the comparison more direct, I calculated the correlations between the two measures and winning percentage.
-
-```{r}
-comparison <- tibble(
-  measure = c("Goals Scored", "Goal Differential"),
-  correlation_with_win_pct = c(
-    cor(hockey$goals_for, hockey$win_pct),
-    cor(hockey$goal_diff, hockey$win_pct)
+  tibble(
+    team = field(".name"), year = field(".year"),
+    wins = field(".wins"), losses = field(".losses"),
+    win_pct = field(".pct"), goals_for = field(".gf"),
+    goals_against = field(".ga"),
+    page_number = page_number, source_url = url
   )
-)
+}
 
-comparison
+hockey_raw <- bind_rows(lapply(page_numbers, scrape_hockey_page))
+write_csv(hockey_raw, "data/raw/hockey_raw.csv")
+
+retrievals <- bind_rows(lapply(page_numbers, function(p) {
+  read_csv(file.path("data/raw", sprintf("page_%02d.html.csv", p)),
+           show_col_types = FALSE)
+}))
+write_csv(retrievals, "results/retrieval_log.csv")
+
+numeric_columns <- c("year", "wins", "losses", "win_pct",
+                     "goals_for", "goals_against")
+parsed <- hockey_raw |>
+  mutate(team = trimws(gsub("\\s+", " ", team)),
+         across(all_of(numeric_columns),
+                ~ parse_number(.x, na = c("", "NA"))))
+
+missing_row <- !complete.cases(parsed[, c("team", numeric_columns)]) |
+  parsed$team == ""
+missing_count <- sum(missing_row)
+hockey <- parsed[!missing_row, ]
+if (nrow(hockey) == 0) stop("No complete records remain.")
+# One observation should represent one team in one season.
+if (anyDuplicated(hockey[c("team", "year")])) {
+  stop("Duplicate team-season records: inspect the saved pages.")
+}
+if (any(hockey$win_pct < 0 | hockey$win_pct > 1) ||
+    any(hockey$goals_for < 0 | hockey$goals_against < 0) ||
+    any(hockey$wins < 0 | hockey$losses < 0)) {
+  stop("Invalid values: inspect the source data.")
+}
+
+hockey <- hockey |>
+  mutate(goal_diff = goals_for - goals_against)
+write_csv(hockey, "data/clean/hockey.csv")
+
+comparison <- tibble(
+  measure = c("Goals scored", "Goal differential"),
+  correlation = c(cor(hockey$goals_for, hockey$win_pct),
+                  cor(hockey$goal_diff, hockey$win_pct))
+)
+write_csv(comparison, "results/correlations.csv")
+
+sample_summary <- tibble(
+  pages_requested = length(page_numbers),
+  scraped_rows = nrow(hockey_raw), incomplete_rows_removed = missing_count,
+  analyzed_rows = nrow(hockey), first_year = min(hockey$year),
+  last_year = max(hockey$year)
+)
+write_csv(sample_summary, "results/sample_summary.csv")
+write_csv(count(hockey, year, name = "team_seasons"),
+          "results/observations_by_year.csv")
+writeLines(capture.output(sessionInfo()), "results/sessionInfo.txt")
+
+r_goals <- comparison$correlation[1]
+r_diff <- comparison$correlation[2]
+fmt <- function(x) sprintf("%.2f", x)
+stronger <- if (r_diff > r_goals) "goal differential" else "goals scored"
+
+p1 <- ggplot(hockey, aes(goals_for, win_pct)) +
+  geom_point(alpha = 0.45, color = "#0072B2") +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "#D55E00") +
+  scale_y_continuous(labels = function(x) paste0(round(100 * x), "%")) +
+  labs(title = "Goals scored and winning percentage",
+       subtitle = "One point = one team-season; line = fitted linear relationship",
+       x = "Total goals scored in the season", y = "Winning percentage",
+       caption = "Source: Scrape This Site, hockey pages 1–24.") +
+  theme_minimal(base_size = 12)
+
+p2 <- ggplot(hockey, aes(goal_diff, win_pct)) +
+  geom_point(alpha = 0.45, color = "#0072B2") +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "#D55E00") +
+  scale_y_continuous(labels = function(x) paste0(round(100 * x), "%")) +
+  labs(title = "Goal differential and winning percentage",
+       subtitle = "One point = one team-season; line = fitted linear relationship",
+       x = "Goals scored minus goals allowed", y = "Winning percentage",
+       caption = "Source: Scrape This Site, hockey pages 1–24.") +
+  theme_minimal(base_size = 12)
+
+ggsave("figures/goals_scored.png", p1, width = 8, height = 5, dpi = 180)
+ggsave("figures/goal_differential.png", p2, width = 8, height = 5, dpi = 180)
 ```
 
-The correlation values give a simple way to compare the two relationships. A larger positive correlation means that the statistic moves more closely with winning percentage.In this dataset, the correlation between goals scored and winning percentage is about 0.48, while the correlation between goal differential and winning percentage is about 0.89. This suggests that goal differential is much more closely associated with winning percentage than scoring alone.
+The saved retrieval dates range from `r min(substr(retrievals$retrieved_at, 1, 10))` to `r max(substr(retrievals$retrieved_at, 1, 10))`. The scrape returned `r nrow(hockey_raw)` rows. After converting numeric fields and removing `r missing_count` incomplete rows, I had **`r nrow(hockey)` team-seasons**, with year labels from **`r min(hockey$year)` to `r max(hockey$year)`**. I also checked for duplicate team-season records and out-of-range values. I kept the website's reported winning percentage rather than calculating it from wins and losses alone.
 
-## A Practical Example
-
-To see what successful seasons tend to look like, I also looked at the team-seasons with the highest winning percentages in the scraped data.
+## Scoring alone leaves a lot unexplained
 
 ```{r}
-top_seasons <- hockey |>
-  arrange(desc(win_pct)) |>
-  select(
-    team,
-    year,
-    wins,
-    losses,
-    win_pct,
-    goals_for,
-    goals_against,
-    goal_diff
-  ) |>
-  slice_head(n = 10)
-
-top_seasons
+#| label: fig-goals
+#| echo: false
+#| fig-cap: "The same season's total goals scored and reported winning percentage."
+p1
 ```
 
-This table makes it possible to look beyond scoring alone. A high-performing team does not simply need to produce goals; the difference between goals scored and goals allowed is also important.
+The correlation between goals scored and winning percentage is **`r fmt(r_goals)`**. There is an upward pattern, but teams with similar scoring totals can still have different winning percentages. A scoring total says nothing about how many goals a team allowed. Scoring 250 goals looks different when the team allows 200 rather than 260.
 
-## Takeaway
+## Adding goals allowed changes the picture
 
-The scraped NHL data support the basic idea that scoring more goals is associated with winning more games, but goals scored alone do not tell the whole story. Goal differential gives a more complete measure because it includes both offense and defense.
+```{r}
+#| label: fig-differential
+#| echo: false
+#| fig-cap: "Goal differential includes both scoring and goals allowed."
+p2
+```
 
-If I wanted to quickly compare two NHL teams based on a small number of statistics, I would look at goal differential before looking only at total goals scored. A team that scores frequently but also allows many goals may not perform as well as its offensive numbers initially suggest.
+The correlation for goal differential is **`r fmt(r_diff)`**. Of the two measures, `r stronger` has the higher correlation in this sample. This is a comparison of two descriptions of the same completed seasons, not a test of whether either statistic can predict next season.
 
-This does not mean goal differential explains everything about winning. Team quality also depends on factors such as goaltending, special teams, injuries, and the strength of opponents. In addition, this is a descriptive analysis, so the relationship should not be interpreted as proof that increasing goal differential by a certain amount directly causes a specific increase in winning percentage.
+```{r}
+#| echo: false
+knitr::kable(comparison, digits = 2,
+             col.names = c("Measure", "Correlation with winning percentage"))
+```
 
-Still, the analysis gives a useful practical rule: when evaluating overall team performance, considering both sides of scoring provides more information than focusing on offense alone. Web scraping made it possible to collect the historical team statistics across many pages and turn them into a dataset that can answer this question directly.
+## What I would use this for
+
+For a quick review of past team performance, I would start with **`r stronger`**, then check the separate scoring and goals-allowed numbers. This gives me a first comparison and a way to see what sits behind it. Looking only at offense can make a team seem stronger than its overall results suggest.
+
+I would also compare teams from the same season where possible. This dataset combines seasons with potentially different schedules and scoring environments, while the horizontal axes use totals rather than per-game rates. That limits comparisons across years. The sample is drawn from a teaching website, and I have not independently checked every record against official NHL statistics.
+
+My takeaway is simple: goals scored are only half of a team's scoring record. Including goals allowed is useful when describing performance, but these correlations do not establish causation or prove which statistic will predict future wins.
+
+## Code and data
+
+The [GitHub repository](https://github.com/ruibao1129/6400-rb) includes this post under `blog/posts/post2`. The README explains how to run it. Saved source pages and raw data are in `data/raw`, cleaned data in `data/clean`, charts in `figures`, and calculated tables in `results`. The source is [Scrape This Site's hockey dataset](https://www.scrapethissite.com/pages/forms/); it is not an official NHL data release.
