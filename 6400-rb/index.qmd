@@ -1,0 +1,191 @@
+---
+
+---
+
+1.  **index.qmd**
+
+```         
+---
+```
+
+title: "Eating Out vs. Eating In: Which Prices Rose Faster?"
+
+date: "2026-10-04"
+
+categories: \[Data Visualization, Food Prices\]
+
+format:
+
+html:
+
+toc: true
+
+code-fold: true
+
+execute:
+
+warning: false
+
+message: false
+
+---
+
+\`\`\`{r}
+
+#\| label: setup
+
+#\| include: false
+
+\# Keep saved data and results beside this index.qmd.
+
+post_dir \<- dirname(normalizePath(knitr::current_input(dir = TRUE)))
+
+knitr::opts_knit\$set(root.dir = post_dir)
+
+knitr::opts_chunk\$set(fig.width = 10, fig.height = 6)
+
+\`\`\`
+
+\## Research question
+
+Did food away from home become more expensive faster than food at home
+
+between January 2015 and December 2024?
+
+This analysis uses monthly, not seasonally adjusted BLS CPI-U indexes
+
+retrieved through FRED. The sample is a fixed historical window, not the
+
+latest available data. January 2015 is rebased to 100 for both series.
+
+Year-over-year inflation compares each month with the same month one year
+
+earlier. These indexes measure price changes, not the dollar cost of an
+
+identical meal or the time spent cooking.
+
+\`\`\`{r}
+
+#\| label: analysis
+
+#\| results: hide
+
+library(readr)
+
+library(dplyr)
+
+library(ggplot2)
+
+for (folder in c("data/raw", "figures", "results")) {
+
+dir.create(folder, recursive = TRUE, showWarnings = FALSE)
+
+}
+
+series \<- tibble::tribble(
+
+\~id, \~category,
+
+"CUUR0000SAF11", "Food at home",
+
+"CUUR0000SEFV", "Food away from home",
+
+"CUUR0000SAF111", "Cereals and bakery products",
+
+"CUUR0000SAF112", "Meats, poultry, fish and eggs",
+
+"CUUR0000SEFJ", "Dairy and related products",
+
+"CUUR0000SAF113", "Fruits and vegetables",
+
+"CUUR0000SAF114", "Nonalcoholic beverages",
+
+"CUUR0000SAF115", "Other food at home"
+
+)
+
+\# Download once; reuse the saved snapshot on later renders.
+
+get_series \<- function(id, category) {
+
+file \<- file.path("data/raw", paste0(id, ".csv"))
+
+url \<- paste0("https://fred.stlouisfed.org/graph/fredgraph.csv?id=",
+
+id, "&cosd=2014-01-01&coed=2024-12-01")
+
+if (!file.exists(file)) {
+
+temp \<- tempfile(fileext = ".csv")
+
+download.file(url, temp, mode = "wb", quiet = TRUE)
+
+raw \<- read_csv(temp, na = c("", "."), show_col_types = FALSE)
+
+if (!id %in% names(raw)) stop("Unexpected download for ", id)
+
+file.copy(temp, file, overwrite = FALSE)
+
+writeLines(c(paste("URL:", url), paste("Retrieved:", Sys.time())),
+
+paste0(file, ".source.txt"))
+
+unlink(temp)
+
+}
+
+raw \<- read_csv(file, na = c("", "."), show_col_types = FALSE)
+
+tibble(date = as.Date(raw\[\[1\]\]), cpi = as.numeric(raw\[\[id\]\]),
+
+category = category, id = id)
+
+}
+
+cpi \<- bind_rows(lapply(seq_len(nrow(series)), function(i) {
+
+get_series(series\$id\[i\], series\$category\[i\])
+
+})) \|\>
+
+filter(date \>= as.Date("2014-01-01"), date \<= as.Date("2024-12-01")) \|\>
+
+arrange(category, date)
+
+\# Include 2014 to calculate year-over-year inflation for 2015.
+
+expected_dates \<- seq(as.Date("2014-01-01"), as.Date("2024-12-01"), by = "month")
+
+for (s in series\$id) {
+
+x \<- filter(cpi, id == s)
+
+if (nrow(x) != length(expected_dates) \|\|
+
+!identical(sort(x\$date), expected_dates) \|\|
+
+anyNA(x\$cpi) \|\| any(x\$cpi \<= 0)) {
+
+stop("Missing, duplicate, or invalid monthly data: ", s)
+
+}
+
+}
+
+cpi \<- cpi \|\>
+
+group_by(category) \|\>
+
+arrange(date, .by_group = TRUE) \|\>
+
+mutate(yoy = 100 \* (cpi / lag(cpi, 12) - 1)) \|\>
+
+filter(date \>= as.Date("2015-01-01")) \|\>
+
+mutate(index = 100 \* cpi / first(cpi)) \|\>
+
+ungroup()
+
+main \<- cpi \|\>
+
+

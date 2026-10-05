@@ -1,0 +1,9 @@
+id,category,source,frequency,adjustment,source_url
+CUUR0000SAF11,Food at home,U.S. Bureau of Labor Statistics,Monthly,Not seasonally adjusted,https://fred.stlouisfed.org/series/CUUR0000SAF11
+CUUR0000SEFV,Food away from home,U.S. Bureau of Labor Statistics,Monthly,Not seasonally adjusted,https://fred.stlouisfed.org/series/CUUR0000SEFV
+CUUR0000SAF111,Cereals and bakery products,U.S. Bureau of Labor Statistics,Monthly,Not seasonally adjusted,https://fred.stlouisfed.org/series/CUUR0000SAF111
+CUUR0000SAF112,"Meats, poultry, fish and eggs",U.S. Bureau of Labor Statistics,Monthly,Not seasonally adjusted,https://fred.stlouisfed.org/series/CUUR0000SAF112
+CUUR0000SEFJ,Dairy and related products,U.S. Bureau of Labor Statistics,Monthly,Not seasonally adjusted,https://fred.stlouisfed.org/series/CUUR0000SEFJ
+CUUR0000SAF113,Fruits and vegetables,U.S. Bureau of Labor Statistics,Monthly,Not seasonally adjusted,https://fred.stlouisfed.org/series/CUUR0000SAF113
+CUUR0000SAF114,Nonalcoholic beverages,U.S. Bureau of Labor Statistics,Monthly,Not seasonally adjusted,https://fred.stlouisfed.org/series/CUUR0000SAF114
+CUUR0000SAF115,Other food at home,U.S. Bureau of Labor Statistics,Monthly,Not seasonally adjusted,https://fred.stlouisfed.org/series/CUUR0000SAF115

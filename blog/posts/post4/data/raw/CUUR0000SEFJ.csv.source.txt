@@ -1,0 +1,2 @@
+URL: https://fred.stlouisfed.org/graph/fredgraph.csv?id=CUUR0000SEFJ&cosd=2014-01-01&coed=2024-12-01
+Retrieved: 2026-10-04 21:33:51.854001

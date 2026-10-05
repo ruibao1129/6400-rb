@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Blog – Rui Bao</title>
+<title>index – Rui Bao</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -68,65 +66,7 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -161,7 +101,7 @@ window.Quarto = {
 <span class="menu-text">Resume</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../blog/index.html" aria-current="page"> 
+    <a class="nav-link" href="../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
 </ul>
@@ -177,150 +117,111 @@ window.Quarto = {
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Blog</h1>
-</div>
-
-
-
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
 
+<hr>
+<hr>
+<ol type="1">
+<li><strong>index.qmd</strong></li>
+</ol>
+<pre><code>---</code></pre>
+<p>title: “Eating Out vs.&nbsp;Eating In: Which Prices Rose Faster?”</p>
+<p>date: “2026-10-04”</p>
+<p>categories: [Data Visualization, Food Prices]</p>
+<p>format:</p>
+<p>html:</p>
+<p>toc: true</p>
+<p>code-fold: true</p>
+<p>execute:</p>
+<p>warning: false</p>
+<p>message: false</p>
+<hr>
+<p>```{r}</p>
+<p>#| label: setup</p>
+<p>#| include: false</p>
+<p># Keep saved data and results beside this index.qmd.</p>
+<p>post_dir &lt;- dirname(normalizePath(knitr::current_input(dir = TRUE)))</p>
+<p>knitr::opts_knit$set(root.dir = post_dir)</p>
+<p>knitr::opts_chunk$set(fig.width = 10, fig.height = 6)</p>
+<p>```</p>
+<p>## Research question</p>
+<p>Did food away from home become more expensive faster than food at home</p>
+<p>between January 2015 and December 2024?</p>
+<p>This analysis uses monthly, not seasonally adjusted BLS CPI-U indexes</p>
+<p>retrieved through FRED. The sample is a fixed historical window, not the</p>
+<p>latest available data. January 2015 is rebased to 100 for both series.</p>
+<p>Year-over-year inflation compares each month with the same month one year</p>
+<p>earlier. These indexes measure price changes, not the dollar cost of an</p>
+<p>identical meal or the time spent cooking.</p>
+<p>```{r}</p>
+<p>#| label: analysis</p>
+<p>#| results: hide</p>
+<p>library(readr)</p>
+<p>library(dplyr)</p>
+<p>library(ggplot2)</p>
+<p>for (folder in c(“data/raw”, “figures”, “results”)) {</p>
+<p>dir.create(folder, recursive = TRUE, showWarnings = FALSE)</p>
+<p>}</p>
+<p>series &lt;- tibble::tribble(</p>
+<p>~id, ~category,</p>
+<p>“CUUR0000SAF11”, “Food at home”,</p>
+<p>“CUUR0000SEFV”, “Food away from home”,</p>
+<p>“CUUR0000SAF111”, “Cereals and bakery products”,</p>
+<p>“CUUR0000SAF112”, “Meats, poultry, fish and eggs”,</p>
+<p>“CUUR0000SEFJ”, “Dairy and related products”,</p>
+<p>“CUUR0000SAF113”, “Fruits and vegetables”,</p>
+<p>“CUUR0000SAF114”, “Nonalcoholic beverages”,</p>
+<p>“CUUR0000SAF115”, “Other food at home”</p>
+<p>)</p>
+<p># Download once; reuse the saved snapshot on later renders.</p>
+<p>get_series &lt;- function(id, category) {</p>
+<p>file &lt;- file.path(“data/raw”, paste0(id, “.csv”))</p>
+<p>url &lt;- paste0(“https://fred.stlouisfed.org/graph/fredgraph.csv?id=”,</p>
+<p>id, “&amp;cosd=2014-01-01&amp;coed=2024-12-01”)</p>
+<p>if (!file.exists(file)) {</p>
+<p>temp &lt;- tempfile(fileext = “.csv”)</p>
+<p>download.file(url, temp, mode = “wb”, quiet = TRUE)</p>
+<p>raw &lt;- read_csv(temp, na = c(““,”.”), show_col_types = FALSE)</p>
+<p>if (!id %in% names(raw)) stop(“Unexpected download for”, id)</p>
+<p>file.copy(temp, file, overwrite = FALSE)</p>
+<p>writeLines(c(paste(“URL:”, url), paste(“Retrieved:”, Sys.time())),</p>
+<p>paste0(file, “.source.txt”))</p>
+<p>unlink(temp)</p>
+<p>}</p>
+<p>raw &lt;- read_csv(file, na = c(““,”.”), show_col_types = FALSE)</p>
+<p>tibble(date = as.Date(raw[[1]]), cpi = as.numeric(raw[[id]]),</p>
+<p>category = category, id = id)</p>
+<p>}</p>
+<p>cpi &lt;- bind_rows(lapply(seq_len(nrow(series)), function(i) {</p>
+<p>get_series(series$id[i], series$category[i])</p>
+<p>})) |&gt;</p>
+<p>filter(date &gt;= as.Date(“2014-01-01”), date &lt;= as.Date(“2024-12-01”)) |&gt;</p>
+<p>arrange(category, date)</p>
+<p># Include 2014 to calculate year-over-year inflation for 2015.</p>
+<p>expected_dates &lt;- seq(as.Date(“2014-01-01”), as.Date(“2024-12-01”), by = “month”)</p>
+<p>for (s in series$id) {</p>
+<p>x &lt;- filter(cpi, id == s)</p>
+<p>if (nrow(x) != length(expected_dates) ||</p>
+<p>!identical(sort(x$date), expected_dates) ||</p>
+<p>anyNA(x$cpi) || any(x$cpi &lt;= 0)) {</p>
+<p>stop(“Missing, duplicate, or invalid monthly data:”, s)</p>
+<p>}</p>
+<p>}</p>
+<p>cpi &lt;- cpi |&gt;</p>
+<p>group_by(category) |&gt;</p>
+<p>arrange(date, .by_group = TRUE) |&gt;</p>
+<p>mutate(yoy = 100 * (cpi / lag(cpi, 12) - 1)) |&gt;</p>
+<p>filter(date &gt;= as.Date(“2015-01-01”)) |&gt;</p>
+<p>mutate(index = 100 * cpi / first(cpi)) |&gt;</p>
+<p>ungroup()</p>
+<p>main &lt;- cpi |&gt;</p>
 
 
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="ZWNvbm9taWNzJTJDZm9vZC1wcmljZXMlMkNkYXRhLXZpc3VhbGl6YXRpb24=" data-listing-date-sort="1791086400000" data-listing-file-modified-sort="1791164496111" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1567">
-<div class="thumbnail">
-<p><a href="../blog/posts/post4/index.html" class="no-external"></a></p><a href="../blog/posts/post4/index.html" class="no-external">
-<p class="card-img-top"><img src="posts/post4/index_files/figure-html/fig-cumulative-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="../blog/posts/post4/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/post4/index.html" class="no-external">Eating Out vs.&nbsp;Eating In: Which Prices Rose Faster?</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/posts/post4/index.html" class="no-external"></a>
-</div>
-<div class="listing-description">
-<a href="../blog/posts/post4/index.html" class="no-external">A decade of U.S. food prices shows why the answer depends on whether we compare cumulative increases or inflation at a particular moment.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/post4/index.html" class="no-external">
-<div class="listing-date">
-Oct 4, 2026
-</div>
-<div class="listing-author">
-Rui Bao
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="ZWNvbm9taWNzJTJDZWR1Y2F0aW9uJTJDZGF0YS12aXN1YWxpemF0aW9u" data-listing-date-sort="1790308800000" data-listing-file-modified-sort="1790385201734" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1966">
-<div class="thumbnail">
-<p><a href="../blog/posts/post3/index.html" class="no-external"></a></p><a href="../blog/posts/post3/index.html" class="no-external">
-<p class="card-img-top"><img src="posts/post3/figures/figure1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="../blog/posts/post3/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/post3/index.html" class="no-external">The College Wage Premium: Large, but Not Steadily Growing</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/posts/post3/index.html" class="no-external"></a>
-</div>
-<div class="listing-description">
-<a href="../blog/posts/post3/index.html" class="no-external">Does a college degree provide a larger wage advantage today than it did two decades ago? This question matters for understanding both education and inequality. A large wage…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/post3/index.html" class="no-external">
-<div class="listing-date">
-Sep 25, 2026
-</div>
-<div class="listing-author">
-Rui Bao
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="d2ViLXNjcmFwaW5nJTJDc3BvcnRzJTJDZGF0YS1hbmFseXNpcw==" data-listing-date-sort="1789963200000" data-listing-file-modified-sort="1789964280733" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1180">
-<div class="thumbnail">
-<p><a href="../blog/posts/post2/index.html" class="no-external"></a></p><a href="../blog/posts/post2/index.html" class="no-external">
-<p class="card-img-top"><img src="posts/post2/index_files/figure-html/unnamed-chunk-3-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="../blog/posts/post2/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/post2/index.html" class="no-external">Do Teams That Score More Goals Win More Games in the NHL?</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/posts/post2/index.html" class="no-external"></a>
-</div>
-<div class="listing-description">
-<a href="../blog/posts/post2/index.html" class="no-external">When looking at a hockey team’s performance, one of the first statistics people notice is how many goals the team scores. It seems reasonable to think that teams that score…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/post2/index.html" class="no-external">
-<div class="listing-date">
-Sep 21, 2026
-</div>
-<div class="listing-author">
-Rui Bao
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="c3RhdGlzdGljcyUyQ2Vjb25vbWljcyUyQ2RhdGEtc2NpZW5jZQ==" data-listing-date-sort="1788148800000" data-listing-file-modified-sort="1790384470841" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="710">
-<div class="thumbnail">
-<p><a href="../blog/posts/post1/index.html" class="no-external"></a></p><a href="../blog/posts/post1/index.html" class="no-external">
-<p class="card-img-top"><img src="posts/post1/index_files/figure-html/unnamed-chunk-1-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="../blog/posts/post1/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/post1/index.html" class="no-external">When Every Group Wins but the Average Loses: Simpson’s Paradox</a>
-</h3>
-<div class="listing-subtitle">
-<a href="../blog/posts/post1/index.html" class="no-external"></a>
-</div>
-<div class="listing-description">
-<a href="../blog/posts/post1/index.html" class="no-external">Imagine that Hospital A has a higher survival rate than Hospital B for both mild and severe cases. It seems obvious that Hospital A must also have a higher survival rate…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/post1/index.html" class="no-external">
-<div class="listing-date">
-Aug 31, 2026
-</div>
-<div class="listing-author">
-Rui Bao
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
