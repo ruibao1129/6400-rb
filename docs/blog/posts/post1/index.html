@@ -194,30 +194,30 @@ window.Quarto = {
 <p>Consider the following hypothetical data:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 41%">
-<col style="width: 41%">
+<col style="width: 38%">
+<col style="width: 30%">
+<col style="width: 30%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Patient group</th>
+<th style="text-align: left;">Patient group</th>
 <th style="text-align: right;">Hospital A</th>
 <th style="text-align: right;">Hospital B</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Mild cases</td>
+<td style="text-align: left;">Mild cases</td>
 <td style="text-align: right;">90 of 100 survive (90%)</td>
 <td style="text-align: right;">760 of 900 survive (84.4%)</td>
 </tr>
 <tr class="even">
-<td>Severe cases</td>
+<td style="text-align: left;">Severe cases</td>
 <td style="text-align: right;">300 of 900 survive (33.3%)</td>
 <td style="text-align: right;">30 of 100 survive (30%)</td>
 </tr>
 <tr class="odd">
-<td><strong>All cases</strong></td>
+<td style="text-align: left;"><strong>All cases</strong></td>
 <td style="text-align: right;"><strong>390 of 1,000 survive (39%)</strong></td>
 <td style="text-align: right;"><strong>790 of 1,000 survive (79%)</strong></td>
 </tr>
@@ -230,7 +230,7 @@ window.Quarto = {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="768"></p>
-<figcaption>Survival rates by patient group and hospital</figcaption>
+<figcaption>Survival rates by patient group and hospital. Source: hypothetical data constructed for this example.</figcaption>
 </figure>
 </div>
 </div>
@@ -240,30 +240,47 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="where-does-the-reversal-come-from">Where Does the Reversal Come From?</h2>
 <p>There is no mathematical contradiction. Hospital A treats mostly severe cases, while Hospital B treats mostly mild cases. Because severe cases are less likely to survive regardless of the hospital, Hospital A’s overall rate is pulled downward.</p>
 <p>An overall survival rate is a weighted average:</p>
-<p>$$ r_{} ===================</p>
-<p>w_{}r_{} + w_{}r_{}. $$</p>
-<p>Here, (r) represents a group’s survival rate and (w) represents that group’s share of the hospital’s patients.</p>
+<p><span class="math display">\[
+r_{\text{overall}}
+=
+w_{\text{mild}} r_{\text{mild}}
++
+w_{\text{severe}} r_{\text{severe}}.
+\]</span></p>
+<p>Here, <span class="math inline">\(r\)</span> represents a survival rate and <span class="math inline">\(w\)</span> represents a group’s share of the hospital’s patients. The two weights sum to one.</p>
 <p>For Hospital A:</p>
 <p><span class="math display">\[
-0.10(0.90)+0.90(0.333)\approx 0.39.
+r_A
+=
+0.10\left(\frac{90}{100}\right)
++
+0.90\left(\frac{300}{900}\right)
+=
+0.39.
 \]</span></p>
 <p>For Hospital B:</p>
 <p><span class="math display">\[
-0.90(0.844)+0.10(0.30)\approx 0.79.
+r_B
+=
+0.90\left(\frac{760}{900}\right)
++
+0.10\left(\frac{30}{100}\right)
+=
+0.79.
 \]</span></p>
 <p>The two overall rates use very different weights. Hospital A’s average is dominated by severe cases, whereas Hospital B’s average is dominated by mild cases. The aggregate comparison therefore mixes together two separate questions: how successfully each hospital treats a given type of patient, and what types of patients each hospital receives.</p>
 </section>
 <section id="why-economists-and-data-scientists-should-care" class="level2">
 <h2 class="anchored" data-anchor-id="why-economists-and-data-scientists-should-care">Why Economists and Data Scientists Should Care</h2>
-<p>Simpson’s paradox illustrates the importance of <strong>confounding variables</strong>. A confounding variable is related both to the comparison being made and to the outcome being studied. Here, illness severity is related to hospital choice and to the probability of survival. Ignoring severity produces a misleading comparison.</p>
-<p>Similar reversals appear in economics. A region’s average wage can rise even if wages fall within every occupation, provided that employment shifts toward higher-paying occupations. A university can have a lower overall admission rate while having higher admission rates within individual departments. An investment strategy may appear successful in aggregate only because it was used more often during favorable market conditions.</p>
-<p>However, the lesson is not simply to divide data into as many groups as possible. Whether we should control for a variable depends on the question and the causal relationships among variables. If illness severity existed before hospital selection, adjusting for it may create a fairer comparison. Controlling for a variable caused by the treatment itself, however, could hide part of the treatment’s true effect.</p>
+<p>Simpson’s paradox illustrates the importance of <strong>confounding variables</strong>. A confounding variable can influence both the treatment or group being compared and the outcome being studied. In this example, illness severity differs across hospitals and is related to the probability of survival. Ignoring severity can therefore produce a misleading comparison of hospital performance.</p>
+<p>Similar reversals can occur in economics. A region’s average wage can rise even if wages fall within every occupation, provided that employment shifts toward higher-paying occupations. A university can have a lower overall admission rate while having higher admission rates within individual departments. An investment strategy may appear successful in aggregate only because it was used more often during favorable market conditions.</p>
+<p>However, the lesson is not simply to divide data into as many groups as possible. Whether we should control for a variable depends on the question and the causal relationships among variables. If illness severity existed before hospital selection and influenced both selection and survival, adjusting for it may create a fairer comparison. Even then, other differences between patients could remain. Controlling for a variable caused by the treatment itself, however, could hide part of the treatment’s total effect.</p>
 </section>
 <section id="the-main-lesson" class="level2">
 <h2 class="anchored" data-anchor-id="the-main-lesson">The Main Lesson</h2>
 <p>Whenever an average is presented, we should ask:</p>
 <p><strong>An average of what, and with what weights?</strong></p>
-<p>Aggregated statistics are not necessarily incorrect, but they may answer a different question from the one we care about. Simpson’s paradox reminds us that data do not interpret themselves. Good analysis requires understanding how the data were generated, identifying relevant subgroups, and deciding which comparisons are genuinely meaningful.</p>
+<p>Aggregated statistics are not necessarily incorrect, but they may answer a different question from the one we care about. Simpson’s paradox reminds us that data do not interpret themselves. Good analysis requires understanding how the data were generated, identifying relevant subgroups, and deciding which comparisons are meaningful.</p>
 
 
 </section>

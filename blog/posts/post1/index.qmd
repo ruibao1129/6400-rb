@@ -16,39 +16,32 @@ This phenomenon is called **Simpson’s paradox**: a relationship that appears w
 
 Consider the following hypothetical data:
 
-| Patient group |                     Hospital A |                     Hospital B |
-| ------------- | -----------------------------: | -----------------------------: |
-| Mild cases    |        90 of 100 survive (90%) |     760 of 900 survive (84.4%) |
-| Severe cases  |     300 of 900 survive (33.3%) |        30 of 100 survive (30%) |
+| Patient group | Hospital A | Hospital B |
+|:--------------|-----------:|-----------:|
+| Mild cases | 90 of 100 survive (90%) | 760 of 900 survive (84.4%) |
+| Severe cases | 300 of 900 survive (33.3%) | 30 of 100 survive (30%) |
 | **All cases** | **390 of 1,000 survive (39%)** | **790 of 1,000 survive (79%)** |
 
 Hospital A has the higher survival rate within both groups. Nevertheless, Hospital B has a much higher overall survival rate.
 
 The following graph makes the reversal visible:
+
 ```{r}
 #| echo: false
 #| fig-width: 8
 #| fig-height: 5
-#| fig-cap: "Survival rates by patient group and hospital"
+#| fig-cap: "Survival rates by patient group and hospital. Source: hypothetical data constructed for this example."
 
-rates <- matrix(
-  c(
-    90, 84.4,
-    33.3, 30,
-    39, 79
-  ),
-  nrow = 2
+# Calculate percentages directly from the counts in the table.
+rates <- 100 * rbind(
+  "Hospital A" = c(90 / 100, 300 / 900, 390 / 1000),
+  "Hospital B" = c(760 / 900, 30 / 100, 790 / 1000)
 )
 
 colnames(rates) <- c(
   "Mild cases",
   "Severe cases",
   "Overall"
-)
-
-rownames(rates) <- c(
-  "Hospital A",
-  "Hospital B"
 )
 
 barplot(
@@ -70,37 +63,48 @@ There is no mathematical contradiction. Hospital A treats mostly severe cases, w
 An overall survival rate is a weighted average:
 
 $$
-r\_{\text{overall}}
-===================
-
-w\_{\text{mild}}r\_{\text{mild}}
-\+
-w\_{\text{severe}}r\_{\text{severe}}.
+r_{\text{overall}}
+=
+w_{\text{mild}} r_{\text{mild}}
++
+w_{\text{severe}} r_{\text{severe}}.
 $$
 
-Here, (r) represents a group’s survival rate and (w) represents that group’s share of the hospital’s patients.
+Here, $r$ represents a survival rate and $w$ represents a group’s share of the hospital’s patients. The two weights sum to one.
 
 For Hospital A:
 
 $$
-0.10(0.90)+0.90(0.333)\approx 0.39.
+r_A
+=
+0.10\left(\frac{90}{100}\right)
++
+0.90\left(\frac{300}{900}\right)
+=
+0.39.
 $$
 
 For Hospital B:
 
 $$
-0.90(0.844)+0.10(0.30)\approx 0.79.
+r_B
+=
+0.90\left(\frac{760}{900}\right)
++
+0.10\left(\frac{30}{100}\right)
+=
+0.79.
 $$
 
 The two overall rates use very different weights. Hospital A’s average is dominated by severe cases, whereas Hospital B’s average is dominated by mild cases. The aggregate comparison therefore mixes together two separate questions: how successfully each hospital treats a given type of patient, and what types of patients each hospital receives.
 
 ## Why Economists and Data Scientists Should Care
 
-Simpson’s paradox illustrates the importance of **confounding variables**. A confounding variable is related both to the comparison being made and to the outcome being studied. Here, illness severity is related to hospital choice and to the probability of survival. Ignoring severity produces a misleading comparison.
+Simpson’s paradox illustrates the importance of **confounding variables**. A confounding variable can influence both the treatment or group being compared and the outcome being studied. In this example, illness severity differs across hospitals and is related to the probability of survival. Ignoring severity can therefore produce a misleading comparison of hospital performance.
 
-Similar reversals appear in economics. A region’s average wage can rise even if wages fall within every occupation, provided that employment shifts toward higher-paying occupations. A university can have a lower overall admission rate while having higher admission rates within individual departments. An investment strategy may appear successful in aggregate only because it was used more often during favorable market conditions.
+Similar reversals can occur in economics. A region’s average wage can rise even if wages fall within every occupation, provided that employment shifts toward higher-paying occupations. A university can have a lower overall admission rate while having higher admission rates within individual departments. An investment strategy may appear successful in aggregate only because it was used more often during favorable market conditions.
 
-However, the lesson is not simply to divide data into as many groups as possible. Whether we should control for a variable depends on the question and the causal relationships among variables. If illness severity existed before hospital selection, adjusting for it may create a fairer comparison. Controlling for a variable caused by the treatment itself, however, could hide part of the treatment’s true effect.
+However, the lesson is not simply to divide data into as many groups as possible. Whether we should control for a variable depends on the question and the causal relationships among variables. If illness severity existed before hospital selection and influenced both selection and survival, adjusting for it may create a fairer comparison. Even then, other differences between patients could remain. Controlling for a variable caused by the treatment itself, however, could hide part of the treatment’s total effect.
 
 ## The Main Lesson
 
@@ -108,4 +112,4 @@ Whenever an average is presented, we should ask:
 
 **An average of what, and with what weights?**
 
-Aggregated statistics are not necessarily incorrect, but they may answer a different question from the one we care about. Simpson’s paradox reminds us that data do not interpret themselves. Good analysis requires understanding how the data were generated, identifying relevant subgroups, and deciding which comparisons are genuinely meaningful.
+Aggregated statistics are not necessarily incorrect, but they may answer a different question from the one we care about. Simpson’s paradox reminds us that data do not interpret themselves. Good analysis requires understanding how the data were generated, identifying relevant subgroups, and deciding which comparisons are meaningful.
