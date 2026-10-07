@@ -46,7 +46,7 @@
     "href": "blog/index.html",
     "title": "Blog",
     "section": "",
-    "text": "Eating Out vs. Eating In: Which Prices Rose Faster?\n\n\n\n\n\nA decade of U.S. food prices shows why the answer depends on whether we compare cumulative increases or inflation at a particular moment.\n\n\n\n\n\nOct 4, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nThe College Wage Premium: Large, but Not Steadily Growing\n\n\n\n\n\n\n\n\n\n\n\nSep 25, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nDo Teams That Score More Goals Win More Games in the NHL?\n\n\n\n\n\n\n\n\n\n\n\nSep 21, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nWhen Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\nAug 31, 2026\n\n\nRui Bao\n\n\n\n\n\n\nNo matching items"
+    "text": "Eating Out vs. Eating In: Which Prices Rose Faster?\n\n\n\n\n\nEating out had the larger price increase over 2015–2024, but groceries experienced the sharper inflation peak.\n\n\n\n\n\nOct 4, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nThe College Wage Premium: Large, but Not Steadily Growing\n\n\n\n\n\n\n\n\n\n\n\nSep 25, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nDo Teams That Score More Goals Win More Games in the NHL?\n\n\n\n\n\n\n\n\n\n\n\nSep 21, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nWhen Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\nAug 31, 2026\n\n\nRui Bao\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "blog/posts/post1/index.html",
@@ -228,7 +228,7 @@
     "href": "blog/posts/post4/index.html",
     "title": "Eating Out vs. Eating In: Which Prices Rose Faster?",
     "section": "",
-    "text": "Cooking at home is often suggested as a way to stretch a food budget. But grocery prices rise too. Between January 2015 and December 2024, did food away from home become more expensive faster than food bought for home consumption? This distinction matters: the category with the sharpest inflation spike need not have the largest increase over a decade."
+    "text": "Eating out got more expensive faster than buying groceries over the decade from January 2015 to December 2024. U.S. prices for food away from home rose 48.1%, compared with 26.8% for food at home. Yet groceries experienced the higher peak in annual inflation.\nThose findings answer two different questions: how much have prices risen, and when were they rising fastest? The distinction matters for anyone trying to understand why food still feels expensive after inflation slows.\nI compare monthly food price indexes from the Bureau of Labor Statistics, retrieved through FRED. These are national urban averages for a fixed historical period, not today’s menu or supermarket prices."
   },
   {
     "objectID": "blog/posts/post4/index.html#research-question",
@@ -376,5 +376,40 @@
     "title": "Do Teams That Score More Goals Win More Games in the NHL?",
     "section": "Code and data",
     "text": "Code and data\nThe GitHub repository includes this post under blog/posts/post2. The README explains how to run it. Saved source pages and raw data are in data/raw, cleaned data in data/clean, charts in figures, and calculated tables in results. The source is Scrape This Site’s hockey dataset; it is not an official NHL data release."
+  },
+  {
+    "objectID": "blog/posts/post4/index.html#eating-out-pulled-further-ahead",
+    "href": "blog/posts/post4/index.html#eating-out-pulled-further-ahead",
+    "title": "Eating Out vs. Eating In: Which Prices Rose Faster?",
+    "section": "Eating out pulled further ahead",
+    "text": "Eating out pulled further ahead\n\n\n\n\n\n\n\n\nFigure 1: Both series start at January 2015 = 100. The lines compare price changes, not the dollar cost of equivalent meals.\n\n\n\n\n\nBoth lines begin at 100 in January 2015, making their percentage changes comparable. By December 2024, the cumulative increase for eating out exceeded that for groceries by 21.2 percentage points.\nThe gap was already developing before the pandemic. Grocery prices stayed relatively close to their starting level for several years, while food-away-from-home prices kept rising. Looking only at the later grocery surge would miss that earlier divergence.\nFor me, the useful distinction is between a smaller price increase and a cheaper meal. This chart establishes the first, not the second. It cannot tell us how many dollars someone saves by cooking the same dinner at home. That would require actual meal prices, and a broader comparison would include cooking time."
+  },
+  {
+    "objectID": "blog/posts/post4/index.html#groceries-had-the-sharper-inflation-peak",
+    "href": "blog/posts/post4/index.html#groceries-had-the-sharper-inflation-peak",
+    "title": "Eating Out vs. Eating In: Which Prices Rose Faster?",
+    "section": "Groceries had the sharper inflation peak",
+    "text": "Groceries had the sharper inflation peak\n\n\n\n\n\n\n\n\nFigure 2: Year-over-year inflation compares each month with the same month one year earlier. A falling positive rate means prices are still increasing.\n\n\n\n\n\nGrocery inflation peaked at 13.5% in August 2022, compared with a peak of 8.8% in March 2023 for eating out. Groceries had the more intense annual increase even though they rose less over the full decade.\nThat is why I would read these two charts together. The first shows the accumulated increase; the second reveals when the pressure intensified. Neither alone gives the full picture of how food prices changed.\nBy December 2024, annual inflation had slowed to 1.8% for groceries and 3.6% for eating out. This meant prices were above their levels a year earlier, but increasing more slowly than at the peaks. It did not undo the previous increases. Lower inflation and an expensive grocery bill can coexist."
+  },
+  {
+    "objectID": "blog/posts/post4/index.html#your-shopping-basket-matters",
+    "href": "blog/posts/post4/index.html#your-shopping-basket-matters",
+    "title": "Eating Out vs. Eating In: Which Prices Rose Faster?",
+    "section": "Your shopping basket matters",
+    "text": "Your shopping basket matters\n\n\n\n\n\n\n\n\nFigure 3: Six major food-at-home categories, January 2015 to December 2024. These are category increases, not weighted contributions to total grocery inflation.\n\n\n\n\n\nEven within groceries, the increases differed. Nonalcoholic beverages rose 30.9%, compared with 18.4% for fruits and vegetables. A single grocery average hides that variation.\nFor a household budget, I would look at frequently purchased categories as well as the headline index. Someone’s exposure depends on how much of their spending goes to each category. These bars do not measure any particular household’s inflation, and the largest percentage increase need not make the largest contribution to its bill.\nA smaller increase also does not make a category cheaper in dollar terms. The chart gives a reason to examine the shopping basket, not a shopping list of what to substitute."
+  },
+  {
+    "objectID": "blog/posts/post4/index.html#what-the-comparison-tells-us",
+    "href": "blog/posts/post4/index.html#what-the-comparison-tells-us",
+    "title": "Eating Out vs. Eating In: Which Prices Rose Faster?",
+    "section": "What the comparison tells us",
+    "text": "What the comparison tells us\nEating out had the larger cumulative increase, while groceries had the sharper inflation peak. The answer to “which rose faster?” depends on the time frame. For budgeting, I would pay attention to both accumulated increases and recent inflation, then compare them with what I actually buy.\nThese indexes cannot explain why prices changed or decide whether cooking is worth someone’s time. They do show why slowing inflation does not mean a return to earlier prices."
+  },
+  {
+    "objectID": "blog/posts/post4/index.html#data-methods-and-reproducibility",
+    "href": "blog/posts/post4/index.html#data-methods-and-reproducibility",
+    "title": "Eating Out vs. Eating In: Which Prices Rose Faster?",
+    "section": "Data, methods and reproducibility",
+    "text": "Data, methods and reproducibility\nI use eight monthly BLS CPI-U series: food at home, food away from home, and six grocery categories. All are U.S. city averages without seasonal adjustment. I set January 2015 = 100 for cumulative comparisons and calculate annual inflation against the same month a year earlier, using 2014 observations for the first year’s rates. The code checks monthly coverage, duplicates and invalid values. Results depend on the chosen endpoints and do not describe a specific store or student budget.\nSources: BLS CPI, FRED’s food at home and food away from home series. All eight source links are recorded in results/series_dictionary.csv.\nThe GitHub repository contains the R code and replication README. Original CSVs and retrieval records are saved in data/raw, charts in figures, and calculated tables and R session information in results. Later renders reuse the saved inputs."
   }
 ]

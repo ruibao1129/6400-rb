@@ -8,7 +8,7 @@
 
 <meta name="author" content="Rui Bao">
 <meta name="dcterms.date" content="2026-10-04">
-<meta name="description" content="A decade of U.S. food prices shows why the answer depends on whether we compare cumulative increases or inflation at a particular moment.">
+<meta name="description" content="Eating out had the larger price increase over 2015–2024, but groceries experienced the sharper inflation peak.">
 
 <title>Eating Out vs.&nbsp;Eating In: Which Prices Rose Faster? – Rui Bao</title>
 <style>
@@ -22,40 +22,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -168,7 +134,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div>
   <div class="description">
-    A decade of U.S. food prices shows why the answer depends on whether we compare cumulative increases or inflation at a particular moment.
+    Eating out had the larger price increase over 2015–2024, but groceries experienced the sharper inflation peak.
   </div>
 </div>
 
@@ -197,131 +163,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Cooking at home is often suggested as a way to stretch a food budget. But grocery prices rise too. Between January 2015 and December 2024, did food away from home become more expensive faster than food bought for home consumption? This distinction matters: the category with the sharpest inflation spike need not have the largest increase over a decade.</p>
-<section id="data-and-approach" class="level2">
-<h2 class="anchored" data-anchor-id="data-and-approach">Data and approach</h2>
-<p>I use eight monthly BLS Consumer Price Index for All Urban Consumers (CPI-U) series, downloaded programmatically through FRED: food at home, food away from home, and six grocery categories. They describe the U.S. city average and are not seasonally adjusted. This fixed historical window includes years before and after the pandemic; it is not an analysis of the latest prices.</p>
-<p>For cumulative changes, I rebase each index to January 2015 = 100. For inflation, I calculate the percentage change from the same month one year earlier, downloading 2014 observations to calculate the first year’s rates. Comparing the same month across years reduces the influence of recurring seasonality. The code checks for missing months, duplicates, and invalid values before analysis.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Show analysis code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (folder <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"data/raw"</span>, <span class="st">"figures"</span>, <span class="st">"results"</span>)) {</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(folder, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>series <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>id, <span class="sc">~</span>category,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CUUR0000SAF11"</span>, <span class="st">"Food at home"</span>,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CUUR0000SEFV"</span>, <span class="st">"Food away from home"</span>,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CUUR0000SAF111"</span>, <span class="st">"Cereals and bakery products"</span>,</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CUUR0000SAF112"</span>, <span class="st">"Meats, poultry, fish and eggs"</span>,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CUUR0000SEFJ"</span>, <span class="st">"Dairy and related products"</span>,</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CUUR0000SAF113"</span>, <span class="st">"Fruits and vegetables"</span>,</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CUUR0000SAF114"</span>, <span class="st">"Nonalcoholic beverages"</span>,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CUUR0000SAF115"</span>, <span class="st">"Other food at home"</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Download once; reuse the saved snapshot on later renders.</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>get_series <span class="ot">&lt;-</span> <span class="cf">function</span>(id, category) {</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"data/raw"</span>, <span class="fu">paste0</span>(id, <span class="st">".csv"</span>))</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"https://fred.stlouisfed.org/graph/fredgraph.csv?id="</span>,</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                id, <span class="st">"&amp;cosd=2014-01-01&amp;coed=2024-12-01"</span>)</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(file)) {</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    temp <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".csv"</span>)</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">download.file</span>(url, temp, <span class="at">mode =</span> <span class="st">"wb"</span>, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(temp, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">""</span>, <span class="st">"."</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span>id <span class="sc">%in%</span> <span class="fu">names</span>(raw)) <span class="fu">stop</span>(<span class="st">"Unexpected download for "</span>, id)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">file.copy</span>(temp, file, <span class="at">overwrite =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">writeLines</span>(<span class="fu">c</span>(<span class="fu">paste</span>(<span class="st">"URL:"</span>, url), <span class="fu">paste</span>(<span class="st">"Retrieved:"</span>, <span class="fu">Sys.time</span>())),</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>               <span class="fu">paste0</span>(file, <span class="st">".source.txt"</span>))</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unlink</span>(temp)</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(file, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">""</span>, <span class="st">"."</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">date =</span> <span class="fu">as.Date</span>(raw[[<span class="dv">1</span>]]), <span class="at">cpi =</span> <span class="fu">as.numeric</span>(raw[[id]]),</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>         <span class="at">category =</span> category, <span class="at">id =</span> id)</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>cpi <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(<span class="fu">lapply</span>(<span class="fu">seq_len</span>(<span class="fu">nrow</span>(series)), <span class="cf">function</span>(i) {</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_series</span>(series<span class="sc">$</span>id[i], series<span class="sc">$</span>category[i])</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>})) <span class="sc">|&gt;</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2014-01-01"</span>), date <span class="sc">&lt;=</span> <span class="fu">as.Date</span>(<span class="st">"2024-12-01"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(category, date)</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Include 2014 to calculate year-over-year inflation for 2015.</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>expected_dates <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">as.Date</span>(<span class="st">"2014-01-01"</span>), <span class="fu">as.Date</span>(<span class="st">"2024-12-01"</span>), <span class="at">by =</span> <span class="st">"month"</span>)</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s <span class="cf">in</span> series<span class="sc">$</span>id) {</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">filter</span>(cpi, id <span class="sc">==</span> s)</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">nrow</span>(x) <span class="sc">!=</span> <span class="fu">length</span>(expected_dates) <span class="sc">||</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span><span class="fu">identical</span>(<span class="fu">sort</span>(x<span class="sc">$</span>date), expected_dates) <span class="sc">||</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>      <span class="fu">anyNA</span>(x<span class="sc">$</span>cpi) <span class="sc">||</span> <span class="fu">any</span>(x<span class="sc">$</span>cpi <span class="sc">&lt;=</span> <span class="dv">0</span>)) {</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Missing, duplicate, or invalid monthly data: "</span>, s)</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>cpi <span class="ot">&lt;-</span> cpi <span class="sc">|&gt;</span></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(category) <span class="sc">|&gt;</span></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date, <span class="at">.by_group =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">yoy =</span> <span class="dv">100</span> <span class="sc">*</span> (cpi <span class="sc">/</span> <span class="fu">lag</span>(cpi, <span class="dv">12</span>) <span class="sc">-</span> <span class="dv">1</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2015-01-01"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">index =</span> <span class="dv">100</span> <span class="sc">*</span> cpi <span class="sc">/</span> <span class="fu">first</span>(cpi)) <span class="sc">|&gt;</span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>main <span class="ot">&lt;-</span> cpi <span class="sc">|&gt;</span></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(category <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Food at home"</span>, <span class="st">"Food away from home"</span>))</span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>changes <span class="ot">&lt;-</span> cpi <span class="sc">|&gt;</span></span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(category, id) <span class="sc">|&gt;</span></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">start_cpi =</span> <span class="fu">first</span>(cpi), <span class="at">end_cpi =</span> <span class="fu">last</span>(cpi),</span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>            <span class="at">change_pct =</span> <span class="dv">100</span> <span class="sc">*</span> (end_cpi <span class="sc">/</span> start_cpi <span class="sc">-</span> <span class="dv">1</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(cpi, <span class="st">"results/monthly_analysis.csv"</span>)</span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(changes, <span class="st">"results/cumulative_changes.csv"</span>)</span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>series <span class="ot">&lt;-</span> series <span class="sc">|&gt;</span></span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">source =</span> <span class="st">"U.S. Bureau of Labor Statistics"</span>,</span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>         <span class="at">frequency =</span> <span class="st">"Monthly"</span>, <span class="at">adjustment =</span> <span class="st">"Not seasonally adjusted"</span>,</span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>         <span class="at">source_url =</span> <span class="fu">paste0</span>(<span class="st">"https://fred.stlouisfed.org/series/"</span>, id))</span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(series, <span class="st">"results/series_dictionary.csv"</span>)</span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">capture.output</span>(<span class="fu">sessionInfo</span>()), <span class="st">"results/sessionInfo.txt"</span>)</span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Food at home"</span> <span class="ot">=</span> <span class="st">"#0072B2"</span>, <span class="st">"Food away from home"</span> <span class="ot">=</span> <span class="st">"#D55E00"</span>)</span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>))</span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>source_note <span class="ot">&lt;-</span> <span class="st">"Source: BLS CPI-U via FRED. U.S. city average; not seasonally adjusted."</span></span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(main, <span class="fu">aes</span>(date, index, <span class="at">color =</span> category)) <span class="sc">+</span></span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> colors) <span class="sc">+</span></span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_date</span>(<span class="at">date_breaks =</span> <span class="st">"2 years"</span>, <span class="at">date_labels =</span> <span class="st">"%Y"</span>) <span class="sc">+</span></span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"How much have food prices increased?"</span>,</span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"January 2015 to December 2024; January 2015 = 100"</span>,</span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Rebased price index"</span>, <span class="at">color =</span> <span class="cn">NULL</span>, <span class="at">caption =</span> source_note) <span class="sc">+</span></span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(main, <span class="fu">aes</span>(date, yoy, <span class="at">color =</span> category)) <span class="sc">+</span></span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"grey65"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> colors) <span class="sc">+</span></span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_date</span>(<span class="at">date_breaks =</span> <span class="st">"2 years"</span>, <span class="at">date_labels =</span> <span class="st">"%Y"</span>) <span class="sc">+</span></span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Which prices were rising faster?"</span>,</span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Percentage change from the same month one year earlier"</span>,</span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Year-over-year inflation (%)"</span>, <span class="at">color =</span> <span class="cn">NULL</span>, <span class="at">caption =</span> source_note) <span class="sc">+</span></span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>categories <span class="ot">&lt;-</span> changes <span class="sc">|&gt;</span></span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>category <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Food at home"</span>, <span class="st">"Food away from home"</span>))</span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(categories, <span class="fu">aes</span>(change_pct, <span class="fu">reorder</span>(category, change_pct))) <span class="sc">+</span></span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#0072B2"</span>, <span class="at">width =</span> <span class="fl">0.65</span>) <span class="sc">+</span></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%.1f%%"</span>, change_pct)), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.15</span>, <span class="at">size =</span> <span class="fl">3.8</span>) <span class="sc">+</span></span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.18</span>))) <span class="sc">+</span></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Not all grocery categories rose equally"</span>,</span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Cumulative price change, January 2015 to December 2024"</span>,</span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Price increase (%)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">caption =</span> source_note)</span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>) {</span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="fu">paste0</span>(<span class="st">"figures/figure"</span>, i, <span class="st">".png"</span>), <span class="at">plot =</span> <span class="fu">list</span>(p1, p2, p3)[[i]],</span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>         <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">6</span>, <span class="at">dpi =</span> <span class="dv">180</span>)</span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="co"># These values also populate the prose, so text and figures stay consistent.</span></span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>pct <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">sprintf</span>(<span class="st">"%.1f"</span>, x)</span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>change_for <span class="ot">&lt;-</span> <span class="cf">function</span>(name) changes<span class="sc">$</span>change_pct[changes<span class="sc">$</span>category <span class="sc">==</span> name]</span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>peak_home <span class="ot">&lt;-</span> main <span class="sc">|&gt;</span> <span class="fu">filter</span>(category <span class="sc">==</span> <span class="st">"Food at home"</span>) <span class="sc">|&gt;</span> <span class="fu">slice_max</span>(yoy, <span class="at">n =</span> <span class="dv">1</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>peak_away <span class="ot">&lt;-</span> main <span class="sc">|&gt;</span> <span class="fu">filter</span>(category <span class="sc">==</span> <span class="st">"Food away from home"</span>) <span class="sc">|&gt;</span> <span class="fu">slice_max</span>(yoy, <span class="at">n =</span> <span class="dv">1</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>last_home <span class="ot">&lt;-</span> main <span class="sc">|&gt;</span> <span class="fu">filter</span>(category <span class="sc">==</span> <span class="st">"Food at home"</span>) <span class="sc">|&gt;</span> <span class="fu">slice_max</span>(date, <span class="at">n =</span> <span class="dv">1</span>)</span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>last_away <span class="ot">&lt;-</span> main <span class="sc">|&gt;</span> <span class="fu">filter</span>(category <span class="sc">==</span> <span class="st">"Food away from home"</span>) <span class="sc">|&gt;</span> <span class="fu">slice_max</span>(date, <span class="at">n =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-</section>
-<section id="eating-out-became-more-expensive-faster-overall" class="level2">
-<h2 class="anchored" data-anchor-id="eating-out-became-more-expensive-faster-overall">1. Eating out became more expensive faster overall</h2>
+<p>Eating out got more expensive faster than buying groceries over the decade from January 2015 to December 2024. U.S. prices for food away from home rose <strong>48.1%</strong>, compared with <strong>26.8%</strong> for food at home. Yet groceries experienced the higher peak in annual inflation.</p>
+<p>Those findings answer two different questions: how much have prices risen, and when were they rising fastest? The distinction matters for anyone trying to understand why food still feels expensive after inflation slows.</p>
+<p>I compare monthly food price indexes from the Bureau of Labor Statistics, retrieved through FRED. These are national urban averages for a fixed historical period, not today’s menu or supermarket prices.</p>
+<section id="eating-out-pulled-further-ahead" class="level2">
+<h2 class="anchored" data-anchor-id="eating-out-pulled-further-ahead">Eating out pulled further ahead</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-cumulative" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -336,11 +182,12 @@ Figure&nbsp;1: Both series start at January 2015 = 100. The lines compare price 
 </div>
 </div>
 </div>
-<p>From January 2015 to December 2024, food-away-from-home prices increased by <strong>48.1%</strong>, compared with <strong>26.8%</strong> for groceries. That is a difference of 21.2 percentage points in cumulative growth.</p>
-<p>The first figure therefore gives a clear answer for this period: eating out experienced the larger percentage increase. This does not mean a restaurant meal costs 21.2% more than a home-cooked meal. The two indexes track different baskets, and rebasing deliberately removes their original levels.</p>
+<p>Both lines begin at 100 in January 2015, making their percentage changes comparable. By December 2024, the cumulative increase for eating out exceeded that for groceries by 21.2 percentage points.</p>
+<p>The gap was already developing before the pandemic. Grocery prices stayed relatively close to their starting level for several years, while food-away-from-home prices kept rising. Looking only at the later grocery surge would miss that earlier divergence.</p>
+<p>For me, the useful distinction is between a smaller price increase and a cheaper meal. This chart establishes the first, not the second. It cannot tell us how many dollars someone saves by cooking the same dinner at home. That would require actual meal prices, and a broader comparison would include cooking time.</p>
 </section>
-<section id="the-biggest-inflation-spike-happened-in-groceries" class="level2">
-<h2 class="anchored" data-anchor-id="the-biggest-inflation-spike-happened-in-groceries">2. The biggest inflation spike happened in groceries</h2>
+<section id="groceries-had-the-sharper-inflation-peak" class="level2">
+<h2 class="anchored" data-anchor-id="groceries-had-the-sharper-inflation-peak">Groceries had the sharper inflation peak</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-inflation" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -355,11 +202,12 @@ Figure&nbsp;2: Year-over-year inflation compares each month with the same month 
 </div>
 </div>
 </div>
-<p>The second figure adds a different perspective. Grocery inflation reached 13.5% in August 2022, while food-away-from-home inflation peaked at 8.8% in March 2023. Groceries had the sharper peak, even though their cumulative increase was smaller.</p>
-<p>By December 2024, annual inflation had slowed to 1.8% for groceries and 3.6% for eating out. Slower inflation did not restore 2015 prices: both rates remained positive. This helps reconcile two observations that can otherwise seem contradictory: food inflation eased, but food still cost substantially more than before.</p>
+<p>Grocery inflation peaked at <strong>13.5% in August 2022</strong>, compared with a peak of <strong>8.8% in March 2023</strong> for eating out. Groceries had the more intense annual increase even though they rose less over the full decade.</p>
+<p>That is why I would read these two charts together. The first shows the accumulated increase; the second reveals when the pressure intensified. Neither alone gives the full picture of how food prices changed.</p>
+<p>By December 2024, annual inflation had slowed to 1.8% for groceries and 3.6% for eating out. This meant prices were above their levels a year earlier, but increasing more slowly than at the peaks. It did not undo the previous increases. Lower inflation and an expensive grocery bill can coexist.</p>
 </section>
-<section id="the-grocery-average-hides-different-experiences" class="level2">
-<h2 class="anchored" data-anchor-id="the-grocery-average-hides-different-experiences">3. The grocery average hides different experiences</h2>
+<section id="your-shopping-basket-matters" class="level2">
+<h2 class="anchored" data-anchor-id="your-shopping-basket-matters">Your shopping basket matters</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-categories" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -374,21 +222,20 @@ Figure&nbsp;3: Six major food-at-home categories, January 2015 to December 2024.
 </div>
 </div>
 </div>
-<p>The third figure shows why the grocery average is not every household’s experience. Other food at home rose 31.4%, nonalcoholic beverages 30.9%, and cereals and bakery products 30.3%. Fruits and vegetables increased 18.4%, while dairy rose 19.1%.</p>
-<p>A household’s exposure depends on what it buys. However, these bars cannot tell us which category contributed most to overall inflation, because spending weights differ. Nor should we average the six percentages to reconstruct the official grocery index.</p>
+<p>Even within groceries, the increases differed. Nonalcoholic beverages rose 30.9%, compared with 18.4% for fruits and vegetables. A single grocery average hides that variation.</p>
+<p>For a household budget, I would look at frequently purchased categories as well as the headline index. Someone’s exposure depends on how much of their spending goes to each category. These bars do not measure any particular household’s inflation, and the largest percentage increase need not make the largest contribution to its bill.</p>
+<p>A smaller increase also does not make a category cheaper in dollar terms. The chart gives a reason to examine the shopping basket, not a shopping list of what to substitute.</p>
 </section>
-<section id="limitations" class="level2">
-<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
-<p>These national urban averages do not describe a specific Philadelphia store, restaurant, or student budget. They also cannot measure the savings from switching identical meals between home and restaurants, including cooking time. Endpoint choices matter, and the analysis is descriptive: it does not identify why prices changed. Potential explanations would require additional data.</p>
+<section id="what-the-comparison-tells-us" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-comparison-tells-us">What the comparison tells us</h2>
+<p>Eating out had the larger cumulative increase, while groceries had the sharper inflation peak. The answer to “which rose faster?” depends on the time frame. For budgeting, I would pay attention to both accumulated increases and recent inflation, then compare them with what I actually buy.</p>
+<p>These indexes cannot explain why prices changed or decide whether cooking is worth someone’s time. They do show why slowing inflation does not mean a return to earlier prices.</p>
 </section>
-<section id="sources-and-reproducibility" class="level2">
-<h2 class="anchored" data-anchor-id="sources-and-reproducibility">Sources and reproducibility</h2>
-<p>Data originate with the <a href="https://www.bls.gov/cpi/">BLS CPI program</a> and are retrieved through FRED: <a href="https://fred.stlouisfed.org/series/CUUR0000SAF11">food at home</a>, <a href="https://fred.stlouisfed.org/series/CUUR0000SEFV">food away from home</a>, and the six series identified with source URLs in <code>results/series_dictionary.csv</code>.</p>
-<p>The code is included above. The <a href="https://github.com/ruibao1129/6400-rb">GitHub repository</a> contains the website project; this analysis belongs in <code>blog/posts/post4</code>. Its README explains replication. Original CSVs and retrieval records are preserved in <code>data/raw</code>, charts in <code>figures</code>, and calculated tables and R session information in <code>results</code>. Later renders reuse the saved inputs.</p>
-</section>
-<section id="takeaway" class="level2">
-<h2 class="anchored" data-anchor-id="takeaway">Takeaway</h2>
-<p>Eating out had the larger cumulative price increase over 2015–2024, but groceries experienced the sharper inflation spike. The timing and the shopping basket both matter. A lower inflation rate means slower price growth, not a return to earlier prices.</p>
+<section id="data-methods-and-reproducibility" class="level2">
+<h2 class="anchored" data-anchor-id="data-methods-and-reproducibility">Data, methods and reproducibility</h2>
+<p>I use eight monthly BLS CPI-U series: food at home, food away from home, and six grocery categories. All are U.S. city averages without seasonal adjustment. I set January 2015 = 100 for cumulative comparisons and calculate annual inflation against the same month a year earlier, using 2014 observations for the first year’s rates. The code checks monthly coverage, duplicates and invalid values. Results depend on the chosen endpoints and do not describe a specific store or student budget.</p>
+<p>Sources: <a href="https://www.bls.gov/cpi/">BLS CPI</a>, FRED’s <a href="https://fred.stlouisfed.org/series/CUUR0000SAF11">food at home</a> and <a href="https://fred.stlouisfed.org/series/CUUR0000SEFV">food away from home</a> series. All eight source links are recorded in <code>results/series_dictionary.csv</code>.</p>
+<p>The <a href="https://github.com/ruibao1129/6400-rb/tree/main/blog/posts/post4">GitHub repository</a> contains the R code and replication README. Original CSVs and retrieval records are saved in <code>data/raw</code>, charts in <code>figures</code>, and calculated tables and R session information in <code>results</code>. Later renders reuse the saved inputs.</p>
 
 
 </section>
