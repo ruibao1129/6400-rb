@@ -49,6 +49,3 @@ Blog: https://ruibao1129.github.io/6400-rb/blog/posts/post2/
 Repository: https://github.com/ruibao1129/6400-rb
 
 The code files alone do not publish the website. Render successfully, commit the generated data and outputs, push, and inspect the live page before submission.
-
-## Equal-scoring illustration
-The article selects pairs with the same year label and exactly equal goals scored, then chooses the largest absolute gap in reported winning percentage (ties ordered by year and team names). This is an intentionally extreme descriptive illustration, not a random or representative pair. All records remain in the correlation analysis. `results/equal_scoring_example.csv` saves the two records and `results/example_selection.csv` saves the selected pair and gap. No causal or forecasting claim follows from the example.

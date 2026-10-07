@@ -1,5 +1,5 @@
 ---
-title: "Same Goals, Different Results: What Scoring Misses in the NHL"
+title: "Do Teams That Score More Goals Win More Games in the NHL?"
 author: "Rui Bao"
 date: "2026-09-21"
 categories: [web-scraping, sports, data-analysis]
@@ -21,9 +21,18 @@ knitr::opts_knit$set(root.dir = post_dir)
 knitr::opts_chunk$set(fig.width = 8, fig.height = 5)
 ```
 
+## What I wanted to compare
+
+A team that scores a lot of goals looks strong on offense. But if it also gives up a lot of goals, those numbers may not tell us much about how often it wins. I wanted to compare two simple measures: total goals scored and goal differential, which is goals scored minus goals allowed. **Which one is more closely associated with NHL winning percentage?**
+
+This is useful for a quick comparison of teams. If I only have time to look at a few statistics, I want to know whether scoring alone leaves out too much information.
+
+## Getting the data
+
+I used `rvest` to collect team statistics from the [hockey pages on Scrape This Site](https://www.scrapethissite.com/pages/forms/). This is a public scraping practice site. The code uses the first 24 pages, matching my original analysis, rather than assuming they cover every available record. It pauses one second between new page requests and saves each page locally. Later renders use those saved pages. No login, CAPTCHA, or paywall is bypassed.
+
 ```{r}
 #| label: analysis
-#| include: false
 library(rvest)
 library(dplyr)
 library(readr)
@@ -153,55 +162,11 @@ p2 <- ggplot(hockey, aes(goal_diff, win_pct)) +
 
 ggsave("figures/goals_scored.png", p1, width = 8, height = 5, dpi = 180)
 ggsave("figures/goal_differential.png", p2, width = 8, height = 5, dpi = 180)
-
-# Illustrative pair: same year and identical goals scored; largest win-rate gap.
-# Record the selection rule so the example is not mistaken for a random sample.
-pairs <- inner_join(
-  hockey |> select(team, year, goals_for, win_pct),
-  hockey |> select(team, year, goals_for, win_pct),
-  by = c("year", "goals_for"), suffix = c("_a", "_b"),
-  relationship = "many-to-many"
-) |>
-  filter(team_a < team_b) |>
-  mutate(gap = abs(win_pct_a - win_pct_b)) |>
-  arrange(desc(gap), year, team_a, team_b)
-if (!nrow(pairs)) stop("No same-year, equal-scoring pair found.")
-chosen <- slice_head(pairs, n = 1)
-example <- hockey |>
-  filter(year == chosen$year,
-         team %in% c(chosen$team_a, chosen$team_b)) |>
-  arrange(desc(win_pct))
-stopifnot(nrow(example) == 2)
-write_csv(example, "results/equal_scoring_example.csv")
-write_csv(chosen, "results/example_selection.csv")
-better <- example[1, ]
-worse <- example[2, ]
-percent <- function(x) sprintf("%.1f%%", 100 * x)
 ```
 
+The saved retrieval dates range from `r min(substr(retrievals$retrieved_at, 1, 10))` to `r max(substr(retrievals$retrieved_at, 1, 10))`. The scrape returned `r nrow(hockey_raw)` rows. After converting numeric fields and removing `r missing_count` incomplete rows, I had **`r nrow(hockey)` team-seasons**, with year labels from **`r min(hockey$year)` to `r max(hockey$year)`**. I also checked for duplicate team-season records and out-of-range values. I kept the website's reported winning percentage rather than calculating it from wins and losses alone.
 
-Two NHL teams scored **`r better$goals_for` goals each**, yet one won **`r better$wins` games** and the other only **`r worse$wins`**. In the records labeled `r better$year`, the `r better$team` and `r worse$team` looked identical on scoring totals. Their results were far apart.
-
-The difference becomes easier to understand when goals allowed enter the picture. Minnesota conceded `r better$goals_against` goals; Washington conceded `r worse$goals_against`. That comparison raises a practical question: when reviewing a team's season, how much do we miss by looking at offense alone?
-
-I scraped `r nrow(hockey)` team-season records from [Scrape This Site's hockey pages](https://www.scrapethissite.com/pages/forms/). In this sample, goal differential—goals scored minus goals allowed—has a much stronger relationship with winning percentage than scoring alone.
-
-## Identical scoring totals, different seasons
-
-```{r}
-#| echo: false
-example |>
-  transmute(Team = team, `Goals scored` = goals_for,
-            `Goals allowed` = goals_against, Wins = wins,
-            `Winning percentage` = percent(win_pct)) |>
-  knitr::kable(caption = paste("Source: Scrape This Site; year label", better$year))
-```
-
-Minnesota's goal differential was +`r better$goal_diff`; Washington's was `r worse$goal_diff`. The winning percentages were `r percent(better$win_pct)` and `r percent(worse$win_pct)`, respectively. A ranking based only on goals scored would treat them as equals, missing a substantial difference in their records.
-
-I selected the same-year, equal-scoring pair with the largest winning-percentage gap in the sample. It is a deliberately clear illustration, not a typical pair or proof that goals allowed caused the entire difference. The broader comparison below uses all the records.
-
-## Scoring matters, but leaves plenty unexplained
+## Scoring alone leaves a lot unexplained
 
 ```{r}
 #| label: fig-goals
@@ -210,9 +175,9 @@ I selected the same-year, equal-scoring pair with the largest winning-percentage
 p1
 ```
 
-Goals scored and winning percentage have a correlation of **`r fmt(r_goals)`**. The upward pattern makes sense, but the spread matters too: similar scoring totals occur alongside quite different winning percentages. For a quick review, I would treat goals scored as one piece of information rather than a complete assessment of performance.
+The correlation between goals scored and winning percentage is **`r fmt(r_goals)`**. There is an upward pattern, but teams with similar scoring totals can still have different winning percentages. A scoring total says nothing about how many goals a team allowed. Scoring 250 goals looks different when the team allows 200 rather than 260.
 
-## Adding goals allowed brings the pattern into focus
+## Adding goals allowed changes the picture
 
 ```{r}
 #| label: fig-differential
@@ -221,22 +186,22 @@ Goals scored and winning percentage have a correlation of **`r fmt(r_goals)`**. 
 p2
 ```
 
-For goal differential, the correlation rises to **`r fmt(r_diff)`**. Teams that outscored their opponents more heavily generally won a larger share of games in this sample.
+The correlation for goal differential is **`r fmt(r_diff)`**. Of the two measures, `r stronger` has the higher correlation in this sample. This is a comparison of two descriptions of the same completed seasons, not a test of whether either statistic can predict next season.
 
-This is not a surprising new law of hockey: scoring and conceding are directly connected to game outcomes. The useful finding is how much tighter the relationship becomes when both sides enter the comparison. It supports using goal differential as a first summary of a completed season, then checking offense and goals allowed separately.
+```{r}
+#| echo: false
+knitr::kable(comparison, digits = 2,
+             col.names = c("Measure", "Correlation with winning percentage"))
+```
 
-## What I would do with this comparison
+## What I would use this for
 
-If I were comparing two teams, I would first compare their goal differentials within the same season. I would then look at goals scored and allowed to see what lies behind the difference. The Minnesota–Washington example shows why stopping at scoring totals can be misleading.
+For a quick review of past team performance, I would start with **`r stronger`**, then check the separate scoring and goals-allowed numbers. This gives me a first comparison and a way to see what sits behind it. Looking only at offense can make a team seem stronger than its overall results suggest.
 
-I would not use these correlations alone to predict next season or recommend a roster change. All measures describe the same completed seasons. The data pool different schedules and scoring environments, and total goals are not per-game rates. The teaching-site records have not been independently verified against official NHL statistics.
+I would also compare teams from the same season where possible. This dataset combines seasons with potentially different schedules and scoring environments, while the horizontal axes use totals rather than per-game rates. That limits comparisons across years. The sample is drawn from a teaching website, and I have not independently checked every record against official NHL statistics.
 
-The takeaway is straightforward: **before calling a team strong because it scores a lot, check what it gives up.** That is a more useful way to read these results than treating the larger correlation as a forecasting model.
+My takeaway is simple: goals scored are only half of a team's scoring record. Including goals allowed is useful when describing performance, but these correlations do not establish causation or prove which statistic will predict future wins.
 
-## Data, methods and reproducibility
+## Code and data
 
-I used `rvest` to collect the first 24 pages of a public scraping practice site. This is a subset, not a claim to cover every available record. New requests are spaced one second apart; saved HTML pages are reused on later renders. No login, CAPTCHA or paywall is bypassed.
-
-After numeric conversion and removal of `r missing_count` incomplete rows, the sample contains `r nrow(hockey)` team-seasons with year labels `r min(hockey$year)`–`r max(hockey$year)`. I check duplicate team-year records and value ranges, retain the site's reported winning percentage, and calculate Pearson correlations. Retrieval dates and source URLs are saved with the data.
-
-The [repository](https://github.com/ruibao1129/6400-rb/tree/main/blog/posts/post2) contains the full R code and replication README. Source snapshots and raw data are in `data/raw`, cleaned data in `data/clean`, charts in `figures`, and correlations and the example-selection results in `results`.
+The [GitHub repository](https://github.com/ruibao1129/6400-rb) includes this post under `blog/posts/post2`. The README explains how to run it. Saved source pages and raw data are in `data/raw`, cleaned data in `data/clean`, charts in `figures`, and calculated tables in `results`. The source is [Scrape This Site's hockey dataset](https://www.scrapethissite.com/pages/forms/); it is not an official NHL data release.

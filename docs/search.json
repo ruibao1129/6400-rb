@@ -46,7 +46,7 @@
     "href": "blog/index.html",
     "title": "Blog",
     "section": "",
-    "text": "Eating Out vs. Eating In: Which Prices Rose Faster?\n\n\n\n\n\nEating out had the larger price increase over 2015–2024, but groceries experienced the sharper inflation peak.\n\n\n\n\n\nOct 4, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nThe College Wage Premium: Large, but Not Steadily Growing\n\n\n\n\n\n\n\n\n\n\n\nSep 25, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nDo Teams That Score More Goals Win More Games in the NHL?\n\n\n\n\n\n\n\n\n\n\n\nSep 21, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nWhen Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\nAug 31, 2026\n\n\nRui Bao\n\n\n\n\n\n\nNo matching items"
+    "text": "Eating Out vs. Eating In: Which Prices Rose Faster?\n\n\n\n\n\nEating out had the larger price increase over 2015–2024, but groceries experienced the sharper inflation peak.\n\n\n\n\n\nOct 4, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nThe College Wage Premium: Large, but Not Steadily Growing\n\n\n\n\n\n\n\n\n\n\n\nSep 25, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nSame Goals, Different Results: What Scoring Misses in the NHL\n\n\n\n\n\n\n\n\n\n\n\nSep 21, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nWhen Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\nAug 31, 2026\n\n\nRui Bao\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "blog/posts/post1/index.html",
@@ -107,9 +107,9 @@
   {
     "objectID": "blog/posts/post2/index.html",
     "href": "blog/posts/post2/index.html",
-    "title": "Do Teams That Score More Goals Win More Games in the NHL?",
+    "title": "Same Goals, Different Results: What Scoring Misses in the NHL",
     "section": "",
-    "text": "A team that scores a lot of goals looks strong on offense. But if it also gives up a lot of goals, those numbers may not tell us much about how often it wins. I wanted to compare two simple measures: total goals scored and goal differential, which is goals scored minus goals allowed. Which one is more closely associated with NHL winning percentage?\nThis is useful for a quick comparison of teams. If I only have time to look at a few statistics, I want to know whether scoring alone leaves out too much information."
+    "text": "Two NHL teams scored 235 goals each, yet one won 48 games and the other only 28. In the records labeled 2006, the Minnesota Wild and Washington Capitals looked identical on scoring totals. Their results were far apart.\nThe difference becomes easier to understand when goals allowed enter the picture. Minnesota conceded 191 goals; Washington conceded 286. That comparison raises a practical question: when reviewing a team’s season, how much do we miss by looking at offense alone?\nI scraped 582 team-season records from Scrape This Site’s hockey pages. In this sample, goal differential—goals scored minus goals allowed—has a much stronger relationship with winning percentage than scoring alone."
   },
   {
     "objectID": "about.html",
@@ -411,5 +411,40 @@
     "title": "Eating Out vs. Eating In: Which Prices Rose Faster?",
     "section": "Data, methods and reproducibility",
     "text": "Data, methods and reproducibility\nI use eight monthly BLS CPI-U series: food at home, food away from home, and six grocery categories. All are U.S. city averages without seasonal adjustment. I set January 2015 = 100 for cumulative comparisons and calculate annual inflation against the same month a year earlier, using 2014 observations for the first year’s rates. The code checks monthly coverage, duplicates and invalid values. Results depend on the chosen endpoints and do not describe a specific store or student budget.\nSources: BLS CPI, FRED’s food at home and food away from home series. All eight source links are recorded in results/series_dictionary.csv.\nThe GitHub repository contains the R code and replication README. Original CSVs and retrieval records are saved in data/raw, charts in figures, and calculated tables and R session information in results. Later renders reuse the saved inputs."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#identical-scoring-totals-different-seasons",
+    "href": "blog/posts/post2/index.html#identical-scoring-totals-different-seasons",
+    "title": "Same Goals, Different Results: What Scoring Misses in the NHL",
+    "section": "Identical scoring totals, different seasons",
+    "text": "Identical scoring totals, different seasons\n\n\n\nSource: Scrape This Site; year label 2006\n\n\n\n\n\n\n\n\n\nTeam\nGoals scored\nGoals allowed\nWins\nWinning percentage\n\n\n\n\nMinnesota Wild\n235\n191\n48\n58.5%\n\n\nWashington Capitals\n235\n286\n28\n34.1%\n\n\n\n\n\nMinnesota’s goal differential was +44; Washington’s was -51. The winning percentages were 58.5% and 34.1%, respectively. A ranking based only on goals scored would treat them as equals, missing a substantial difference in their records.\nI selected the same-year, equal-scoring pair with the largest winning-percentage gap in the sample. It is a deliberately clear illustration, not a typical pair or proof that goals allowed caused the entire difference. The broader comparison below uses all the records."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#scoring-matters-but-leaves-plenty-unexplained",
+    "href": "blog/posts/post2/index.html#scoring-matters-but-leaves-plenty-unexplained",
+    "title": "Same Goals, Different Results: What Scoring Misses in the NHL",
+    "section": "Scoring matters, but leaves plenty unexplained",
+    "text": "Scoring matters, but leaves plenty unexplained\n\n\n\n\n\n\n\n\nFigure 1: The same season’s total goals scored and reported winning percentage.\n\n\n\n\n\nGoals scored and winning percentage have a correlation of 0.48. The upward pattern makes sense, but the spread matters too: similar scoring totals occur alongside quite different winning percentages. For a quick review, I would treat goals scored as one piece of information rather than a complete assessment of performance."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#adding-goals-allowed-brings-the-pattern-into-focus",
+    "href": "blog/posts/post2/index.html#adding-goals-allowed-brings-the-pattern-into-focus",
+    "title": "Same Goals, Different Results: What Scoring Misses in the NHL",
+    "section": "Adding goals allowed brings the pattern into focus",
+    "text": "Adding goals allowed brings the pattern into focus\n\n\n\n\n\n\n\n\nFigure 2: Goal differential includes both scoring and goals allowed.\n\n\n\n\n\nFor goal differential, the correlation rises to 0.89. Teams that outscored their opponents more heavily generally won a larger share of games in this sample.\nThis is not a surprising new law of hockey: scoring and conceding are directly connected to game outcomes. The useful finding is how much tighter the relationship becomes when both sides enter the comparison. It supports using goal differential as a first summary of a completed season, then checking offense and goals allowed separately."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#what-i-would-do-with-this-comparison",
+    "href": "blog/posts/post2/index.html#what-i-would-do-with-this-comparison",
+    "title": "Same Goals, Different Results: What Scoring Misses in the NHL",
+    "section": "What I would do with this comparison",
+    "text": "What I would do with this comparison\nIf I were comparing two teams, I would first compare their goal differentials within the same season. I would then look at goals scored and allowed to see what lies behind the difference. The Minnesota–Washington example shows why stopping at scoring totals can be misleading.\nI would not use these correlations alone to predict next season or recommend a roster change. All measures describe the same completed seasons. The data pool different schedules and scoring environments, and total goals are not per-game rates. The teaching-site records have not been independently verified against official NHL statistics.\nThe takeaway is straightforward: before calling a team strong because it scores a lot, check what it gives up. That is a more useful way to read these results than treating the larger correlation as a forecasting model."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#data-methods-and-reproducibility",
+    "href": "blog/posts/post2/index.html#data-methods-and-reproducibility",
+    "title": "Same Goals, Different Results: What Scoring Misses in the NHL",
+    "section": "Data, methods and reproducibility",
+    "text": "Data, methods and reproducibility\nI used rvest to collect the first 24 pages of a public scraping practice site. This is a subset, not a claim to cover every available record. New requests are spaced one second apart; saved HTML pages are reused on later renders. No login, CAPTCHA or paywall is bypassed.\nAfter numeric conversion and removal of 0 incomplete rows, the sample contains 582 team-seasons with year labels 1990–2011. I check duplicate team-year records and value ranges, retain the site’s reported winning percentage, and calculate Pearson correlations. Retrieval dates and source URLs are saved with the data.\nThe repository contains the full R code and replication README. Source snapshots and raw data are in data/raw, cleaned data in data/clean, charts in figures, and correlations and the example-selection results in results."
   }
 ]
