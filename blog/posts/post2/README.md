@@ -2,6 +2,14 @@
 
 Author: Rui Bao
 
+## Start here
+
+- **Read the article:** [Published Blog Post 2](https://ruibao1129.github.io/6400-rb/blog/posts/post2/).
+- **Read or run the code:** [index.qmd](index.qmd) contains the complete R analysis and article. No separate R script is required.
+- **Inspect the inputs:** [saved source pages and raw data](data/raw/) and [cleaned data](data/clean/hockey.csv).
+- **Inspect the outputs:** [figures](figures/), [correlations](results/correlations.csv), and [the two-team example](results/equal_scoring_example.csv).
+- **Reproduce:** follow the steps below. The included HTML snapshots allow the analysis to run without requesting the source website again.
+
 ## Question
 Compare the association of total goals scored and goal differential with the reported winning percentage of historical NHL team-seasons.
 
@@ -11,13 +19,26 @@ https://www.scrapethissite.com/pages/forms/
 The script requests pages 1–24 with the website's default page size, preserving the scope of the original project. It does not claim these pages exhaust the site or every season. Actual row counts, year coverage, removed incomplete rows, and observations by year are generated in results. The site is a teaching sandbox, not an official NHL statistical release. Records have not been independently verified against NHL records.
 
 ## Reproduce
-1. Place index.qmd and this README in blog/posts/post2 within the Quarto website.
-2. Install R and Quarto/RStudio. Install packages in R:
+
+1. Clone or download the [whole repository](https://github.com/ruibao1129/6400-rb), keeping its folder structure. Open the repository root in RStudio.
+2. Install R and Quarto (included with recent RStudio releases). In the R Console, install the packages:
+
+   ```r
    install.packages(c("rvest", "dplyr", "readr", "ggplot2", "knitr", "rmarkdown"))
-3. Open index.qmd in RStudio and click Render. Alternatively, from the website root run:
+   ```
+
+   Use dplyr 1.1.1 or later for the join's `relationship` argument. Recorded package versions are in [sessionInfo.txt](results/sessionInfo.txt).
+
+3. Open `blog/posts/post2/index.qmd` and click **Render**. Alternatively, run this in a terminal from the repository root:
+
+   ```sh
    quarto render blog/posts/post2/index.qmd
-4. The first execution needs internet access and fetches 24 pages sequentially, waiting one second before each new request. Later renders read the saved HTML and need no website requests for the data.
-5. Commit the resulting source snapshots, clean data, charts, results, README, and index.qmd. Publish the rendered website through the existing workflow.
+   ```
+
+4. With the committed source snapshots, no new data requests are needed. If a snapshot is missing, the code requests the corresponding page, waits one second before the request, and saves its URL and retrieval time.
+5. Rendering recreates the cleaned data, two charts, and result tables in this folder. The website page is written to `docs/blog/posts/post2/index.html` relative to the repository root. Open that file to inspect the output. Rendering does not publish it.
+
+Expected results with the supplied snapshots: 582 team-seasons, correlations of approximately 0.4801 (goals scored) and 0.8872 (goal differential), and an equal-scoring comparison of Minnesota Wild and Washington Capitals with year label 2006. Both scored 235 goals; they won 48 and 28 games, respectively.
 
 ## Responsible collection
 Use only the public practice pages. Check the site's current access guidance before a new scrape. Do not bypass logins, CAPTCHAs, paywalls, or blocks. The code stops when expected team rows are absent; inspect the page manually if this happens. It does not retry aggressively. No credentials or personal data are collected.
