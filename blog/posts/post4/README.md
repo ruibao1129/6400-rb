@@ -2,17 +2,27 @@
 
 Author: Rui Bao
 
+## Start here
+
+- [Read the published article](https://ruibao1129.github.io/6400-rb/blog/posts/post4/).
+- [Open the article and complete R code](index.qmd).
+- [Inspect saved source data](data/raw/), [charts](figures/), and [calculated tables](results/).
+
 ## Research question
 Did U.S. food-away-from-home prices rise faster than food-at-home prices between January 2015 and December 2024?
 
 ## Reproduce
-1. Place this folder at `blog/posts/post4` inside the 6400-rb Quarto website.
+1. Clone or download the whole [website repository](https://github.com/ruibao1129/6400-rb), and open `6400-rb.Rproj` at its root. This analysis is in `blog/posts/post4/`.
 2. Install R, Quarto (bundled with RStudio), and these packages:
-   `install.packages(c("readr", "dplyr", "ggplot2", "knitr"))`
+   `install.packages(c("readr", "dplyr", "ggplot2", "knitr", "rmarkdown"))`
 3. Open `index.qmd` in RStudio and click Render, or run from the website root:
    `quarto render blog/posts/post4/index.qmd`
 4. With the supplied snapshots, no data download is needed. If a raw CSV is absent, the code downloads that series from FRED and records the URL and retrieval time. To deliberately refresh a series, remove its CSV and matching `.source.txt` file, then render with internet access.
 5. For the whole website, render from its root so that navigation and the blog listing update. This project uses `docs` as the website output directory. Inspect the published page after deploying through the existing GitHub Pages workflow.
+
+## Expected results
+
+With the saved snapshots, cumulative price increases from January 2015 to December 2024 are approximately 48.1% for food away from home and 26.8% for food at home. Peak year-over-year inflation is approximately 8.8% and 13.5%, respectively. Rendering recreates three PNG charts and four result files listed below. The website HTML is written to `docs/blog/posts/post4/index.html`; it is generated output, not the source to edit.
 
 ## Organization
 - `index.qmd`: complete article and analysis code; numerical prose is generated from results.

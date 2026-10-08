@@ -2,6 +2,16 @@
 
 Question: Did the wage premium associated with a bachelor's degree or higher increase between May 2003 and May 2024?
 
+## Start here
+
+- [Read the published article](https://ruibao1129.github.io/6400-rb/blog/posts/post3/).
+- [Open the article and complete R code](index.qmd).
+- [Inspect calculated tables](results/) and [three saved charts](figures/).
+
+**The raw IPUMS microdata are not distributed in this repository.** To rerun the analysis, obtain the extract described below. The public tables and charts can be reviewed without downloading microdata.
+
+Clone or download the **whole website repository** first, and open `6400-rb.Rproj` at its root. The paths below refer to this post's folder unless stated otherwise.
+
 ## Folder structure
 
 - `index.qmd`: complete R analysis, article, and figure code. Setup code is hidden in the rendered article but available here.
@@ -37,6 +47,10 @@ quarto render blog/posts/post3/index.qmd
 ```
 
 The website configuration writes the page to `docs/blog/posts/post3/index.html`. Rendering this document recreates all figures and result tables. All website pages must have valid YAML for full-site preview. To reproduce the article alone, copy this `post3` folder outside the website and run `quarto render index.qmd` from that folder.
+
+## Expected outputs
+
+The supplied extract yields 171,391 person-month observations. The main college premium is about 71.3% in 2003 and 75.5% in 2024; the full-time comparison is about 71.9% and 70.4%. Rendering recreates seven CSV tables in `results/`, three PNG charts in `figures/`, and `results/sessionInfo.txt` documenting the R environment. The rendered website page is output, not the analysis entry point.
 
 ## Methods
 

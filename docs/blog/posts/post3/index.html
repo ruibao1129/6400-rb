@@ -69,35 +69,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
@@ -186,17 +157,11 @@ window.Quarto = {
 </header>
 
 
-<p>Does a college degree provide a larger wage advantage today than it did two decades ago? This question matters for understanding both education and inequality. A large wage gap does not necessarily mean that the gap is growing, or that graduates are experiencing strong wage growth.</p>
-<p>Using IPUMS Current Population Survey (CPS) microdata, I examine the college wage premium among workers aged 25–54 in May of each year from 2003 through 2024. Three visualizations tell a consistent story: the education wage gap remains substantial, but its evolution is uneven and differs between men and women.</p>
-<section id="data-and-measurement" class="level2">
-<h2 class="anchored" data-anchor-id="data-and-measurement">Data and Measurement</h2>
-<p>The analysis includes 171,391 person-month observations with at least a high-school diploma. I exclude self-employed workers and observations without valid positive earnings or usual working hours.</p>
-<p>The high-school comparison group includes workers whose highest qualification is a high-school diploma or equivalent, with no college education.</p>
-<p>Hourly earnings equal weekly earnings divided by usual hours at the main job. This measure includes both hourly and salaried employees. I adjust earnings to May 2024 dollars using the BLS Consumer Price Index.</p>
-<p>All medians use <strong>EARNWT</strong>, the CPS earnings-study weight. These weights make the estimates reflect the represented population rather than treating every sample observation equally. The results describe May snapshots, not annual averages.</p>
-</section>
-<section id="the-education-wage-gap-remains-large" class="level2">
-<h2 class="anchored" data-anchor-id="the-education-wage-gap-remains-large">1. The Education Wage Gap Remains Large</h2>
+<p>College-educated workers earned about <strong>75.5% more per hour</strong> than high-school graduates in May 2024, based on the weighted medians in this sample. That is a large advantage. But whether it has grown since 2003 depends on which workers we compare: the gap increased slightly in the main sample and declined slightly when I restricted it to full-time workers.</p>
+<p>That distinction matters when discussing education and pay. A large wage advantage today does not automatically mean the advantage is growing, or that graduates’ purchasing power has improved.</p>
+<p>I use IPUMS Current Population Survey data for employed wage and salary workers aged 25–54, comparing May observations from 2003 through 2024. These are historical snapshots, not a measure of today’s job market.</p>
+<section id="a-large-advantage-little-change-at-the-endpoints" class="level2">
+<h2 class="anchored" data-anchor-id="a-large-advantage-little-change-at-the-endpoints">A large advantage, little change at the endpoints</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-wages" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -211,21 +176,13 @@ Figure&nbsp;1: Weighted median real hourly earnings by education, May 2003–202
 </div>
 </div>
 </div>
-<p>Workers with a bachelor’s degree or higher consistently earn more than the other groups. In 2024, their median hourly earnings were $38.00, compared with $21.65 for high-school graduates and $24.05 for workers with some college or an associate degree.</p>
-<p>However, a large gap does not imply strong real wage growth. The college group’s median was already $37.65 in 2003, measured in the same dollars. The high-school median was $21.98. Both endpoints show relatively little change in purchasing power.</p>
+<p>In May 2024, workers with a bachelor’s degree or higher had median hourly earnings of $38.00, compared with $21.65 for high-school graduates and $24.05 for those with some college or an associate degree.</p>
+<p>The separation between the groups is clear. The change over time is less dramatic: in May 2024 dollars, the college median was $37.65 in 2003, while the high-school median was $21.98. Both were close to their 2024 levels.</p>
+<p>I read this as a distinction between relative advantage and progress in purchasing power. College graduates can remain well ahead of another group without their own real median earnings rising much. Neither finding cancels the other.</p>
 </section>
-<section id="has-the-college-premium-increased" class="level2">
-<h2 class="anchored" data-anchor-id="has-the-college-premium-increased">2. Has the College Premium Increased?</h2>
-<p>I calculate the college wage premium as:</p>
-<p><span class="math display">\[
-\text{College premium}
-=
-\left(
-\frac{\text{Median hourly earnings: bachelor's or higher}}
-{\text{Median hourly earnings: high school}}
--1
-\right)\times 100.
-\]</span></p>
+<section id="is-the-gap-growing-the-comparison-matters" class="level2">
+<h2 class="anchored" data-anchor-id="is-the-gap-growing-the-comparison-matters">Is the gap growing? The comparison matters</h2>
+<p>The college wage premium measures how much higher the college median is than the high-school median, as a percentage of the high-school median.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-premium" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -240,12 +197,13 @@ Figure&nbsp;2: College wage premium calculated from weighted median hourly earni
 </div>
 </div>
 </div>
-<p>The premium increased from 71.3% in 2003 to 75.5% in 2024. However, the path was not steadily upward: it reached 84.5% in 2022 before declining.</p>
-<p>The spike around 2020 also deserves caution. Changes in who remains employed can increase observed median earnings even without individual workers receiving raises. These repeated cross-sections do not measure the same workers’ wage growth.</p>
-<p>The endpoint comparison is sensitive to the sample definition. Among workers usually working at least 35 hours per week, the premium changed from 71.9% to 70.4%. The lasting education gap is therefore clearer than evidence of a widening gap.</p>
+<p>The premium moved from 71.3% in 2003 to 75.5% in 2024, with fluctuations in between. It reached 84.5% in 2022 before falling. That is not a steady upward path.</p>
+<p>Restricting the sample to workers usually working at least 35 hours per week changes the endpoint story: the premium moved from <strong>71.9% to 70.4%</strong>. The direction reverses, although the large college advantage remains.</p>
+<p>For me, that check is a reason to be cautious about a headline declaring that the gap is widening. The enduring gap is clearer than the small change between two selected years. I have not calculated confidence intervals, so these movements are not established statistically significant changes.</p>
+<p>Employment composition also matters. A rise in the median can reflect changes in who is working, not just pay increases. These comparisons do not follow individual workers’ wage growth or establish what caused the movements around 2020.</p>
 </section>
-<section id="different-patterns-for-men-and-women" class="level2">
-<h2 class="anchored" data-anchor-id="different-patterns-for-men-and-women">3. Different Patterns for Men and Women</h2>
+<section id="one-overall-number-hides-different-patterns" class="level2">
+<h2 class="anchored" data-anchor-id="one-overall-number-hides-different-patterns">One overall number hides different patterns</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-sex" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -260,28 +218,19 @@ Figure&nbsp;3: Within-sex college wage premiums in May 2003 and May 2024.
 </div>
 </div>
 </div>
-<p>The women’s premium rose from 76.1% to 82.1%, while the men’s premium declined from 71.5% to 66.7%.</p>
-<p>A higher women’s premium does not mean women earn more than men. Each comparison uses high-school graduates of the same sex as its reference group. Occupation, experience, and employment selection could contribute to these differences.</p>
+<p>Among women, the premium rose from 76.1% to 82.1%; among men, it fell from 71.5% to 66.7%. The overall comparison conceals these different directions.</p>
+<p>A larger premium for women does not mean women earn more than men. Each percentage compares college and high-school graduates within the same sex. It also cannot tell us whether education itself explains the gap: occupation, experience and selection into employment may differ.</p>
 </section>
-<section id="limitations-and-takeaway" class="level2">
-<h2 class="anchored" data-anchor-id="limitations-and-takeaway">Limitations and Takeaway</h2>
-<p>These are descriptive wage gaps, not causal estimates of attending college. The college group includes graduate degrees, and its composition can change over time. The analysis also excludes workers with missing earnings or variable usual hours.</p>
-<p>CPS earnings rounding and topcoding changed in 2023–2024. I use the harmonized rounded series and a common weekly cap of $2,884.61; this cap leaves the overall education-group medians unchanged. Imputed earnings remain included because allocation flags were not downloaded.</p>
-<p>Finally, single-month estimates contain sampling noise, and I have not estimated confidence intervals. Small changes should not be interpreted as statistically established differences.</p>
-<p><strong>The main finding is an enduring college wage advantage, rather than a steadily growing one.</strong> Its apparent change depends on which workers we compare.</p>
+<section id="what-i-take-from-these-results" class="level2">
+<h2 class="anchored" data-anchor-id="what-i-take-from-these-results">What I take from these results</h2>
+<p>The strongest finding is a persistent college wage advantage, not a consistently widening one. I would ask who is included and which years are compared before drawing conclusions from a single premium.</p>
+<p>These results also do not settle whether college is worth its cost. They describe employed workers, include graduate degrees, and do not measure tuition, forgone earnings or the causal effect of attending college.</p>
 </section>
-<section id="code-and-reproducibility" class="level2">
-<h2 class="anchored" data-anchor-id="code-and-reproducibility">Code and Reproducibility</h2>
-<p>The <a href="https://github.com/ruibao1129/6400-rb/tree/main/blog/posts/post3">GitHub repository</a> contains the complete Quarto source, saved figures, result tables, and a README with data-download and replication instructions. All figures and reported statistics are generated from code. Obtain the original microdata through IPUMS CPS using the sample and variable selections documented in the README.</p>
-</section>
-<section id="sources" class="level2">
-<h2 class="anchored" data-anchor-id="sources">Sources</h2>
-<ul>
-<li><a href="https://cps.ipums.org/cps/">IPUMS CPS, University of Minnesota</a>. Underlying CPS data are provided by the U.S. Census Bureau and Bureau of Labor Statistics.</li>
-<li><a href="https://cps.ipums.org/cps-action/variables/EARNWEEK2">IPUMS weekly earnings documentation</a>.</li>
-<li><a href="https://cps.ipums.org/cps-action/variables/EARNWT">IPUMS earnings weights</a>.</li>
-<li><a href="https://data.bls.gov/timeseries/CUUR0000SA0?years_option=all_years">BLS CPI-U, series CUUR0000SA0</a>.</li>
-</ul>
+<section id="data-methods-and-reproducibility" class="level2">
+<h2 class="anchored" data-anchor-id="data-methods-and-reproducibility">Data, methods and reproducibility</h2>
+<p>The sample contains 171,391 person-month observations with at least a high-school qualification. I exclude self-employed workers and invalid earnings or hours. Hourly earnings are weekly earnings divided by usual main-job hours; all medians use <strong>EARNWT</strong>, the CPS earnings-study weight. BLS CPI-U converts wages to May 2024 dollars. These are May snapshots, not annual averages.</p>
+<p>I use the harmonized rounded earnings series and cap weekly earnings at $2,884.61 across years. The cap leaves the overall education-group medians unchanged, but does not eliminate all measurement differences from the 2023–2024 reporting changes. Imputed earnings remain included because allocation flags were not downloaded.</p>
+<p>Sources: <a href="https://cps.ipums.org/cps/">IPUMS CPS</a>, its <a href="https://cps.ipums.org/cps-action/variables/EARNWEEK2">earnings</a> and <a href="https://cps.ipums.org/cps-action/variables/EARNWT">weight</a> documentation, and <a href="https://data.bls.gov/timeseries/CUUR0000SA0?years_option=all_years">BLS CPI-U</a>. The <a href="https://github.com/ruibao1129/6400-rb/tree/main/blog/posts/post3">repository and README</a> provide code, saved figures and results, plus instructions for obtaining the IPUMS extract and reproducing the analysis.</p>
 
 
 </section>

@@ -9,3 +9,6 @@
 
 # Local backup copies; Git already retains version history.
 *.bak
+
+# macOS folder metadata
+.DS_Store

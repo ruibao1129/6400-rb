@@ -172,7 +172,7 @@
     "href": "blog/posts/post3/index.html",
     "title": "The College Wage Premium: Large, but Not Steadily Growing",
     "section": "",
-    "text": "Does a college degree provide a larger wage advantage today than it did two decades ago? This question matters for understanding both education and inequality. A large wage gap does not necessarily mean that the gap is growing, or that graduates are experiencing strong wage growth.\nUsing IPUMS Current Population Survey (CPS) microdata, I examine the college wage premium among workers aged 25–54 in May of each year from 2003 through 2024. Three visualizations tell a consistent story: the education wage gap remains substantial, but its evolution is uneven and differs between men and women."
+    "text": "College-educated workers earned about 75.5% more per hour than high-school graduates in May 2024, based on the weighted medians in this sample. That is a large advantage. But whether it has grown since 2003 depends on which workers we compare: the gap increased slightly in the main sample and declined slightly when I restricted it to full-time workers.\nThat distinction matters when discussing education and pay. A large wage advantage today does not automatically mean the advantage is growing, or that graduates’ purchasing power has improved.\nI use IPUMS Current Population Survey data for employed wage and salary workers aged 25–54, comparing May observations from 2003 through 2024. These are historical snapshots, not a measure of today’s job market."
   },
   {
     "objectID": "blog/posts/post3/index.html#data-and-measurement",
@@ -278,13 +278,6 @@
     "title": "Eating Out vs. Eating In: Which Prices Rose Faster?",
     "section": "Reproducibility",
     "text": "Reproducibility\nThe analysis code is included in this document. The first render downloads and saves each original CSV and a source URL/retrieval timestamp in data/raw. Later renders reuse those snapshots. Figures are saved in figures, and calculated results and R session information in results."
-  },
-  {
-    "objectID": "6400-rb/index.html",
-    "href": "6400-rb/index.html",
-    "title": "Rui Bao",
-    "section": "",
-    "text": "index.qmd\n\n---\ntitle: “Eating Out vs. Eating In: Which Prices Rose Faster?”\ndate: “2026-10-04”\ncategories: [Data Visualization, Food Prices]\nformat:\nhtml:\ntoc: true\ncode-fold: true\nexecute:\nwarning: false\nmessage: false\n\n```{r}\n#| label: setup\n#| include: false\n# Keep saved data and results beside this index.qmd.\npost_dir &lt;- dirname(normalizePath(knitr::current_input(dir = TRUE)))\nknitr::opts_knit$set(root.dir = post_dir)\nknitr::opts_chunk$set(fig.width = 10, fig.height = 6)\n```\n## Research question\nDid food away from home become more expensive faster than food at home\nbetween January 2015 and December 2024?\nThis analysis uses monthly, not seasonally adjusted BLS CPI-U indexes\nretrieved through FRED. The sample is a fixed historical window, not the\nlatest available data. January 2015 is rebased to 100 for both series.\nYear-over-year inflation compares each month with the same month one year\nearlier. These indexes measure price changes, not the dollar cost of an\nidentical meal or the time spent cooking.\n```{r}\n#| label: analysis\n#| results: hide\nlibrary(readr)\nlibrary(dplyr)\nlibrary(ggplot2)\nfor (folder in c(“data/raw”, “figures”, “results”)) {\ndir.create(folder, recursive = TRUE, showWarnings = FALSE)\n}\nseries &lt;- tibble::tribble(\n~id, ~category,\n“CUUR0000SAF11”, “Food at home”,\n“CUUR0000SEFV”, “Food away from home”,\n“CUUR0000SAF111”, “Cereals and bakery products”,\n“CUUR0000SAF112”, “Meats, poultry, fish and eggs”,\n“CUUR0000SEFJ”, “Dairy and related products”,\n“CUUR0000SAF113”, “Fruits and vegetables”,\n“CUUR0000SAF114”, “Nonalcoholic beverages”,\n“CUUR0000SAF115”, “Other food at home”\n)\n# Download once; reuse the saved snapshot on later renders.\nget_series &lt;- function(id, category) {\nfile &lt;- file.path(“data/raw”, paste0(id, “.csv”))\nurl &lt;- paste0(“https://fred.stlouisfed.org/graph/fredgraph.csv?id=”,\nid, “&cosd=2014-01-01&coed=2024-12-01”)\nif (!file.exists(file)) {\ntemp &lt;- tempfile(fileext = “.csv”)\ndownload.file(url, temp, mode = “wb”, quiet = TRUE)\nraw &lt;- read_csv(temp, na = c(““,”.”), show_col_types = FALSE)\nif (!id %in% names(raw)) stop(“Unexpected download for”, id)\nfile.copy(temp, file, overwrite = FALSE)\nwriteLines(c(paste(“URL:”, url), paste(“Retrieved:”, Sys.time())),\npaste0(file, “.source.txt”))\nunlink(temp)\n}\nraw &lt;- read_csv(file, na = c(““,”.”), show_col_types = FALSE)\ntibble(date = as.Date(raw[[1]]), cpi = as.numeric(raw[[id]]),\ncategory = category, id = id)\n}\ncpi &lt;- bind_rows(lapply(seq_len(nrow(series)), function(i) {\nget_series(series$id[i], series$category[i])\n})) |&gt;\nfilter(date &gt;= as.Date(“2014-01-01”), date &lt;= as.Date(“2024-12-01”)) |&gt;\narrange(category, date)\n# Include 2014 to calculate year-over-year inflation for 2015.\nexpected_dates &lt;- seq(as.Date(“2014-01-01”), as.Date(“2024-12-01”), by = “month”)\nfor (s in series$id) {\nx &lt;- filter(cpi, id == s)\nif (nrow(x) != length(expected_dates) ||\n!identical(sort(x$date), expected_dates) ||\nanyNA(x$cpi) || any(x$cpi &lt;= 0)) {\nstop(“Missing, duplicate, or invalid monthly data:”, s)\n}\n}\ncpi &lt;- cpi |&gt;\ngroup_by(category) |&gt;\narrange(date, .by_group = TRUE) |&gt;\nmutate(yoy = 100 * (cpi / lag(cpi, 12) - 1)) |&gt;\nfilter(date &gt;= as.Date(“2015-01-01”)) |&gt;\nmutate(index = 100 * cpi / first(cpi)) |&gt;\nungroup()\nmain &lt;- cpi |&gt;"
   },
   {
     "objectID": "blog/posts/post4/index.html#data-and-approach",
@@ -446,5 +439,40 @@
     "title": "Same Goals, Different Results: What Scoring Misses in the NHL",
     "section": "Data, methods and reproducibility",
     "text": "Data, methods and reproducibility\nI used rvest to collect the first 24 pages of a public scraping practice site. This is a subset, not a claim to cover every available record. New requests are spaced one second apart; saved HTML pages are reused on later renders. No login, CAPTCHA or paywall is bypassed.\nAfter numeric conversion and removal of 0 incomplete rows, the sample contains 582 team-seasons with year labels 1990–2011. I check duplicate team-year records and value ranges, retain the site’s reported winning percentage, and calculate Pearson correlations. Retrieval dates and source URLs are saved with the data.\nThe repository contains the full R code and replication README. Source snapshots and raw data are in data/raw, cleaned data in data/clean, charts in figures, and correlations and the example-selection results in results."
+  },
+  {
+    "objectID": "blog/posts/post3/index.html#a-large-advantage-little-change-at-the-endpoints",
+    "href": "blog/posts/post3/index.html#a-large-advantage-little-change-at-the-endpoints",
+    "title": "The College Wage Premium: Large, but Not Steadily Growing",
+    "section": "A large advantage, little change at the endpoints",
+    "text": "A large advantage, little change at the endpoints\n\n\n\n\n\n\n\n\nFigure 1: Weighted median real hourly earnings by education, May 2003–2024.\n\n\n\n\n\nIn May 2024, workers with a bachelor’s degree or higher had median hourly earnings of $38.00, compared with $21.65 for high-school graduates and $24.05 for those with some college or an associate degree.\nThe separation between the groups is clear. The change over time is less dramatic: in May 2024 dollars, the college median was $37.65 in 2003, while the high-school median was $21.98. Both were close to their 2024 levels.\nI read this as a distinction between relative advantage and progress in purchasing power. College graduates can remain well ahead of another group without their own real median earnings rising much. Neither finding cancels the other."
+  },
+  {
+    "objectID": "blog/posts/post3/index.html#is-the-gap-growing-the-comparison-matters",
+    "href": "blog/posts/post3/index.html#is-the-gap-growing-the-comparison-matters",
+    "title": "The College Wage Premium: Large, but Not Steadily Growing",
+    "section": "Is the gap growing? The comparison matters",
+    "text": "Is the gap growing? The comparison matters\nThe college wage premium measures how much higher the college median is than the high-school median, as a percentage of the high-school median.\n\n\n\n\n\n\n\n\nFigure 2: College wage premium calculated from weighted median hourly earnings.\n\n\n\n\n\nThe premium moved from 71.3% in 2003 to 75.5% in 2024, with fluctuations in between. It reached 84.5% in 2022 before falling. That is not a steady upward path.\nRestricting the sample to workers usually working at least 35 hours per week changes the endpoint story: the premium moved from 71.9% to 70.4%. The direction reverses, although the large college advantage remains.\nFor me, that check is a reason to be cautious about a headline declaring that the gap is widening. The enduring gap is clearer than the small change between two selected years. I have not calculated confidence intervals, so these movements are not established statistically significant changes.\nEmployment composition also matters. A rise in the median can reflect changes in who is working, not just pay increases. These comparisons do not follow individual workers’ wage growth or establish what caused the movements around 2020."
+  },
+  {
+    "objectID": "blog/posts/post3/index.html#one-overall-number-hides-different-patterns",
+    "href": "blog/posts/post3/index.html#one-overall-number-hides-different-patterns",
+    "title": "The College Wage Premium: Large, but Not Steadily Growing",
+    "section": "One overall number hides different patterns",
+    "text": "One overall number hides different patterns\n\n\n\n\n\n\n\n\nFigure 3: Within-sex college wage premiums in May 2003 and May 2024.\n\n\n\n\n\nAmong women, the premium rose from 76.1% to 82.1%; among men, it fell from 71.5% to 66.7%. The overall comparison conceals these different directions.\nA larger premium for women does not mean women earn more than men. Each percentage compares college and high-school graduates within the same sex. It also cannot tell us whether education itself explains the gap: occupation, experience and selection into employment may differ."
+  },
+  {
+    "objectID": "blog/posts/post3/index.html#what-i-take-from-these-results",
+    "href": "blog/posts/post3/index.html#what-i-take-from-these-results",
+    "title": "The College Wage Premium: Large, but Not Steadily Growing",
+    "section": "What I take from these results",
+    "text": "What I take from these results\nThe strongest finding is a persistent college wage advantage, not a consistently widening one. I would ask who is included and which years are compared before drawing conclusions from a single premium.\nThese results also do not settle whether college is worth its cost. They describe employed workers, include graduate degrees, and do not measure tuition, forgone earnings or the causal effect of attending college."
+  },
+  {
+    "objectID": "blog/posts/post3/index.html#data-methods-and-reproducibility",
+    "href": "blog/posts/post3/index.html#data-methods-and-reproducibility",
+    "title": "The College Wage Premium: Large, but Not Steadily Growing",
+    "section": "Data, methods and reproducibility",
+    "text": "Data, methods and reproducibility\nThe sample contains 171,391 person-month observations with at least a high-school qualification. I exclude self-employed workers and invalid earnings or hours. Hourly earnings are weekly earnings divided by usual main-job hours; all medians use EARNWT, the CPS earnings-study weight. BLS CPI-U converts wages to May 2024 dollars. These are May snapshots, not annual averages.\nI use the harmonized rounded earnings series and cap weekly earnings at $2,884.61 across years. The cap leaves the overall education-group medians unchanged, but does not eliminate all measurement differences from the 2023–2024 reporting changes. Imputed earnings remain included because allocation flags were not downloaded.\nSources: IPUMS CPS, its earnings and weight documentation, and BLS CPI-U. The repository and README provide code, saved figures and results, plus instructions for obtaining the IPUMS extract and reproducing the analysis."
   }
 ]
