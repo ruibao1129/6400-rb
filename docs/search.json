@@ -46,7 +46,7 @@
     "href": "blog/index.html",
     "title": "Blog",
     "section": "",
-    "text": "Eating Out vs. Eating In: Which Prices Rose Faster?\n\n\n\n\n\nEating out had the larger price increase over 2015–2024, but groceries experienced the sharper inflation peak.\n\n\n\n\n\nOct 4, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nThe College Wage Premium: Large, but Not Steadily Growing\n\n\n\n\n\n\n\n\n\n\n\nSep 25, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nSame Goals, Different Results: What Scoring Misses in the NHL\n\n\n\n\n\n\n\n\n\n\n\nSep 21, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nWhen Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\nAug 31, 2026\n\n\nRui Bao\n\n\n\n\n\n\nNo matching items"
+    "text": "Does Cheaper Rent Mean More Affordable Housing?\n\n\nTwo maps of Philadelphia tell different stories.\n\n\n\n\n\n\n\n\nOct 17, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nEating Out vs. Eating In: Which Prices Rose Faster?\n\n\n\n\n\nEating out had the larger price increase over 2015–2024, but groceries experienced the sharper inflation peak.\n\n\n\n\n\nOct 4, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nThe College Wage Premium: Large, but Not Steadily Growing\n\n\n\n\n\n\n\n\n\n\n\nSep 25, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nSame Goals, Different Results: What Scoring Misses in the NHL\n\n\n\n\n\n\n\n\n\n\n\nSep 21, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nWhen Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\nAug 31, 2026\n\n\nRui Bao\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "blog/posts/post1/index.html",
@@ -474,5 +474,40 @@
     "title": "The College Wage Premium: Large, but Not Steadily Growing",
     "section": "Data, methods and reproducibility",
     "text": "Data, methods and reproducibility\nThe sample contains 171,391 person-month observations with at least a high-school qualification. I exclude self-employed workers and invalid earnings or hours. Hourly earnings are weekly earnings divided by usual main-job hours; all medians use EARNWT, the CPS earnings-study weight. BLS CPI-U converts wages to May 2024 dollars. These are May snapshots, not annual averages.\nI use the harmonized rounded earnings series and cap weekly earnings at $2,884.61 across years. The cap leaves the overall education-group medians unchanged, but does not eliminate all measurement differences from the 2023–2024 reporting changes. Imputed earnings remain included because allocation flags were not downloaded.\nSources: IPUMS CPS, its earnings and weight documentation, and BLS CPI-U. The repository and README provide code, saved figures and results, plus instructions for obtaining the IPUMS extract and reproducing the analysis."
+  },
+  {
+    "objectID": "blog/posts/post5/index.html",
+    "href": "blog/posts/post5/index.html",
+    "title": "Does Cheaper Rent Mean More Affordable Housing?",
+    "section": "",
+    "text": "A lower monthly rent looks like a better deal. But a cheaper apartment can still take a larger share of a household’s income. Where in Philadelphia does lower rent actually mean a lighter burden for the people living there?\nThe answer is not a simple map of expensive and inexpensive areas. In the 2019–2023 American Community Survey (ACS), 58.8% of eligible renter households in the lowest-rent quarter of the tracts studied spent at least 30% of income on rent, compared with 41.0% in the highest-rent quarter. Lower prices did not necessarily mean less financial pressure."
+  },
+  {
+    "objectID": "blog/posts/post5/index.html#two-maps-two-different-questions",
+    "href": "blog/posts/post5/index.html#two-maps-two-different-questions",
+    "title": "Does Cheaper Rent Mean More Affordable Housing?",
+    "section": "Two maps, two different questions",
+    "text": "Two maps, two different questions\nThe left map shows each census tract’s median monthly gross rent, which includes utilities. The right shows the share of renter households spending at least 30% of income on gross rent. I call this rent burden; households whose ratios cannot be computed are excluded from that denominator. Citywide, the estimated share was 52.0%.\n\n\n\n\n\n\nFigure 1: Philadelphia census tracts, ACS 2019–2023. Colors show estimates, not precise neighborhood rankings. Gray tracts lack a usable median rent or have fewer than 100 estimated households with a computed rent-to-income ratio.\n\n\n\nAround City Hall, many tracts have comparatively high rents but lighter burdens. Several areas to the north and west show the opposite combination: lower rents alongside larger shares of burdened renters. The pattern is uneven, with exceptions in both directions. Census tracts are statistical areas, not exact neighborhood boundaries.\nThat mismatch is the important geographic finding. A rent map describes the price of housing occupied by current residents. A burden map adds their ability to pay. An expensive area can look less strained because the households living there can afford more, while a lower-priced area can still leave residents stretched. These maps alone do not establish why households or housing prices differ across places."
+  },
+  {
+    "objectID": "blog/posts/post5/index.html#comparing-the-same-city-more-systematically",
+    "href": "blog/posts/post5/index.html#comparing-the-same-city-more-systematically",
+    "title": "Does Cheaper Rent Mean More Affordable Housing?",
+    "section": "Comparing the same city more systematically",
+    "text": "Comparing the same city more systematically\nTo move beyond visually comparing colors, I sorted 376 tracts into four equal-sized groups by median rent. Within each group, I added the estimated burdened households and divided by all households with computed ratios. This gives households proportional influence rather than treating every tract’s percentage equally.\n\n\n\n\n\n\nFigure 2: Groups are based on tract median rent, not individual households’ rents. Whiskers show approximate 90% intervals conditional on these estimated groups; they do not include uncertainty in group assignment.\n\n\n\nThe lowest-rent group had tract medians of $407–$1,125, yet its burden rate was about 17.8 percentage points higher than the highest-rent group’s. The direction remains when I require at least 200 or 300 eligible households per tract, and when I exclude tracts with particularly imprecise burden estimates. These checks support the broad comparison, not a ranking of individual blocks.\nThis does not mean a household would save money by moving to a more expensive area. The groups contain different households and housing. Nor does the comparison establish that higher rents cause lower burdens."
+  },
+  {
+    "objectID": "blog/posts/post5/index.html#what-i-would-take-from-this",
+    "href": "blog/posts/post5/index.html#what-i-would-take-from-this",
+    "title": "Does Cheaper Rent Mean More Affordable Housing?",
+    "section": "What I would take from this",
+    "text": "What I would take from this\nIf I were using a map to identify housing pressure, I would look at rent burden alongside rent levels. Focusing only on the most expensive areas could overlook residents under substantial pressure in cheaper ones. A practical next step would be to examine high-burden areas’ housing conditions and eligibility for assistance before targeting resources.\nThere are limits. ACS five-year estimates pool 2019–2023 responses; they are not today’s advertised rents. Individual tract estimates can have wide sampling errors, and household size, subsidies, and housing quality are not controlled here. The analysis includes 376 of 408 tracts, covering about 99.2% of citywide households with computed ratios.\nFor me, the useful distinction is between cheaper housing and housing that residents can afford. A price map answers only the first question."
+  },
+  {
+    "objectID": "blog/posts/post5/index.html#sources-and-reproduction",
+    "href": "blog/posts/post5/index.html#sources-and-reproduction",
+    "title": "Does Cheaper Rent Mean More Affordable Housing?",
+    "section": "Sources and reproduction",
+    "text": "Sources and reproduction\nI use Census ACS tables B25064 and B25070, downloaded from the official table-based Summary File, and 2023 Census cartographic boundaries. Dollar values are in 2023 dollars.\nThe Post 5 README links the R scripts, saved source data, calculated tables, and replication instructions. Rendering regenerates the maps, chart, and numerical statements above."
   }
 ]

@@ -1,0 +1,4 @@
+file,source_url,retrieved_utc,processing,source_md5,snapshot_md5
+b25064_philadelphia.dat,https://www2.census.gov/programs-surveys/acs/summary_file/2023/table-based-SF/data/5YRData/acsdt5y2023-b25064.dat,2026-10-17T05:33:03.471792+00:00,Unmodified header and rows with GEO_ID 1400000US42101* or 0500000US42101; other geographies omitted,4bf95df59e714b7c361dbfeee2a4f91c,aad3ea2af0b8c215ddec8a613f5a2bf0
+b25070_philadelphia.dat,https://www2.census.gov/programs-surveys/acs/summary_file/2023/table-based-SF/data/5YRData/acsdt5y2023-b25070.dat,2026-10-17T05:33:03.664326+00:00,Unmodified header and rows with GEO_ID 1400000US42101* or 0500000US42101; other geographies omitted,d66738290fc179ee47278a524f03ca06,c27192ca42cc4dee782176dfb8c34f86
+cb_2023_42_tract_500k.zip,https://www2.census.gov/geo/tiger/GENZ2023/shp/cb_2023_42_tract_500k.zip,2026-10-17T05:33:03.758433+00:00,Original Pennsylvania boundary ZIP,20d635ebcc3857a84febe089d815a707,20d635ebcc3857a84febe089d815a707

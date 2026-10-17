@@ -10,6 +10,7 @@
 | Post 2: NHL scoring and wins | [Read](https://ruibao1129.github.io/6400-rb/blog/posts/post2/) | [Start here: Post 2 README](blog/posts/post2/README.md) |
 | Post 3: College wage premium | [Read](https://ruibao1129.github.io/6400-rb/blog/posts/post3/) | [Start here: Post 3 README](blog/posts/post3/README.md) |
 | Post 4: Food prices | [Read](https://ruibao1129.github.io/6400-rb/blog/posts/post4/) | [Start here: Post 4 README](blog/posts/post4/README.md) |
+| Post 5: Philadelphia rent burden | [Read](https://ruibao1129.github.io/6400-rb/blog/posts/post5/) | [Start here: Post 5 README](blog/posts/post5/README.md) |
 
 ## Repository layout
 
@@ -22,4 +23,4 @@ For replication, follow the relevant post's README. To render one article from t
 
 ## Other website and course files
 
-`images/`, `files/`, the root QMD pages, and `styles.css` support the portfolio website. `ExtraCredit.R` and the root `cereal_market_*.csv` files are separate course materials, not inputs for Posts 1–4. Each post README identifies its own inputs.
+`images/`, `files/`, the root QMD pages, and `styles.css` support the portfolio website. `ExtraCredit.R` and the root `cereal_market_*.csv` files are separate course materials, not inputs for Posts 1–5. Each post README identifies its own inputs.
