@@ -17,7 +17,10 @@
 - `blog/posts/postN/`: the source article (`index.qmd`), analysis code, and assignment-specific README. Start here when reviewing an assignment.
 - Data, figures, and calculated results are documented in each assignment's README. Post 3 requires an independently obtained IPUMS extract.
 - `docs/`: generated website output for GitHub Pages; these HTML files are not the analysis source.
+- `6400-rb.Rproj`: open this file in RStudio to use the website project.
 - `_quarto.yml`: website configuration.
+
+Each post folder is the review entry point; its README identifies the code to run, required data, and generated results. For Post 5, begin with [the replication guide](blog/posts/post5/README.md), then [the analysis script](blog/posts/post5/code/analysis.R).
 
 For replication, follow the relevant post's README. To render one article from the repository root, run `quarto render blog/posts/post2/index.qmd` (replace `post2` as needed).
 

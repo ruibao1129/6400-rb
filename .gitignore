@@ -12,3 +12,6 @@
 
 # macOS folder metadata
 .DS_Store
+
+# Separate problem-set outputs retained locally, outside the blog submission.
+/PS3_Problem5_results/
