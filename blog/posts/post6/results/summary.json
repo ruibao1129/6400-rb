@@ -1,0 +1,77 @@
+{
+  "raw_children": 11551,
+  "raw_mothers": 4943,
+  "original_main_respondents": 4943,
+  "unmatched": 0,
+  "main_n": 286,
+  "main_mothers": 245,
+  "life_n": 221,
+  "life_mothers": 196,
+  "birth_min": 1970,
+  "birth_max": 1986,
+  "mother_years_mean": 6.821678321678322,
+  "child_years_mean": 3.0734265734265733,
+  "mother_years_min": 3,
+  "mother_years_max": 8,
+  "child_years_min": 3,
+  "child_years_max": 4,
+  "mother_age_mean": 34.71678321678322,
+  "child_age_mean": 34.75874125874126,
+  "early_age_mean": 21.76923076923077,
+  "late_age_mean": 34.83257918552036,
+  "models": {
+    "single_year": {
+      "beta": 0.09538906556093654,
+      "se": 0.044412525712057185,
+      "lower": 0.007908203983226475,
+      "upper": 0.1828699271386466,
+      "n": 286,
+      "mothers": 245,
+      "intercept": 9.409150414242033
+    },
+    "multi_year": {
+      "beta": 0.16229573779075396,
+      "se": 0.057655667175754766,
+      "lower": 0.04872941030752699,
+      "upper": 0.27586206527398094,
+      "n": 286,
+      "mothers": 245,
+      "intercept": 8.72235977523795
+    },
+    "early_child": {
+      "beta": 0.16066469627643118,
+      "se": 0.08132815848384023,
+      "lower": 0.00026897263239947233,
+      "upper": 0.32106041992046286,
+      "n": 221,
+      "mothers": 196,
+      "intercept": 7.965168889507119
+    },
+    "mature_child": {
+      "beta": 0.16300155743443143,
+      "se": 0.06889221761085668,
+      "lower": 0.027132046761432715,
+      "upper": 0.29887106810743014,
+      "n": 221,
+      "mothers": 196,
+      "intercept": 8.777834744479193
+    }
+  },
+  "contrasts": {
+    "multi_minus_single": {
+      "difference": 0.06690667222981742,
+      "se": 0.04519177207448949,
+      "lower": -0.022109097396330157,
+      "upper": 0.155922441855965,
+      "p": 0.14002842937234736
+    },
+    "mature_minus_early": {
+      "difference": 0.0023368611580002474,
+      "se": 0.08462482172081914,
+      "lower": -0.164560555077669,
+      "upper": 0.1692342773936695,
+      "p": 0.9779979603096396
+    }
+  },
+  "ten_percent_exact": 1.5588691460475923
+}

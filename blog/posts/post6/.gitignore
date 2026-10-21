@@ -1,0 +1,7 @@
+data/raw/*
+!data/raw/.gitkeep
+results/private/
+__pycache__/
+.venv/
+.quarto/
+index_files/

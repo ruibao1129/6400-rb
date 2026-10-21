@@ -46,7 +46,7 @@
     "href": "blog/index.html",
     "title": "Blog",
     "section": "",
-    "text": "Does Cheaper Rent Mean More Affordable Housing?\n\n\nTwo maps of Philadelphia tell different stories.\n\n\n\n\n\n\n\n\nOct 17, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nEating Out vs. Eating In: Which Prices Rose Faster?\n\n\n\n\n\nEating out had the larger price increase over 2015–2024, but groceries experienced the sharper inflation peak.\n\n\n\n\n\nOct 4, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nThe College Wage Premium: Large, but Not Steadily Growing\n\n\n\n\n\n\n\n\n\n\n\nSep 25, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nSame Goals, Different Results: What Scoring Misses in the NHL\n\n\n\n\n\n\n\n\n\n\n\nSep 21, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nWhen Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\nAug 31, 2026\n\n\nRui Bao\n\n\n\n\n\n\nNo matching items"
+    "text": "Is Your First Paycheck Your Economic Destiny?\n\n\nMatching mothers and children with SQL—and learning when income tells the wrong story.\n\n\n\n\n\n\n\n\nOct 20, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nDoes Cheaper Rent Mean More Affordable Housing?\n\n\nTwo maps of Philadelphia tell different stories.\n\n\n\n\n\n\n\n\nOct 17, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nEating Out vs. Eating In: Which Prices Rose Faster?\n\n\n\n\n\nEating out had the larger price increase over 2015–2024, but groceries experienced the sharper inflation peak.\n\n\n\n\n\nOct 4, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nThe College Wage Premium: Large, but Not Steadily Growing\n\n\n\n\n\n\n\n\n\n\n\nSep 25, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nSame Goals, Different Results: What Scoring Misses in the NHL\n\n\n\n\n\n\n\n\n\n\n\nSep 21, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nWhen Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\nAug 31, 2026\n\n\nRui Bao\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "blog/posts/post1/index.html",
@@ -509,5 +509,54 @@
     "title": "Does Cheaper Rent Mean More Affordable Housing?",
     "section": "Sources and reproduction",
     "text": "Sources and reproduction\nI use Census ACS tables B25064 and B25070, downloaded from the official table-based Summary File, and 2023 Census cartographic boundaries. Dollar values are in 2023 dollars.\nThe Post 5 README links the R scripts, saved source data, calculated tables, and replication instructions. Rendering regenerates the maps, chart, and numerical statements above."
+  },
+  {
+    "objectID": "blog/posts/post6/index.html",
+    "href": "blog/posts/post6/index.html",
+    "title": "Is Your First Paycheck Your Economic Destiny?",
+    "section": "",
+    "text": "Would you judge a whole movie from its opening scene? An income recorded while someone is studying, changing jobs, or raising a child can be an equally misleading preview. How well do a mother’s earnings predict her child’s—and how much does the answer depend on which paycheck we measure?\nThis tutorial uses SQL inside Python to link real families, construct comparable earnings measures, and estimate intergenerational elasticity (IGE). The surprise is that finding the right family is easier than finding the right measure of economic status."
+  },
+  {
+    "objectID": "blog/posts/post6/index.html#give-every-person-the-right-key",
+    "href": "blog/posts/post6/index.html#give-every-person-the-right-key",
+    "title": "Is Your First Paycheck Your Economic Destiny?",
+    "section": "1. Give every person the right key",
+    "text": "1. Give every person the right key\nI use the NLSY79 and its Child/Young Adult survey. The extracts contain 11,551 children and 4,943 corresponding mothers. A child’s C0000100 identifies the child; C0000200 identifies the mother and matches R0000100 in her file, as the NLS linkage documentation explains. Siblings share a mother ID, so the relationship is many-to-one.\nThe snippets below explain the key steps; they are not a standalone script. Run code/analysis.py for the complete workflow, including income preparation and creation of the matched table used later.\nLoad the CSVs into SQLite, Python’s built-in SQL database:\nimport sqlite3\nimport pandas as pd\n\ncon = sqlite3.connect(\":memory:\")\nchildren = pd.read_csv(\"data/raw/children.csv\").rename(columns={\n    \"C0000100\": \"child_id\", \"C0000200\": \"mother_id\",\n    \"C0005700\": \"birth_year\", \"C0005400\": \"sex\"\n})\nmothers = pd.read_csv(\"data/raw/mothers.csv\").rename(columns={\n    \"R0000100\": \"mother_id\", \"R0000500\": \"birth_year\"\n})\nmothers[\"birth_year\"] += 1900  # Original years are 57–64.\nassert children.child_id.is_unique\nassert mothers.mother_id.is_unique\nchildren.to_sql(\"children\", con, index=False)\nmothers.to_sql(\"mothers\", con, index=False)"
+  },
+  {
+    "objectID": "blog/posts/post6/index.html#match-families-then-check-the-join",
+    "href": "blog/posts/post6/index.html#match-families-then-check-the-join",
+    "title": "Is Your First Paycheck Your Economic Destiny?",
+    "section": "2. Match families, then check the join",
+    "text": "2. Match families, then check the join\nSELECT chooses columns. JOIN connects rows whose mother IDs agree:\ncon.executescript(\"\"\"\nCREATE TABLE matches AS\nSELECT c.child_id, c.mother_id, c.birth_year,\n       c.sex, m.birth_year AS mother_birth_year\nFROM children AS c\nJOIN mothers AS m ON c.mother_id = m.mother_id;\n\"\"\")\nassert con.execute(\"SELECT COUNT(*) FROM matches\").fetchone()[0] == len(children)\nAll children match. Checking unique keys first matters: duplicate mother rows could quietly multiply observations. We also aggregate each person’s income history before joining generations, preventing one mother-year from pairing with every child-year."
+  },
+  {
+    "objectID": "blog/posts/post6/index.html#turn-paychecks-into-comparable-income",
+    "href": "blog/posts/post6/index.html#turn-paychecks-into-comparable-income",
+    "title": "Is Your First Paycheck Your Economic Destiny?",
+    "section": "3. Turn paychecks into comparable income",
+    "text": "3. Turn paychecks into comparable income\nHere, “income” means annual wage and salary earnings, not household income. The full script reshapes the histories, treats negative survey codes as missing, retains valid zeros, and converts earnings to 2019 dollars using BLS CPI-U through FRED. Income-band answers are excluded because their category numbers are not dollars. Later questions use actual interview years; income-year age is measured at year-end.\nBoth generations’ averages use available observations within ages 30–39, requiring at least three income years. GROUP BY collects each child’s rows; AVG and COUNT perform aggregation:\nSELECT child_id, AVG(real_income) AS child_avg,\n       COUNT(DISTINCT income_year) AS child_years\nFROM child_income\nWHERE age BETWEEN 30 AND 39\nGROUP BY child_id\nHAVING COUNT(DISTINCT income_year) &gt;= 3;\nApply the same operation to mothers. For the single-year comparison, select each person’s available year nearest age 35, breaking ties toward the earlier year. Requiring positive selected incomes and positive averages leaves 286 children from 245 mothers, identical across both models. Zeros enter averages but cannot be logged as single-year earnings.\n\n\n\n\n\n\nFigure 1: Each dot represents one adult child; orange points summarize groups. Both generations’ earnings are averaged within their thirties. The fitted line describes association in this selected sample."
+  },
+  {
+    "objectID": "blog/posts/post6/index.html#estimate-the-elasticity-not-economic-destiny",
+    "href": "blog/posts/post6/index.html#estimate-the-elasticity-not-economic-destiny",
+    "title": "Is Your First Paycheck Your Economic Destiny?",
+    "section": "4. Estimate the elasticity, not economic destiny",
+    "text": "4. Estimate the elasticity, not economic destiny\nEstimate\n\\[\n\\log(Y_{child})=\\alpha+\\beta\\log(Y_{mother})+\\varepsilon.\n\\]\nThe slope \\(\\beta\\) is the IGE: roughly, the percentage difference in children’s earnings associated with 1% higher maternal earnings. After SQL produces one row per child, Python fits the regression:\nimport numpy as np\n\nmatched = pd.read_sql_query(\"SELECT * FROM matched\", con)\nX = np.column_stack([np.ones(len(matched)), np.log(matched.mother_avg)])\nalpha, beta = np.linalg.lstsq(X, np.log(matched.child_avg), rcond=None)[0]\nThe single-year estimate is 0.095, versus 0.162 using averages. The latter associates 10% higher maternal earnings with about 1.6% higher child earnings. Averages contain 6.8 maternal and 3.1 child income years on average.\n\n\n\n\n\n\nFigure 2: Both estimates use the same children. Single years are selected near age 35; averages use at least three distinct years in ages 30–39. Intervals allow siblings’ errors to be correlated.\n\n\n\nThe difference is 0.067, with a mother-clustered 95% interval of [-0.022, 0.156]. This sample does not establish a precise improvement. Averaging can reduce temporary fluctuations; it does not guarantee a larger estimate."
+  },
+  {
+    "objectID": "blog/posts/post6/index.html#change-the-camera-angle-life-cycle-bias",
+    "href": "blog/posts/post6/index.html#change-the-camera-angle-life-cycle-bias",
+    "title": "Is Your First Paycheck Your Economic Destiny?",
+    "section": "5. Change the camera angle: life-cycle bias",
+    "text": "5. Change the camera angle: life-cycle bias\nFor 221 of these children, positive income is also observed near age 22 within ages 20–24. Holding their sample and mothers’ average income fixed gives an early-career slope of 0.161 and a thirties slope of 0.163. These uncertain estimates cannot reveal the true lifetime IGE.\nThe mechanism is clearer in a numerical example. Suppose the true lifetime IGE is 0.40, but early earnings reveal only half of the differences in lifetime log earnings. The early slope is then \\(0.5\\times0.40=0.20\\). Midcareer earnings that fully reveal those differences produce 0.40. This is life-cycle bias, not just random paycheck noise: future high earners may still be training when measured young.\n\n\n\n\n\n\nFigure 3: Left: a same-child age comparison from the NLS data, holding maternal income fixed. Right: a hypothetical analytical demonstration with true IGE 0.40, not another empirical estimate. Averaging early-career earnings alone leaves the assumed age distortion intact.\n\n\n\nAveraging several years dampens short-lived shocks. Averaging only young years can retain the same age distortion, which is why the main comparison aligns both generations in their thirties. Haider and Solon (2006) document the broader age-dependent measurement problem.\nThese are unweighted associations in a selected sample with observed earnings. Attrition, excluded zeros, topcoding, and mothers’ labor-force participation limit generalization. Neither estimate is causal or a national mobility statistic."
+  },
+  {
+    "objectID": "blog/posts/post6/index.html#code-and-reproducibility",
+    "href": "blog/posts/post6/index.html#code-and-reproducibility",
+    "title": "Is Your First Paycheck Your Economic Destiny?",
+    "section": "Code and reproducibility",
+    "text": "Code and reproducibility\nThe GitHub project folder contains the tutorial source, Python/SQL code, figures, result tables, and README with data-extraction and replication instructions. Run python code/analysis.py to regenerate the analysis and article, then quarto render index.qmd to build the webpage. Detailed variable definitions follow the NLS income guide and downloaded codebooks.\nTakeaway: SQL can find someone’s mother exactly; a paycheck describes economic status much less exactly. Match the family, align the life stage, and average enough income years before interpreting the slope as a story about opportunity."
   }
 ]
