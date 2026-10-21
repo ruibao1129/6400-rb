@@ -11,6 +11,7 @@
 | Post 3: College wage premium | [Read](https://ruibao1129.github.io/6400-rb/blog/posts/post3/) | [Start here: Post 3 README](blog/posts/post3/README.md) |
 | Post 4: Food prices | [Read](https://ruibao1129.github.io/6400-rb/blog/posts/post4/) | [Start here: Post 4 README](blog/posts/post4/README.md) |
 | Post 5: Philadelphia rent burden | [Read](https://ruibao1129.github.io/6400-rb/blog/posts/post5/) | [Start here: Post 5 README](blog/posts/post5/README.md) |
+| Post 6: Intergenerational earnings and SQL | [Read](https://ruibao1129.github.io/6400-rb/blog/posts/post6/) | [Start here: Post 6 README](blog/posts/post6/README.md) |
 
 ## Repository layout
 
@@ -26,4 +27,4 @@ For replication, follow the relevant post's README. To render one article from t
 
 ## Other website and course files
 
-`images/`, `files/`, the root QMD pages, and `styles.css` support the portfolio website. `ExtraCredit.R` and the root `cereal_market_*.csv` files are separate course materials, not inputs for Posts 1–5. Each post README identifies its own inputs.
+`images/`, `files/`, the root QMD pages, and `styles.css` support the portfolio website. `course_materials/` holds the separate `ExtraCredit.R` script and `cereal_market_*.csv` datasets; these are not inputs for the blog posts. Each post README identifies its own inputs. The extra-credit script uses an interactive file picker, so moving it does not change a hard-coded input path.
