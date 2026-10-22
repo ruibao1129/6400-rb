@@ -158,7 +158,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Two NHL teams scored <strong>235 goals each</strong>, yet one won <strong>48 games</strong> and the other only <strong>28</strong>. In the records labeled 2006, the Minnesota Wild and Washington Capitals looked identical on scoring totals. Their results were far apart.</p>
-<p>The difference becomes easier to understand when goals allowed enter the picture. Minnesota conceded 191 goals; Washington conceded 286. That comparison raises a practical question: when reviewing a team’s season, how much do we miss by looking at offense alone?</p>
+<p>The difference becomes easier to understand when goals allowed enter the picture. The Minnesota Wild conceded 191 goals; the Washington Capitals conceded 286. That comparison raises a practical question: when reviewing a team’s season, how much do we miss by looking at offense alone?</p>
 <p>I scraped 582 team-season records from <a href="https://www.scrapethissite.com/pages/forms/">Scrape This Site’s hockey pages</a>. In this sample, goal differential—goals scored minus goals allowed—has a much stronger relationship with winning percentage than scoring alone.</p>
 <section id="identical-scoring-totals-different-seasons" class="level2">
 <h2 class="anchored" data-anchor-id="identical-scoring-totals-different-seasons">Identical scoring totals, different seasons</h2>
@@ -243,7 +243,7 @@ Figure&nbsp;2: Goal differential includes both scoring and goals allowed.
 </section>
 <section id="what-i-would-do-with-this-comparison" class="level2">
 <h2 class="anchored" data-anchor-id="what-i-would-do-with-this-comparison">What I would do with this comparison</h2>
-<p>If I were comparing two teams, I would first compare their goal differentials within the same season. I would then look at goals scored and allowed to see what lies behind the difference. The Minnesota–Washington example shows why stopping at scoring totals can be misleading.</p>
+<p>For a fan or analyst preparing a season review, I would use a two-step checklist: first compare teams’ goal differentials within the same season; then inspect goals scored and allowed separately to explain the ranking. The opening table shows what an offense-only comparison misses, the first scatterplot shows that problem across the sample, and the second shows how adding goals allowed tightens the relationship. The recommendation concerns describing completed seasons, not choosing next year’s players.</p>
 <p>I would not use these correlations alone to predict next season or recommend a roster change. All measures describe the same completed seasons. The data pool different schedules and scoring environments, and total goals are not per-game rates. The teaching-site records have not been independently verified against official NHL statistics.</p>
 <p>The takeaway is straightforward: <strong>before calling a team strong because it scores a lot, check what it gives up.</strong> That is a more useful way to read these results than treating the larger correlation as a forecasting model.</p>
 </section>
@@ -251,7 +251,7 @@ Figure&nbsp;2: Goal differential includes both scoring and goals allowed.
 <h2 class="anchored" data-anchor-id="data-methods-and-reproducibility">Data, methods and reproducibility</h2>
 <p>I used <code>rvest</code> to collect the first 24 pages of a public scraping practice site. This is a subset, not a claim to cover every available record. New requests are spaced one second apart; saved HTML pages are reused on later renders. No login, CAPTCHA or paywall is bypassed.</p>
 <p>After numeric conversion and removal of 0 incomplete rows, the sample contains 582 team-seasons with year labels 1990–2011. I check duplicate team-year records and value ranges, retain the site’s reported winning percentage, and calculate Pearson correlations. Retrieval dates and source URLs are saved with the data.</p>
-<p>The <a href="https://github.com/ruibao1129/6400-rb/tree/main/blog/posts/post2">repository</a> contains the full R code and replication README. Source snapshots and raw data are in <code>data/raw</code>, cleaned data in <code>data/clean</code>, charts in <code>figures</code>, and correlations and the example-selection results in <code>results</code>.</p>
+<p>To reproduce this post, start with the <a href="https://github.com/ruibao1129/6400-rb/blob/main/blog/posts/post2/README.md">Post 2 README</a>, then open <a href="https://github.com/ruibao1129/6400-rb/blob/main/blog/posts/post2/index.qmd">index.qmd, the complete R analysis</a>. Source snapshots and raw data are in <code>data/raw</code>, cleaned data in <code>data/clean</code>, charts in <code>figures</code>, and correlations and the example-selection results in <code>results</code>. The <code>docs/</code> copy is generated website output, not the analysis entry point.</p>
 
 
 </section>

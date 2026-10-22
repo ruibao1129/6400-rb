@@ -182,7 +182,7 @@ percent <- function(x) sprintf("%.1f%%", 100 * x)
 
 Two NHL teams scored **`r better$goals_for` goals each**, yet one won **`r better$wins` games** and the other only **`r worse$wins`**. In the records labeled `r better$year`, the `r better$team` and `r worse$team` looked identical on scoring totals. Their results were far apart.
 
-The difference becomes easier to understand when goals allowed enter the picture. Minnesota conceded `r better$goals_against` goals; Washington conceded `r worse$goals_against`. That comparison raises a practical question: when reviewing a team's season, how much do we miss by looking at offense alone?
+The difference becomes easier to understand when goals allowed enter the picture. The `r better$team` conceded `r better$goals_against` goals; the `r worse$team` conceded `r worse$goals_against`. That comparison raises a practical question: when reviewing a team's season, how much do we miss by looking at offense alone?
 
 I scraped `r nrow(hockey)` team-season records from [Scrape This Site's hockey pages](https://www.scrapethissite.com/pages/forms/). In this sample, goal differential—goals scored minus goals allowed—has a much stronger relationship with winning percentage than scoring alone.
 
@@ -227,7 +227,7 @@ This is not a surprising new law of hockey: scoring and conceding are directly c
 
 ## What I would do with this comparison
 
-If I were comparing two teams, I would first compare their goal differentials within the same season. I would then look at goals scored and allowed to see what lies behind the difference. The Minnesota–Washington example shows why stopping at scoring totals can be misleading.
+For a fan or analyst preparing a season review, I would use a two-step checklist: first compare teams' goal differentials within the same season; then inspect goals scored and allowed separately to explain the ranking. The opening table shows what an offense-only comparison misses, the first scatterplot shows that problem across the sample, and the second shows how adding goals allowed tightens the relationship. The recommendation concerns describing completed seasons, not choosing next year's players.
 
 I would not use these correlations alone to predict next season or recommend a roster change. All measures describe the same completed seasons. The data pool different schedules and scoring environments, and total goals are not per-game rates. The teaching-site records have not been independently verified against official NHL statistics.
 
@@ -239,4 +239,4 @@ I used `rvest` to collect the first 24 pages of a public scraping practice site.
 
 After numeric conversion and removal of `r missing_count` incomplete rows, the sample contains `r nrow(hockey)` team-seasons with year labels `r min(hockey$year)`–`r max(hockey$year)`. I check duplicate team-year records and value ranges, retain the site's reported winning percentage, and calculate Pearson correlations. Retrieval dates and source URLs are saved with the data.
 
-The [repository](https://github.com/ruibao1129/6400-rb/tree/main/blog/posts/post2) contains the full R code and replication README. Source snapshots and raw data are in `data/raw`, cleaned data in `data/clean`, charts in `figures`, and correlations and the example-selection results in `results`.
+To reproduce this post, start with the [Post 2 README](https://github.com/ruibao1129/6400-rb/blob/main/blog/posts/post2/README.md), then open [index.qmd, the complete R analysis](https://github.com/ruibao1129/6400-rb/blob/main/blog/posts/post2/index.qmd). Source snapshots and raw data are in `data/raw`, cleaned data in `data/clean`, charts in `figures`, and correlations and the example-selection results in `results`. The `docs/` copy is generated website output, not the analysis entry point.

@@ -10,7 +10,19 @@ Author: Rui Bao
 - **Inspect the outputs:** [figures](figures/), [correlations](results/correlations.csv), and [the two-team example](results/equal_scoring_example.csv).
 - **Reproduce:** follow the steps below. The included HTML snapshots allow the analysis to run without requesting the source website again.
 
-## Question
+## Three-minute review route
+
+| What to inspect | File | What it establishes |
+| --- | --- | --- |
+| Article and executable analysis | [index.qmd](index.qmd) | Question, ethical collection, cleaning, plots, and recommendation; render this file. |
+| Collection provenance | [retrieval_log.csv](results/retrieval_log.csv) | Source URL and retrieval time for each saved page. |
+| Analysis input | [hockey.csv](data/clean/hockey.csv) | One cleaned row per team-season. |
+| Main evidence | [correlations.csv](results/correlations.csv), [goals scored plot](figures/goals_scored.png), [goal differential plot](figures/goal_differential.png) | The sample-wide comparison behind the recommendation. |
+| Opening illustration | [equal_scoring_example.csv](results/equal_scoring_example.csv), [selection rule output](results/example_selection.csv) | The deliberately selected equal-scoring pair, not a representative case. |
+
+No separate analysis script is missing: all R code lives in `index.qmd`. Do not start from the rendered HTML under `docs/`. The analysis uses cached pages by default; reproduction does not require a fresh scrape.
+
+## Analytical question
 Compare the association of total goals scored and goal differential with the reported winning percentage of historical NHL team-seasons.
 
 ## Data source and scope

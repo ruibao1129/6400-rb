@@ -23,6 +23,8 @@
 
 Each post folder is the review entry point; its README identifies the code to run, required data, and generated results. For Post 5, begin with [the replication guide](blog/posts/post5/README.md), then [the analysis script](blog/posts/post5/code/analysis.R).
 
+**Reviewing Posts 1–3:** start with the assignment's README in the table above, then its `index.qmd`. Each QMD contains both the article and executable R code; there is no missing standalone script. Post 1 uses explicitly hypothetical counts; Post 2 includes cached source pages and cleaned data; Post 3 requires the privately obtained IPUMS extract. `docs/` is only the generated website, and `course_materials/` contains unrelated coursework.
+
 For replication, follow the relevant post's README. To render one article from the repository root, run `quarto render blog/posts/post2/index.qmd` (replace `post2` as needed).
 
 ## Other website and course files

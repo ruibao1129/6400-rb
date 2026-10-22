@@ -50,6 +50,8 @@ The website configuration writes the page to `docs/blog/posts/post3/index.html`.
 
 ## Expected outputs
 
+Figure 2 displays the complete 2003–2024 premium series for both the main sample and the full-time (35+ usual hours) sample on identical axes. This directly supports the sample-dependent endpoint comparison in the text. Figure 3 separately supports the within-sex endpoint comparisons; the conclusion integrates all three figures without assuming an external news headline or claiming statistically established trends.
+
 The supplied extract yields 171,391 person-month observations. The main college premium is about 71.3% in 2003 and 75.5% in 2024; the full-time comparison is about 71.9% and 70.4%. Rendering recreates seven CSV tables in `results/`, three PNG charts in `figures/`, and `results/sessionInfo.txt` documenting the R environment. The rendered website page is output, not the analysis entry point.
 
 ## Methods

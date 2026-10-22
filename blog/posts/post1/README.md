@@ -29,5 +29,9 @@ The website's `_quarto.yml` sets `docs` as its output directory. Rendering produ
 
 Percentages are calculated from survivor counts divided by group totals. Displayed percentages are rounded to one decimal place where needed. Weighted-average equations use exact fractions, giving overall survival rates of 39% for A and 79% for B.
 
+The standardized illustration applies weights of 0.5 to each severity group: A = 0.5 × (90/100) + 0.5 × (300/900) = 61.7%; B = 0.5 × (760/900) + 0.5 × (30/100) = 57.2%, rounded only at the end. These are hypothetical common-mix rates, not observed totals or causal treatment effects.
+
+Equations use native MathML in the generated HTML, so they do not depend on an external MathJax download. Check the rendered page rather than GitHub's QMD preview when assessing equation layout.
+
 ## Published article
 https://ruibao1129.github.io/6400-rb/blog/posts/post1/

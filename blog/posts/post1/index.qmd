@@ -3,7 +3,10 @@ title: "When Every Group Wins but the Average Loses: Simpson’s Paradox"
 author: "Rui Bao"
 date: "2026-08-31"
 categories: [statistics, economics, data-science]
-format: html
+format:
+  html:
+    html-math-method: mathml
+    toc: false
 ---
 
 Imagine that Hospital A has a higher survival rate than Hospital B for both mild and severe cases. It seems obvious that Hospital A must also have a higher survival rate overall.
@@ -72,16 +75,18 @@ $$
 
 Here, $r$ represents a survival rate and $w$ represents a group’s share of the hospital’s patients. The two weights sum to one.
 
+For example, Hospital A's mild-case weight is 100 / 1,000 = 0.10. The weights describe **patient shares**, not survival probabilities. Rates in the equations are proportions: 0.90 means 90%.
+
 For Hospital A:
 
 $$
 r_A
 =
-0.10\left(\frac{90}{100}\right)
+0.10\times\frac{90}{100}
 +
-0.90\left(\frac{300}{900}\right)
+0.90\times\frac{300}{900}
 =
-0.39.
+0.39=39\%.
 $$
 
 For Hospital B:
@@ -89,14 +94,16 @@ For Hospital B:
 $$
 r_B
 =
-0.90\left(\frac{760}{900}\right)
+0.90\times\frac{760}{900}
 +
-0.10\left(\frac{30}{100}\right)
+0.10\times\frac{30}{100}
 =
-0.79.
+0.79=79\%.
 $$
 
 The two overall rates use very different weights. Hospital A’s average is dominated by severe cases, whereas Hospital B’s average is dominated by mild cases. The aggregate comparison therefore mixes together two separate questions: how successfully each hospital treats a given type of patient, and what types of patients each hospital receives.
+
+To see what the weights change, imagine giving both hospitals the same hypothetical mix: half mild cases and half severe cases. Applying these common weights to the exact subgroup rates gives **61.7% for A and 57.2% for B**. A is ahead again. These are standardized comparisons, not observed overall rates or a prediction about moving patients between hospitals. The reversal comes from changing the mix, not from an arithmetic mistake.
 
 ## Why Economists and Data Scientists Should Care
 

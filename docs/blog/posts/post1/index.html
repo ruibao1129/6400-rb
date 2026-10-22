@@ -69,35 +69,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
@@ -240,35 +211,37 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="where-does-the-reversal-come-from">Where Does the Reversal Come From?</h2>
 <p>There is no mathematical contradiction. Hospital A treats mostly severe cases, while Hospital B treats mostly mild cases. Because severe cases are less likely to survive regardless of the hospital, Hospital A’s overall rate is pulled downward.</p>
 <p>An overall survival rate is a weighted average:</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mtext mathvariant="normal">overall</mtext></msub><mo>=</mo><msub><mi>w</mi><mtext mathvariant="normal">mild</mtext></msub><msub><mi>r</mi><mtext mathvariant="normal">mild</mtext></msub><mo>+</mo><msub><mi>w</mi><mtext mathvariant="normal">severe</mtext></msub><msub><mi>r</mi><mtext mathvariant="normal">severe</mtext></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">
 r_{\text{overall}}
 =
 w_{\text{mild}} r_{\text{mild}}
 +
 w_{\text{severe}} r_{\text{severe}}.
-\]</span></p>
-<p>Here, <span class="math inline">\(r\)</span> represents a survival rate and <span class="math inline">\(w\)</span> represents a group’s share of the hospital’s patients. The two weights sum to one.</p>
+</annotation></semantics></math></p>
+<p>Here, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math> represents a survival rate and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>w</mi><annotation encoding="application/x-tex">w</annotation></semantics></math> represents a group’s share of the hospital’s patients. The two weights sum to one.</p>
+<p>For example, Hospital A’s mild-case weight is 100 / 1,000 = 0.10. The weights describe <strong>patient shares</strong>, not survival probabilities. Rates in the equations are proportions: 0.90 means 90%.</p>
 <p>For Hospital A:</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>A</mi></msub><mo>=</mo><mn>0.10</mn><mo>×</mo><mfrac><mn>90</mn><mn>100</mn></mfrac><mo>+</mo><mn>0.90</mn><mo>×</mo><mfrac><mn>300</mn><mn>900</mn></mfrac><mo>=</mo><mn>0.39</mn><mo>=</mo><mn>39</mn><mi>%</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
 r_A
 =
-0.10\left(\frac{90}{100}\right)
+0.10\times\frac{90}{100}
 +
-0.90\left(\frac{300}{900}\right)
+0.90\times\frac{300}{900}
 =
-0.39.
-\]</span></p>
+0.39=39\%.
+</annotation></semantics></math></p>
 <p>For Hospital B:</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>B</mi></msub><mo>=</mo><mn>0.90</mn><mo>×</mo><mfrac><mn>760</mn><mn>900</mn></mfrac><mo>+</mo><mn>0.10</mn><mo>×</mo><mfrac><mn>30</mn><mn>100</mn></mfrac><mo>=</mo><mn>0.79</mn><mo>=</mo><mn>79</mn><mi>%</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
 r_B
 =
-0.90\left(\frac{760}{900}\right)
+0.90\times\frac{760}{900}
 +
-0.10\left(\frac{30}{100}\right)
+0.10\times\frac{30}{100}
 =
-0.79.
-\]</span></p>
+0.79=79\%.
+</annotation></semantics></math></p>
 <p>The two overall rates use very different weights. Hospital A’s average is dominated by severe cases, whereas Hospital B’s average is dominated by mild cases. The aggregate comparison therefore mixes together two separate questions: how successfully each hospital treats a given type of patient, and what types of patients each hospital receives.</p>
+<p>To see what the weights change, imagine giving both hospitals the same hypothetical mix: half mild cases and half severe cases. Applying these common weights to the exact subgroup rates gives <strong>61.7% for A and 57.2% for B</strong>. A is ahead again. These are standardized comparisons, not observed overall rates or a prediction about moving patients between hospitals. The reversal comes from changing the mix, not from an arithmetic mistake.</p>
 </section>
 <section id="why-economists-and-data-scientists-should-care" class="level2">
 <h2 class="anchored" data-anchor-id="why-economists-and-data-scientists-should-care">Why Economists and Data Scientists Should Care</h2>
