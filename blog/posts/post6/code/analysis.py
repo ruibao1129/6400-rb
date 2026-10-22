@@ -369,7 +369,7 @@ def main():
     values={"RAW_CHILDREN":f'{summary["raw_children"]:,}',"RAW_MOTHERS":f'{summary["raw_mothers"]:,}',
         "MAIN_N":f'{len(main_sample):,}',"MAIN_MOTHERS":f'{summary["main_mothers"]:,}',
         "LIFE_N":f'{len(life):,}',"SINGLE":f'{models["single_year"]["beta"]:.3f}',
-        "MULTI":f'{models["multi_year"]["beta"]:.3f}',"EARLY":f'{models["early_child"]["beta"]:.3f}',
+        "MULTI":f'{models["multi_year"]["beta"]:.3f}',"IGE_SHARE":f'{100*models["multi_year"]["beta"]:.1f}',"EARLY":f'{models["early_child"]["beta"]:.3f}',
         "LATE":f'{models["mature_child"]["beta"]:.3f}',"PERCENT":f'{summary["ten_percent_exact"]:.1f}',
         "M_YEARS":f'{summary["mother_years_mean"]:.1f}',"C_YEARS":f'{summary["child_years_mean"]:.1f}',
         "MULTI_LOW":f'{models["multi_year"]["lower"]:.3f}',"MULTI_HIGH":f'{models["multi_year"]["upper"]:.3f}',
