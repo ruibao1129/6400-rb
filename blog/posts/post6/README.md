@@ -6,18 +6,39 @@ and life-cycle bias.
 
 ## Read and render
 
-`index.qmd` is the blog article. `index.html` is a rendered preview. The article
+Start here:
+
+- **Article:** [published Blog Post 6](https://ruibao1129.github.io/6400-rb/blog/posts/post6/).
+- **Article source:** [index.qmd](index.qmd).
+- **Complete analysis:** [code/analysis.py](code/analysis.py).
+- **Independent checks:** [code/verify.py](code/verify.py).
+- **Main results:** [estimates](results/ige_estimates.csv), [paired comparisons](results/contrasts.csv), and [sample selection](results/sample_flow.csv).
+
+`index.qmd` is the blog article. In this website repository the generated page is
+`docs/blog/posts/post6/index.html`, relative to the repository root; there is no
+tracked `index.html` beside this README. A standalone copy rendered outside the
+website instead produces a local `index.html`. The article
 contains instructional code excerpts; `code/analysis.py` is the complete runnable
 pipeline. The excerpts describe stages of that pipeline and are not a replacement
 for all the preparation code.
 
-To reproduce using the inputs included in the local delivery package:
+**A fresh GitHub download does not include the raw NLS microdata.** Obtain and
+stage the three extracts using the instructions below before running the full
+analysis. The saved article, figures, and aggregate results can be inspected
+without those extracts; rendering the saved article does not regenerate estimates.
+
+To reproduce, open the whole repository and first change to this post's folder.
+Run the following in a terminal starting at the repository root. Skip the first
+line if your terminal is already inside `blog/posts/post6/`:
 
 ```bash
+cd blog/posts/post6
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
+# Obtain/stage the NLS extracts as described below before the next line.
 python code/analysis.py
+python code/verify.py
 quarto render index.qmd
 ```
 
@@ -35,7 +56,6 @@ only `index.qmd` will be overwritten on the next analysis run.
 ```text
 post6/
   index.qmd                  Generated article, ready for the website
-  index.html                 Rendered preview
   requirements.txt
   README.md
   code/
@@ -66,11 +86,12 @@ post6/
     private/                 Rebuilt SQLite database and individual-level results
 ```
 
-The local delivery package includes raw inputs for immediate replication. The
-`.gitignore` keeps raw microdata, individual-level derived files, and caches out
-of Git by default. The code, cached CPI, variable map/tagsets, aggregate results,
-and figures are ready to track. A fresh GitHub checkout requires the NLS extracts
-described below. No passwords, tokens, or restricted geographic data are used.
+The `.gitignore` keeps raw microdata, individual-level derived files, and caches
+out of Git. The repository includes code, cached CPI, variable map/tagsets,
+aggregate results, and figures. The local delivery package additionally contains
+raw inputs, but these are not part of a fresh GitHub checkout. Obtain the NLS
+extracts described below for full replication. No passwords, tokens, or restricted
+geographic data are used.
 
 ## Data sources and re-extraction
 

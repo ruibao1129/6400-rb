@@ -223,52 +223,62 @@ window.Quarto = {
 
 <p>Would you judge a whole movie from its opening scene? An income recorded while someone is studying, changing jobs, or raising a child can be an equally misleading preview. <strong>How well do a mother’s earnings predict her child’s—and how much does the answer depend on which paycheck we measure?</strong></p>
 <p>This tutorial uses SQL inside Python to link real families, construct comparable earnings measures, and estimate intergenerational elasticity (IGE). The surprise is that finding the right family is easier than finding the right measure of economic status.</p>
+<p>Your first paycheck is not your lifetime income. Here I compare annual earnings near specified ages, rather than anyone’s literal first payment from a job.</p>
 <section id="give-every-person-the-right-key" class="level2">
 <h2 class="anchored" data-anchor-id="give-every-person-the-right-key">1. Give every person the right key</h2>
 <p>I use the <a href="https://www.nlsinfo.org/investigator/">NLSY79 and its Child/Young Adult survey</a>. The extracts contain 11,551 children and 4,943 corresponding mothers. A child’s <code>C0000100</code> identifies the child; <code>C0000200</code> identifies the mother and matches <code>R0000100</code> in her file, as the <a href="https://nlsinfo.org/content/cohorts/nlsy79-children/other-documentation/codebook-supplement/appendix-h-identification">NLS linkage documentation</a> explains. Siblings share a mother ID, so the relationship is many-to-one.</p>
-<p>The snippets below explain the key steps; they are not a standalone script. Run <code>code/analysis.py</code> for the complete workflow, including income preparation and creation of the <code>matched</code> table used later.</p>
-<p>Load the CSVs into SQLite, Python’s built-in SQL database:</p>
+<p>Work from <code>blog/posts/post6/</code>. The snippets explain key steps, not a standalone script. After obtaining the extracts, run <code>python code/analysis.py</code> for the complete workflow and saved SQLite database; the <a href="https://github.com/ruibao1129/6400-rb/blob/main/blog/posts/post6/README.md">README</a> explains installation and data access.</p>
+<p>First, read the two CSV files:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> sqlite3.<span class="ex">connect</span>(<span class="st">":memory:"</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>children <span class="op">=</span> pd.read_csv(<span class="st">"data/raw/children.csv"</span>).rename(columns<span class="op">=</span>{</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"C0000100"</span>: <span class="st">"child_id"</span>, <span class="st">"C0000200"</span>: <span class="st">"mother_id"</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"C0005700"</span>: <span class="st">"birth_year"</span>, <span class="st">"C0005400"</span>: <span class="st">"sex"</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>mothers <span class="op">=</span> pd.read_csv(<span class="st">"data/raw/mothers.csv"</span>).rename(columns<span class="op">=</span>{</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"R0000100"</span>: <span class="st">"mother_id"</span>, <span class="st">"R0000500"</span>: <span class="st">"birth_year"</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>mothers[<span class="st">"birth_year"</span>] <span class="op">+=</span> <span class="dv">1900</span>  <span class="co"># Original years are 57–64.</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> children.child_id.is_unique</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> mothers.mother_id.is_unique</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>children.to_sql(<span class="st">"children"</span>, con, index<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>mothers.to_sql(<span class="st">"mothers"</span>, con, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>children <span class="op">=</span> pd.read_csv(<span class="st">"data/raw/children.csv"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>mothers <span class="op">=</span> pd.read_csv(<span class="st">"data/raw/mothers.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Next, give the identifiers readable names, check unique keys, and load the tables into SQLite, Python’s built-in SQL database. Expand the preparation below to run this demonstration through the join in Step 2.</p>
+<details>
+<summary>
+Show data preparation: rename, check, and load into SQLite
+</summary>
+<p>Run this once after reading the CSVs:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>children <span class="op">=</span> children.rename(columns<span class="op">=</span>{</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"C0000100"</span>: <span class="st">"child_id"</span>, <span class="st">"C0000200"</span>: <span class="st">"mother_id"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"C0005700"</span>: <span class="st">"birth_year"</span>, <span class="st">"C0005400"</span>: <span class="st">"sex"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>mothers <span class="op">=</span> mothers.rename(columns<span class="op">=</span>{</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"R0000100"</span>: <span class="st">"mother_id"</span>, <span class="st">"R0000500"</span>: <span class="st">"birth_year"</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>mothers[<span class="st">"birth_year"</span>] <span class="op">+=</span> <span class="dv">1900</span>  <span class="co"># Original years are 57–64.</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> children.child_id.is_unique</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> mothers.mother_id.is_unique</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> sqlite3.<span class="ex">connect</span>(<span class="st">":memory:"</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>children.to_sql(<span class="st">"children"</span>, con, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>mothers.to_sql(<span class="st">"mothers"</span>, con, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </section>
 <section id="match-families-then-check-the-join" class="level2">
 <h2 class="anchored" data-anchor-id="match-families-then-check-the-join">2. Match families, then check the join</h2>
 <p><code>SELECT</code> chooses columns. <code>JOIN</code> connects rows whose mother IDs agree:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>con.executescript(<span class="st">"""</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">CREATE TABLE matches AS</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT c.child_id, c.mother_id, c.birth_year,</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="st">       c.sex, m.birth_year AS mother_birth_year</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">FROM children AS c</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="st">JOIN mothers AS m ON c.mother_id = m.mother_id;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> con.execute(<span class="st">"SELECT COUNT(*) FROM matches"</span>).fetchone()[<span class="dv">0</span>] <span class="op">==</span> <span class="bu">len</span>(children)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>con.executescript(<span class="st">"""</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="st">CREATE TABLE matches AS</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT c.child_id, c.mother_id, c.birth_year,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="st">       c.sex, m.birth_year AS mother_birth_year</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="st">FROM children AS c</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">JOIN mothers AS m ON c.mother_id = m.mother_id;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> con.execute(<span class="st">"SELECT COUNT(*) FROM matches"</span>).fetchone()[<span class="dv">0</span>] <span class="op">==</span> <span class="bu">len</span>(children)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>All children match. Checking unique keys first matters: duplicate mother rows could quietly multiply observations. We also aggregate each person’s income history <strong>before</strong> joining generations, preventing one mother-year from pairing with every child-year.</p>
 </section>
 <section id="turn-paychecks-into-comparable-income" class="level2">
 <h2 class="anchored" data-anchor-id="turn-paychecks-into-comparable-income">3. Turn paychecks into comparable income</h2>
-<p>Here, “income” means annual wage and salary earnings, not household income. The full script reshapes the histories, treats negative survey codes as missing, retains valid zeros, and converts earnings to 2019 dollars using <a href="https://fred.stlouisfed.org/series/CPIAUCNS">BLS CPI-U through FRED</a>. Income-band answers are excluded because their category numbers are not dollars. Later questions use actual interview years; income-year age is measured at year-end.</p>
+<p>Here, “income” means annual wage and salary earnings, not household income. The full script reshapes the histories, treats negative survey codes as missing, retains valid zeros, and converts earnings to 2019 dollars using <a href="https://fred.stlouisfed.org/series/CPIAUCNS">BLS CPI-U through FRED</a>. Income-band answers are excluded because their category numbers are not dollars. For the 2014–2020 child waves, the reference year is actual interview year minus one; earlier waves follow their codebooks. Age is measured at income-year end.</p>
 <p>Both generations’ averages use available observations within ages 30–39, requiring at least three income years. <code>GROUP BY</code> collects each child’s rows; <code>AVG</code> and <code>COUNT</code> perform aggregation:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> child_id, <span class="fu">AVG</span>(real_income) <span class="kw">AS</span> child_avg,</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span> income_year) <span class="kw">AS</span> child_years</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> child_income</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> age <span class="kw">BETWEEN</span> <span class="dv">30</span> <span class="kw">AND</span> <span class="dv">39</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> child_id</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">HAVING</span> <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span> income_year) <span class="op">&gt;=</span> <span class="dv">3</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Apply the same operation to mothers. For the single-year comparison, select each person’s available year nearest age 35, breaking ties toward the earlier year. Requiring positive selected incomes and positive averages leaves <strong>286 children from 245 mothers</strong>, identical across both models. Zeros enter averages but cannot be logged as single-year earnings.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> child_id, <span class="fu">AVG</span>(real_income) <span class="kw">AS</span> child_avg,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span> income_year) <span class="kw">AS</span> child_years</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> child_income</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> age <span class="kw">BETWEEN</span> <span class="dv">30</span> <span class="kw">AND</span> <span class="dv">39</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> child_id</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">HAVING</span> <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span> income_year) <span class="op">&gt;=</span> <span class="dv">3</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Apply the same operation to mothers, then join the two person-level summaries through <code>matches</code>. The full script also selects each person’s available year nearest age 35 within ages 30–39, breaking ties toward the earlier year, and creates <code>matched</code> after requiring positive selected incomes and averages. This leaves <strong>286 children from 245 mothers</strong>, identical across both models. Zeros enter averages but cannot be logged as single-year earnings; these selection requirements explain why far fewer children enter the regressions than the initial match.</p>
 <div id="fig-family" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Logarithmic scatterplot of mothers' and children's average annual earnings, with grouped geometric means and a fitted line.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-family-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -286,12 +296,13 @@ Figure&nbsp;1: Each dot represents one adult child; orange points summarize grou
 <p><span class="math display">\[
 \log(Y_{child})=\alpha+\beta\log(Y_{mother})+\varepsilon.
 \]</span></p>
-<p>The slope <span class="math inline">\(\beta\)</span> is the IGE: roughly, the percentage difference in children’s earnings associated with 1% higher maternal earnings. After SQL produces one row per child, Python fits the regression:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>matched <span class="op">=</span> pd.read_sql_query(<span class="st">"SELECT * FROM matched"</span>, con)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.column_stack([np.ones(<span class="bu">len</span>(matched)), np.log(matched.mother_avg)])</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>alpha, beta <span class="op">=</span> np.linalg.lstsq(X, np.log(matched.child_avg), rcond<span class="op">=</span><span class="va">None</span>)[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The slope <span class="math inline">\(\beta\)</span> is the IGE: roughly, the percentage difference in children’s earnings associated with 1% higher maternal earnings. Open the database generated by the complete script—not the temporary in-memory demonstration above—to fit the regression:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> sqlite3.<span class="ex">connect</span>(<span class="st">"results/private/analysis.sqlite"</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>matched <span class="op">=</span> pd.read_sql_query(<span class="st">"SELECT * FROM matched"</span>, con)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.column_stack([np.ones(<span class="bu">len</span>(matched)), np.log(matched.mother_avg)])</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>alpha, beta <span class="op">=</span> np.linalg.lstsq(X, np.log(matched.child_avg), rcond<span class="op">=</span><span class="va">None</span>)[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The single-year estimate is <strong>0.095</strong>, versus <strong>0.162</strong> using averages. The latter associates 10% higher maternal earnings with about <strong>1.6% higher child earnings</strong>. Averages contain 6.8 maternal and 3.1 child income years on average.</p>
 <div id="fig-comparison" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Two IGE estimates compare one income year per generation with multiyear income averages, including 95 percent confidence intervals.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -303,12 +314,12 @@ Figure&nbsp;2: Both estimates use the same children. Single years are selected n
 </figcaption>
 </figure>
 </div>
-<p>The difference is 0.067, with a mother-clustered 95% interval of [-0.022, 0.156]. This sample does not establish a precise improvement. Averaging can reduce temporary fluctuations; it does not guarantee a larger estimate.</p>
+<p>The difference is 0.067, with a mother-clustered 95% interval of [-0.022, 0.156]. The interval includes zero: the data do not establish that the two slopes differ. Nor do we observe lifetime income to determine which estimate is closer to the truth. Averaging can reduce temporary noise; it does not guarantee a larger or unbiased estimate.</p>
 </section>
 <section id="change-the-camera-angle-life-cycle-bias" class="level2">
 <h2 class="anchored" data-anchor-id="change-the-camera-angle-life-cycle-bias">5. Change the camera angle: life-cycle bias</h2>
 <p>For 221 of these children, positive income is also observed near age 22 within ages 20–24. Holding their sample and mothers’ average income fixed gives an early-career slope of 0.161 and a thirties slope of 0.163. These uncertain estimates cannot reveal the true lifetime IGE.</p>
-<p>The mechanism is clearer in a numerical example. Suppose the true lifetime IGE is 0.40, but early earnings reveal only half of the differences in lifetime log earnings. The early slope is then <span class="math inline">\(0.5\times0.40=0.20\)</span>. Midcareer earnings that fully reveal those differences produce 0.40. This is <strong>life-cycle bias</strong>, not just random paycheck noise: future high earners may still be training when measured young.</p>
+<p>The mechanism is clearer in a hypothetical example. Assume true lifetime IGE is 0.40, maternal lifetime earnings are measured without error, and early child log earnings load only halfway on lifetime log earnings, with remaining noise unrelated to maternal income. The early slope is <span class="math inline">\(0.5\times0.40=0.20\)</span>; full loading at midcareer gives 0.40. This illustrates <strong>life-cycle bias</strong> under explicit assumptions, not a bias established by the NLS estimates: future high earners may still be training when measured young.</p>
 <div id="fig-lifecycle" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Two panels distinguish uncertain observed age-specific slopes from a hypothetical example showing early-career slopes of 0.20 and a midcareer slope of 0.40.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lifecycle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -325,7 +336,7 @@ Figure&nbsp;3: Left: a same-child age comparison from the NLS data, holding mate
 <section id="code-and-reproducibility" class="level2">
 <h2 class="anchored" data-anchor-id="code-and-reproducibility">Code and reproducibility</h2>
 <p>The <a href="https://github.com/ruibao1129/6400-rb/tree/main/blog/posts/post6">GitHub project folder</a> contains the tutorial source, Python/SQL code, figures, result tables, and README with data-extraction and replication instructions. Run <code>python code/analysis.py</code> to regenerate the analysis and article, then <code>quarto render index.qmd</code> to build the webpage. Detailed variable definitions follow the <a href="https://www.nlsinfo.org/content/cohorts/nlsy79-children/topical-guide/income/introduction">NLS income guide</a> and downloaded codebooks.</p>
-<p><strong>Takeaway:</strong> SQL can find someone’s mother exactly; a paycheck describes economic status much less exactly. Match the family, align the life stage, and average enough income years before interpreting the slope as a story about opportunity.</p>
+<p><strong>Takeaway:</strong> Figure 1 shows the matched-family association; Figure 2 shows how the estimate changes with income measurement, without establishing a difference; Figure 3 separates an inconclusive age comparison from a transparent bias illustration. Match the family, align the life stage, and average income—but do not confuse a better measurement strategy with proof of lifetime mobility.</p>
 
 
 </section>
