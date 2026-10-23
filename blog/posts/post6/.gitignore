@@ -1,6 +1,6 @@
-data/raw/*
-!data/raw/.gitkeep
-results/private/
+private/
+*.zip
+*.dta
 __pycache__/
 .venv/
 .quarto/

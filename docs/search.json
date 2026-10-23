@@ -46,7 +46,7 @@
     "href": "blog/index.html",
     "title": "Blog",
     "section": "",
-    "text": "Is Your First Paycheck Your Economic Destiny?\n\n\nMatching mothers and children with SQL—and learning when income tells the wrong story.\n\n\n\n\n\n\n\n\nOct 20, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nDoes Cheaper Rent Mean More Affordable Housing?\n\n\nTwo maps of Philadelphia tell different stories.\n\n\n\n\n\n\n\n\nOct 17, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nEating Out vs. Eating In: Which Prices Rose Faster?\n\n\n\n\n\nEating out had the larger price increase over 2015–2024, but groceries experienced the sharper inflation peak.\n\n\n\n\n\nOct 4, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nThe College Wage Premium: Large, but Not Steadily Growing\n\n\n\n\n\n\n\n\n\n\n\nSep 25, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nSame Goals, Different Results: What Scoring Misses in the NHL\n\n\n\n\n\n\n\n\n\n\n\nSep 21, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nWhen Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\nAug 31, 2026\n\n\nRui Bao\n\n\n\n\n\n\nNo matching items"
+    "text": "Can One Paycheck Tell Your Family’s Economic Story?\n\n\nA SQL tutorial on matching generations—and why the age of the paycheck matters.\n\n\n\n\n\n\n\n\nOct 20, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nDoes Cheaper Rent Mean More Affordable Housing?\n\n\nTwo maps of Philadelphia tell different stories.\n\n\n\n\n\n\n\n\nOct 17, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nEating Out vs. Eating In: Which Prices Rose Faster?\n\n\n\n\n\nEating out had the larger price increase over 2015–2024, but groceries experienced the sharper inflation peak.\n\n\n\n\n\nOct 4, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nThe College Wage Premium: Large, but Not Steadily Growing\n\n\n\n\n\n\n\n\n\n\n\nSep 25, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nSame Goals, Different Results: What Scoring Misses in the NHL\n\n\n\n\n\n\n\n\n\n\n\nSep 21, 2026\n\n\nRui Bao\n\n\n\n\n\n\n\n\n\n\n\n\nWhen Every Group Wins but the Average Loses: Simpson’s Paradox\n\n\n\n\n\n\n\n\n\n\n\nAug 31, 2026\n\n\nRui Bao\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "blog/posts/post1/index.html",
@@ -268,9 +268,9 @@
   {
     "objectID": "blog/posts/post6/index.html",
     "href": "blog/posts/post6/index.html",
-    "title": "Is Your First Paycheck Your Economic Destiny?",
+    "title": "Can One Paycheck Tell Your Family’s Economic Story?",
     "section": "",
-    "text": "Would you judge a whole movie from its opening scene? An income recorded while someone is studying, changing jobs, or raising a child can be an equally misleading preview. How well do a mother’s earnings predict her child’s—and how much does the answer depend on which paycheck we measure?\nSQL can identify a mother precisely; measuring her economic status is harder. This tutorial matches families and estimates intergenerational elasticity (IGE) using annual earnings near specified ages—not literal first paychecks."
+    "text": "Would you judge a movie from its opening scene? Earnings in your early twenties can be an equally incomplete preview: school, short hours, and job changes may obscure your eventual position. How strongly do mothers’ earnings predict their children’s, and does the answer change when we measure income later or over more years?\nI use the University of Michigan’s PSID-SHELF, covering 42 survey waves from 1968 through 2021. This is a tutorial in measurement, not a claim that parents determine their children’s destinies."
   },
   {
     "objectID": "blog/posts/post6/index.html#give-every-person-the-right-key",
@@ -313,5 +313,47 @@
     "title": "Is Your First Paycheck Your Economic Destiny?",
     "section": "Code and reproducibility",
     "text": "Code and reproducibility\nThe repository contains code, figures, results, and extraction instructions. Run python code/analysis.py, python code/verify.py, then quarto render index.qmd. Definitions follow the NLS income guide and codebooks.\nTakeaway: The figures move from matched families to measurement sensitivity to life-cycle bias. Match correctly, compare like life stages, and average available income years—but distinguish an improved measurement strategy from evidence about lifetime mobility."
+  },
+  {
+    "objectID": "blog/posts/post6/index.html#find-the-familynot-just-a-similar-surname",
+    "href": "blog/posts/post6/index.html#find-the-familynot-just-a-similar-surname",
+    "title": "Can One Paycheck Tell Your Family’s Economic Story?",
+    "section": "1. Find the family—not just a similar surname",
+    "text": "1. Find the family—not just a similar surname\nThe extract contains 84,121 people, including years without observations. ID identifies a person; REL_PAR_BM_ID identifies their biological mother. Siblings share a mother, making this a many-to-one match. After the extraction step in the replication guide, open the private database:\nimport sqlite3\nimport pandas as pd\nimport numpy as np\ncon = sqlite3.connect(\"private/selected_columns.sqlite\")\nSQL’s GROUP BY reduces repeated person-year records to one mother link per child. HAVING excludes inconsistent links:\ncon.executescript(\"\"\"\nCREATE TEMP TABLE links AS\nSELECT ID, MIN(REL_PAR_BM_ID) AS mother_id\nFROM person_year\nGROUP BY ID\nHAVING COUNT(DISTINCT REL_PAR_BM_ID) = 1\n   AND MIN(REL_PAR_BM_ID) &gt; 0;\n\"\"\")\nSELECT chooses columns; MIN retrieves the sole consistent mother ID. An identified mother is not necessarily observed: we still need her earnings records. Run the Python blocks in order from the post folder, in one fresh session, after extracting the data."
+  },
+  {
+    "objectID": "blog/posts/post6/index.html#put-both-generations-on-comparable-clocks",
+    "href": "blog/posts/post6/index.html#put-both-generations-on-comparable-clocks",
+    "title": "Can One Paycheck Tell Your Family’s Economic Story?",
+    "section": "2. Put both generations on comparable clocks",
+    "text": "2. Put both generations on comparable clocks\nIncome refers to the previous tax year, so measurement age equals survey year minus one minus birth year. I use individual labor earnings in 2024 dollars, not household income. These measures are available for reference persons and spouses; other adult household members are not automatically covered.\nI exclude missing, negative, and standardized topcoded amounts, but retain valid zeros in averages. Both generations need at least three observed income years at ages 30–39. AVG constructs the measure; HAVING enforces coverage:\ncon.executescript(\"\"\"\nCREATE TEMP TABLE valid AS\nSELECT ID, YEAR, YEAR-1-DEMO_BIRTH_YEAR AS age, EARN_TOT_RD AS income\nFROM person_year\nWHERE REFCOUPLE=1 AND EARN_TOT_ND&gt;=0\n  AND EARN_TOT_ND&lt;9999999 AND EARN_TOT_RD&gt;=0;\nCREATE TEMP TABLE averages AS\nSELECT ID, AVG(income) AS average_income, COUNT(*) AS n_years\nFROM valid\nWHERE age BETWEEN 30 AND 39\nGROUP BY ID\nHAVING COUNT(*) &gt;= 3;\nCREATE TEMP TABLE singles AS\nSELECT ID, income, ROW_NUMBER() OVER\n  (PARTITION BY ID ORDER BY ABS(age-35), YEAR) AS rn\nFROM valid WHERE age BETWEEN 30 AND 39;\n\"\"\")\nFor single-year income I select the observation nearest age 35, breaking ties toward the earlier year, before requiring positive earnings. I do not search for a more convenient positive paycheck.\nJOIN connects matching IDs. Joining each income table twice retrieves child and mother measures. Requiring positive single-year and average incomes fixes one common comparison sample:\n\n\nShow the complete comparison-sample join\n\nmatched = pd.read_sql_query(\"\"\"\nSELECT l.ID, l.mother_id, c.average_income AS child_average,\n       m.average_income AS mother_average, cs.income AS child_single,\n       ms.income AS mother_single\nFROM links l\nJOIN averages c ON l.ID=c.ID\nJOIN averages m ON l.mother_id=m.ID\nJOIN singles cs ON l.ID=cs.ID AND cs.rn=1\nJOIN singles ms ON l.mother_id=ms.ID AND ms.rn=1\nWHERE c.average_income&gt;0 AND m.average_income&gt;0\n  AND cs.income&gt;0 AND ms.income&gt;0\nORDER BY l.ID\n\"\"\", con)\nassert matched.ID.is_unique and len(matched) == 3094"
+  },
+  {
+    "objectID": "blog/posts/post6/index.html#estimate-persistence-then-lengthen-the-snapshot",
+    "href": "blog/posts/post6/index.html#estimate-persistence-then-lengthen-the-snapshot",
+    "title": "Can One Paycheck Tell Your Family’s Economic Story?",
+    "section": "3. Estimate persistence, then lengthen the snapshot",
+    "text": "3. Estimate persistence, then lengthen the snapshot\nThe intergenerational elasticity is the slope in\nlog(Ychild)=α+βlog(Ymother)+ε.\\log(Y_{child})=\\alpha+\\beta\\log(Y_{mother})+\\varepsilon.\nA slope of 0.09 associates 10% higher maternal earnings with approximately 0.9% higher child earnings—not a 9% inherited share or a causal effect. The calculation is:\ndef slope(parent, child):\n    X = np.column_stack([np.ones(len(parent)), np.log(parent)])\n    return np.linalg.lstsq(X, np.log(child), rcond=None)[0][1]\n\nsingle = slope(matched.mother_single, matched.child_single)\naverage = slope(matched.mother_average, matched.child_average)\nprint(f\"Single: {single:.3f}; average: {average:.3f}\")\nThe full script also clusters uncertainty by mother because siblings are not independent.\n\n\n\nSingle-year versus multiyear earnings, using the same sample.\n\n\nAmong the same 3,094 children and 1,753 mothers, the estimate rises from 0.068 for single-year earnings to 0.090 for multiyear averages. Mothers contribute 8.35 years on average; children contribute 5.39. Averaging can dampen temporary fluctuations, although it does not guarantee a lifetime-income measure."
+  },
+  {
+    "objectID": "blog/posts/post6/index.html#replay-the-same-children-at-different-ages",
+    "href": "blog/posts/post6/index.html#replay-the-same-children-at-different-ages",
+    "title": "Can One Paycheck Tell Your Family’s Economic Story?",
+    "section": "4. Replay the same children at different ages",
+    "text": "4. Replay the same children at different ages\nNext I hold maternal average earnings fixed and compare child earnings nearest ages 22, 35, and 45, within windows 20–24, 30–39, and 40–49. All three estimates use exactly the same 1,608 children and 1,116 mothers. This is a separate sample from Figure 1, not a directly comparable fourth bar.\n\n\n\nMaternal-income associations at three child ages.\n\n\nThe point estimate increases from 0.014 near 22 to 0.042 near 35 and 0.051 near 45. Figure 1 changes the length of the snapshot; Figure 2 changes its timing. Figure 3 asks whether either apparent change is precisely estimated.\n\n\n\nPaired differences and their uncertainty.\n\n\nHowever, every paired 95% confidence interval includes zero. The age-45-minus-age-22 difference is 0.036, with an interval of −0.001 to 0.074. These results suggest a pattern; they do not establish bias relative to an unobserved true lifetime elasticity.\nThe mechanism is distinct from temporary noise: if early log earnings respond only half as strongly to lifetime status as mature earnings do, and the remaining error is unrelated to maternal status, a lifetime slope of 0.4 would appear as 0.2 early on. This is an illustrative assumption, not a PSID estimate. Averaging reduces transitory noise; averaging only early ages need not remove lifecycle bias."
+  },
+  {
+    "objectID": "blog/posts/post6/index.html#the-takeaway-match-people-precisely-measure-status-patiently",
+    "href": "blog/posts/post6/index.html#the-takeaway-match-people-precisely-measure-status-patiently",
+    "title": "Can One Paycheck Tell Your Family’s Economic Story?",
+    "section": "5. The takeaway: match people precisely, measure status patiently",
+    "text": "5. The takeaway: match people precisely, measure status patiently\nCan one paycheck tell the family’s economic story? Not reliably on its own. Figure 1 shows higher persistence with averaging; Figure 2 shows higher point estimates at later ages; Figure 3 shows why neither pattern warrants a definitive claim. A precise family join cannot rescue an incomplete measure of economic status.\nThese are unweighted, selected-sample associations. Long follow-up requirements, attrition, positive-income restrictions, and reference-couple coverage limit generalization. The earnings construction also excludes farming income after 1993, creating a comparability limitation. Neither averaging nor a larger sample eliminates these issues. The safest conclusion is that when we measure income deserves as much attention as whose income we match."
+  },
+  {
+    "objectID": "blog/posts/post6/index.html#code-and-data-access",
+    "href": "blog/posts/post6/index.html#code-and-data-access",
+    "title": "Can One Paycheck Tell Your Family’s Economic Story?",
+    "section": "Code and data access",
+    "text": "Code and data access\nThe replication guide and complete analysis include the age comparison, clustered uncertainty, and fixed specification. Raw PSID microdata remain private and must be obtained from the provider; they are not redistributed here."
   }
 ]

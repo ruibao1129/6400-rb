@@ -1,154 +1,145 @@
 ---
-title: "Is Your First Paycheck Your Economic Destiny?"
-subtitle: "Matching mothers and children with SQL—and learning when income tells the wrong story."
+title: "Can One Paycheck Tell Your Family’s Economic Story?"
+subtitle: "A SQL tutorial on matching generations—and why the age of the paycheck matters."
 author: "Rui Bao"
 date: "2026-10-20"
 categories: [economics, Python, SQL]
-image: figures/02_single_vs_average.png
+image: figures/01_single_vs_average.png
 format:
   html:
     toc: false
-    code-fold: false
-    code-overflow: wrap
+    code-fold: true
+    html-math-method: mathml
 execute:
   enabled: false
 ---
 
-Would you judge a whole movie from its opening scene? An income recorded while someone is studying, changing jobs, or raising a child can be an equally misleading preview. **How well do a mother’s earnings predict her child’s—and how much does the answer depend on which paycheck we measure?**
+Would you judge a movie from its opening scene? Earnings in your early twenties can be an equally incomplete preview: school, short hours, and job changes may obscure your eventual position. **How strongly do mothers’ earnings predict their children’s, and does the answer change when we measure income later or over more years?**
 
-SQL can identify a mother precisely; measuring her economic status is harder. This tutorial matches families and estimates intergenerational elasticity (IGE) using annual earnings near specified ages—not literal first paychecks.
+I use the University of Michigan’s [PSID-SHELF](https://www.icpsr.umich.edu/sites/psid/view/studies/194322), covering 42 survey waves from 1968 through 2021. This is a tutorial in measurement, not a claim that parents determine their children’s destinies.
 
-## 1. Give every person the right key
+## 1. Find the family—not just a similar surname
 
-I use the [NLSY79 and its Child/Young Adult survey](https://www.nlsinfo.org/investigator/). The extracts contain 11,551 children and 4,943 corresponding mothers. A child’s `C0000100` identifies the child; `C0000200` identifies the mother and matches `R0000100` in her file, as the [NLS linkage documentation](https://nlsinfo.org/content/cohorts/nlsy79-children/other-documentation/codebook-supplement/appendix-h-identification) explains. Siblings share a mother ID, so the relationship is many-to-one.
-
-Work from `blog/posts/post6/`. The snippets explain key steps, not a standalone script. After obtaining the extracts, run `python code/analysis.py` for the complete workflow and saved SQLite database; the [README](https://github.com/ruibao1129/6400-rb/blob/main/blog/posts/post6/README.md) explains installation and data access.
-
-First, read the two CSV files:
+The extract contains 84,121 people, including years without observations. `ID` identifies a person; `REL_PAR_BM_ID` identifies their biological mother. Siblings share a mother, making this a many-to-one match. After the extraction step in the [replication guide](https://github.com/ruibao1129/6400-rb/blob/main/blog/posts/post6/README.md), open the private database:
 
 ```python
 import sqlite3
 import pandas as pd
-children = pd.read_csv("data/raw/children.csv")
-mothers = pd.read_csv("data/raw/mothers.csv")
+import numpy as np
+con = sqlite3.connect("private/selected_columns.sqlite")
 ```
 
-Expand the preparation to rename variables, check unique keys, and load SQLite tables before Step 2.
-
-<details>
-<summary>Show data preparation: rename, check, and load into SQLite</summary>
-
-Run this once after reading the CSVs:
+SQL’s `GROUP BY` reduces repeated person-year records to one mother link per child. `HAVING` excludes inconsistent links:
 
 ```python
-children = children.rename(columns={
-    "C0000100": "child_id", "C0000200": "mother_id",
-    "C0005700": "birth_year", "C0005400": "sex"
-})
-mothers = mothers.rename(columns={
-    "R0000100": "mother_id", "R0000500": "birth_year"
-})
-mothers["birth_year"] += 1900  # Original years are 57–64.
-assert children.child_id.is_unique
-assert mothers.mother_id.is_unique
+con.executescript("""
+CREATE TEMP TABLE links AS
+SELECT ID, MIN(REL_PAR_BM_ID) AS mother_id
+FROM person_year
+GROUP BY ID
+HAVING COUNT(DISTINCT REL_PAR_BM_ID) = 1
+   AND MIN(REL_PAR_BM_ID) > 0;
+""")
+```
 
-con = sqlite3.connect(":memory:")
-children.to_sql("children", con, index=False)
-mothers.to_sql("mothers", con, index=False)
+`SELECT` chooses columns; `MIN` retrieves the sole consistent mother ID. An identified mother is not necessarily observed: we still need her earnings records. Run the Python blocks in order from the post folder, in one fresh session, after extracting the data.
+
+## 2. Put both generations on comparable clocks
+
+Income refers to the previous tax year, so measurement age equals survey year minus one minus birth year. I use individual labor earnings in 2024 dollars, not household income. These measures are available for reference persons and spouses; other adult household members are not automatically covered.
+
+I exclude missing, negative, and standardized topcoded amounts, but retain valid zeros in averages. Both generations need at least three observed income years at ages 30–39. `AVG` constructs the measure; `HAVING` enforces coverage:
+
+```python
+con.executescript("""
+CREATE TEMP TABLE valid AS
+SELECT ID, YEAR, YEAR-1-DEMO_BIRTH_YEAR AS age, EARN_TOT_RD AS income
+FROM person_year
+WHERE REFCOUPLE=1 AND EARN_TOT_ND>=0
+  AND EARN_TOT_ND<9999999 AND EARN_TOT_RD>=0;
+CREATE TEMP TABLE averages AS
+SELECT ID, AVG(income) AS average_income, COUNT(*) AS n_years
+FROM valid
+WHERE age BETWEEN 30 AND 39
+GROUP BY ID
+HAVING COUNT(*) >= 3;
+CREATE TEMP TABLE singles AS
+SELECT ID, income, ROW_NUMBER() OVER
+  (PARTITION BY ID ORDER BY ABS(age-35), YEAR) AS rn
+FROM valid WHERE age BETWEEN 30 AND 39;
+""")
+```
+
+For single-year income I select the observation nearest age 35, breaking ties toward the earlier year, **before** requiring positive earnings. I do not search for a more convenient positive paycheck.
+
+`JOIN` connects matching IDs. Joining each income table twice retrieves child and mother measures. Requiring positive single-year and average incomes fixes one common comparison sample:
+
+<details>
+<summary>Show the complete comparison-sample join</summary>
+
+```python
+matched = pd.read_sql_query("""
+SELECT l.ID, l.mother_id, c.average_income AS child_average,
+       m.average_income AS mother_average, cs.income AS child_single,
+       ms.income AS mother_single
+FROM links l
+JOIN averages c ON l.ID=c.ID
+JOIN averages m ON l.mother_id=m.ID
+JOIN singles cs ON l.ID=cs.ID AND cs.rn=1
+JOIN singles ms ON l.mother_id=ms.ID AND ms.rn=1
+WHERE c.average_income>0 AND m.average_income>0
+  AND cs.income>0 AND ms.income>0
+ORDER BY l.ID
+""", con)
+assert matched.ID.is_unique and len(matched) == 3094
 ```
 
 </details>
 
-## 2. Match families, then check the join
+## 3. Estimate persistence, then lengthen the snapshot
 
-`SELECT` chooses columns. `JOIN` connects rows whose mother IDs agree:
+The intergenerational elasticity is the slope in
 
-```python
-con.executescript("""
-CREATE TABLE matches AS
-SELECT c.child_id, c.mother_id, c.birth_year,
-       c.sex, m.birth_year AS mother_birth_year
-FROM children AS c
-JOIN mothers AS m ON c.mother_id = m.mother_id;
-""")
-assert con.execute("SELECT COUNT(*) FROM matches").fetchone()[0] == len(children)
-```
+$$\log(Y_{child})=\alpha+\beta\log(Y_{mother})+\varepsilon.$$
 
-All children match. Duplicate mother rows would multiply observations. Later, aggregate each person's income history **before** joining generations, avoiding every mother-year pairing with every child-year.
-
-## 3. Turn paychecks into comparable income
-
-Income means annual wage and salary earnings, not household income. The full script reshapes histories, treats negative codes as missing, retains valid zeros, excludes income-band codes, and converts earnings to 2019 dollars using [BLS CPI-U through FRED](https://fred.stlouisfed.org/series/CPIAUCNS). For 2014–2020 child waves, income year is actual interview year minus one; earlier waves follow codebooks. Age is income year minus birth year.
-
-After running the full script, switch from the demonstration connection to its saved database. Both generations' averages use ages 30–39 and at least three income years. `GROUP BY` collects each child's rows; `AVG` averages income, and `HAVING` filters groups by `COUNT`:
+A slope of 0.09 associates 10% higher maternal earnings with approximately 0.9% higher child earnings—not a 9% inherited share or a causal effect. The calculation is:
 
 ```python
-con = sqlite3.connect("results/private/analysis.sqlite")
-child_avgs = pd.read_sql_query("""
-SELECT child_id, AVG(real_income) AS child_avg,
-       COUNT(DISTINCT income_year) AS child_years
-FROM child_income
-WHERE age BETWEEN 30 AND 39
-GROUP BY child_id
-HAVING COUNT(DISTINCT income_year) >= 3;
-""", con)
+def slope(parent, child):
+    X = np.column_stack([np.ones(len(parent)), np.log(parent)])
+    return np.linalg.lstsq(X, np.log(child), rcond=None)[0][1]
+
+single = slope(matched.mother_single, matched.child_single)
+average = slope(matched.mother_average, matched.child_average)
+print(f"Single: {single:.3f}; average: {average:.3f}")
 ```
 
-The full script similarly aggregates mothers, joins summaries through `matches`, and selects each person's year nearest age 35 within ages 30–39 (earlier year breaks ties). It creates `matched` after requiring positive averages and selected single-year incomes: **286 children from 245 mothers**, identical across models. Coverage and positivity restrictions explain the reduced sample. Zeros enter averages but cannot be logged individually.
+The full script also clusters uncertainty by mother because siblings are not independent.
 
-![Each dot represents one adult child; orange points summarize groups. Both generations’ earnings are averaged within their thirties. The fitted line describes association in this selected sample.](figures/01_matched_earnings.png){#fig-family fig-alt="Logarithmic scatterplot of mothers' and children's average annual earnings, with grouped geometric means and a fitted line."}
+![Single-year versus multiyear earnings, using the same sample.](figures/01_single_vs_average.png)
 
-## 4. Estimate the elasticity, not economic destiny
+Among the same 3,094 children and 1,753 mothers, the estimate rises from **0.068** for single-year earnings to **0.090** for multiyear averages. Mothers contribute 8.35 years on average; children contribute 5.39. Averaging can dampen temporary fluctuations, although it does not guarantee a lifetime-income measure.
 
-Estimate
+## 4. Replay the same children at different ages
 
-$$
-\log(Y_{child})=\alpha+\beta\log(Y_{mother})+\varepsilon.
-$$
+Next I hold maternal average earnings fixed and compare child earnings nearest ages 22, 35, and 45, within windows 20–24, 30–39, and 40–49. All three estimates use exactly the same 1,608 children and 1,116 mothers. This is a **separate sample** from Figure 1, not a directly comparable fourth bar.
 
-The IGE, $\beta$, is approximately the percentage difference in child earnings associated with 1% higher maternal earnings. Using Step 3's database connection:
+![Maternal-income associations at three child ages.](figures/02_age_comparison.png)
 
-```python
-import numpy as np
+The point estimate increases from **0.014** near 22 to **0.042** near 35 and **0.051** near 45. Figure 1 changes the length of the snapshot; Figure 2 changes its timing. Figure 3 asks whether either apparent change is precisely estimated.
 
-matched = pd.read_sql_query("SELECT * FROM matched", con)
-X = np.column_stack([np.ones(len(matched)), np.log(matched.mother_avg)])
-alpha, beta = np.linalg.lstsq(X, np.log(matched.child_avg), rcond=None)[0]
-```
+![Paired differences and their uncertainty.](figures/03_paired_differences.png)
 
-The single-year estimate is **0.095**, versus **0.162** using averages. The latter associates 10% higher maternal earnings with about **1.6% higher child earnings**. Averages contain 6.8 maternal and 3.1 child income years on average.
+However, every paired 95% confidence interval includes zero. The age-45-minus-age-22 difference is 0.036, with an interval of −0.001 to 0.074. These results suggest a pattern; they do not establish bias relative to an unobserved true lifetime elasticity.
 
-An IGE of 0.162 does not mean a child inherits 16.2% of their mother's income; it describes how percentage differences in earnings are associated across generations.
+The mechanism is distinct from temporary noise: if early log earnings respond only half as strongly to lifetime status as mature earnings do, and the remaining error is unrelated to maternal status, a lifetime slope of 0.4 would appear as 0.2 early on. This is an illustrative assumption, not a PSID estimate. Averaging reduces transitory noise; averaging only early ages need not remove lifecycle bias.
 
-![Both estimates use the same children. Single years are selected near age 35; averages use at least three distinct years in ages 30–39. Intervals allow siblings’ errors to be correlated.](figures/02_single_vs_average.png){#fig-comparison fig-alt="Two IGE estimates compare one income year per generation with multiyear income averages, including 95 percent confidence intervals."}
+## 5. The takeaway: match people precisely, measure status patiently
 
-Their difference is 0.067, with a mother-clustered 95% interval of [-0.022, 0.156]. Including zero, this interval does not establish different slopes. Without observed lifetime income, a larger estimate is not proof of greater accuracy.
+Can one paycheck tell the family's economic story? Not reliably on its own. Figure 1 shows higher persistence with averaging; Figure 2 shows higher point estimates at later ages; Figure 3 shows why neither pattern warrants a definitive claim. A precise family join cannot rescue an incomplete measure of economic status.
 
-## 5. Change the camera angle: life-cycle bias
+These are unweighted, selected-sample associations. Long follow-up requirements, attrition, positive-income restrictions, and reference-couple coverage limit generalization. The earnings construction also excludes farming income after 1993, creating a comparability limitation. Neither averaging nor a larger sample eliminates these issues. The safest conclusion is that **when we measure income deserves as much attention as whose income we match**.
 
-For 221 children observed near age 22 within ages 20–24, holding their sample and mothers' average income fixed gives early and thirties slopes of 0.161 and 0.163. This inconclusive comparison does not establish empirical life-cycle bias.
+## Code and data access
 
-To demonstrate the mechanism, assume perfectly measured maternal lifetime log earnings and true IGE 0.40. Early child log earnings reflect half their lifetime differences; midcareer earnings reflect all. In this noiseless hypothetical model, slopes are 0.20 and 0.40. Reproduce them directly:
-
-```python
-parent_log = np.linspace(-1, 1, 101)
-child_lifetime_log = 0.40 * parent_log
-for loading in (0.5, 1.0):
-    measured_log = loading * child_lifetime_log
-    print(round(np.polyfit(parent_log, measured_log, 1)[0], 2))
-# 0.2, then 0.4 — hypothetical, not NLS estimates
-```
-
-That is **life-cycle bias**: measurement at different ages changes the slope even without random noise. Future high earners may still be training when measured young.
-
-![Left: a same-child age comparison from the NLS data, holding maternal income fixed. Right: a hypothetical analytical demonstration with true IGE 0.40, not another empirical estimate. Averaging early-career earnings alone leaves the assumed age distortion intact.](figures/03_age_and_measurement.png){#fig-lifecycle fig-alt="Two panels distinguish uncertain observed age-specific slopes from a hypothetical example showing early-career slopes of 0.20 and a midcareer slope of 0.40."}
-
-Averaging can dampen short-lived shocks that do not persist across years, especially temporary noise in parental income. It cannot eliminate systematic age distortion: averaging only early years in the hypothetical model retains the 0.5 loading. Aligning both generations in their thirties helps but does not guarantee lifetime measurement. See [Haider and Solon (2006)](https://doi.org/10.1257/aer.96.4.1308).
-
-These are unweighted associations in a selected sample with observed earnings. Attrition, excluded zeros, topcoding, and mothers’ labor-force participation limit generalization. Neither estimate is causal or a national mobility statistic.
-
-## Code and reproducibility
-
-The [repository](https://github.com/ruibao1129/6400-rb/tree/main/blog/posts/post6) contains code, figures, results, and extraction instructions. Run `python code/analysis.py`, `python code/verify.py`, then `quarto render index.qmd`. Definitions follow the [NLS income guide](https://www.nlsinfo.org/content/cohorts/nlsy79-children/topical-guide/income/introduction) and codebooks.
-
-**Takeaway:** The figures move from matched families to measurement sensitivity to life-cycle bias. Match correctly, compare like life stages, and average available income years—but distinguish an improved measurement strategy from evidence about lifetime mobility.
+The [replication guide](https://github.com/ruibao1129/6400-rb/blob/main/blog/posts/post6/README.md) and [complete analysis](https://github.com/ruibao1129/6400-rb/blob/main/blog/posts/post6/code/analysis.py) include the age comparison, clustered uncertainty, and fixed specification. Raw PSID microdata remain private and must be obtained from the provider; they are not redistributed here.

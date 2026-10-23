@@ -1,0 +1,25 @@
+# PSID trial specification (before regression)
+
+Keep the existing NLS article unchanged. Use biological mother–child links and
+individual real labor earnings from PSID-SHELF V2.1. Income age is survey year
+minus one minus birth year. Earnings cover reference persons/spouses, not every
+adult household member. Farming income is not included after 1993, according to
+the official construction code; this comparability limitation must be reported.
+
+Exclude missing, negative, and standardized nominal topcodes (9,999,999).
+Include valid zero earnings in averages. Require at least three observed years
+at ages 30–39 for both generations. Select the single observation closest to 35
+(earlier year breaks ties), then require both selected incomes and averages to
+be positive. Never choose a different observation because its income is positive.
+
+Primary comparison: single-year versus multiyear-average log-log OLS slopes in
+exactly the same sample. Cluster uncertainty by mother; compare paired slopes.
+
+Age comparison: hold mother's ages-30–39 average fixed and use exactly the same
+children at all three ages. Select observations nearest 22, 35, 45 within 20–24,
+30–39, 40–49 respectively, then require all three to be positive. Compare slopes
+with mother-clustered paired uncertainty. No sample tuning based on estimates.
+
+Estimates are unweighted, descriptive, selected-sample associations, not national
+estimates or causal effects. Age sensitivity is not proof of bias relative to an
+unobserved true lifetime IGE. No significance requirement is imposed.
