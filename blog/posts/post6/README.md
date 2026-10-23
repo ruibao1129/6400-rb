@@ -8,8 +8,8 @@
 - Fixed specification and limitations: `code/ANALYSIS_PLAN.txt`.
 - Aggregate results: `results/summary.json`; charts: `figures/`.
 
-This version uses PSID-SHELF 1968–2021 V2.1, not the earlier NLS extract.
-The earlier article and data were backed up outside this repository.
+This article uses PSID-SHELF 1968–2021 V2.1. Start with the files listed above;
+the repository contains one current analysis version.
 
 ## Obtain the data
 

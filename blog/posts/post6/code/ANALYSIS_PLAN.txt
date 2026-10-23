@@ -1,7 +1,9 @@
-# PSID trial specification (before regression)
+# Blog6: PSID analysis specification
 
-Keep the existing NLS article unchanged. Use biological mother–child links and
-individual real labor earnings from PSID-SHELF V2.1. Income age is survey year
+This is the specification for the published PSID version. The original trial
+specification was fixed before regression; replacing the earlier article did not
+change the sample definitions to pursue significance. Use biological mother–child
+links and individual real labor earnings from PSID-SHELF V2.1. Income age is survey year
 minus one minus birth year. Earnings cover reference persons/spouses, not every
 adult household member. Farming income is not included after 1993, according to
 the official construction code; this comparability limitation must be reported.

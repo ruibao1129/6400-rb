@@ -5,6 +5,9 @@
 
 /.quarto/
 
+# Legacy source-folder preview resources; the published website lives in docs/.
+/blog/index_files/
+
 **/*.quarto_ipynb
 
 # Local backup copies; Git already retains version history.
