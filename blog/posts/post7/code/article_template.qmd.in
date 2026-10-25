@@ -1,0 +1,54 @@
+---
+title: "Is an Early Flight Worth the Alarm?"
+subtitle: "Explore departure-time reliability at New York’s three major airports in 2025."
+author: "Rui Bao"
+date: "2026-10-23"
+categories: [economics, travel, Plotly]
+image: figures/hourly_preview.png
+format:
+  html:
+    toc: false
+resources:
+  - assets/
+execute:
+  enabled: false
+---
+
+The 6 a.m. flight costs you sleep. A later one may cost you time at the airport. **Which scheduled departure hours had fewer disruptions in the records—and does the answer change with the airport, airline, or month?**
+
+I examine **@@N@@ domestic flight records** scheduled to leave JFK, LaGuardia (LGA), or Newark (EWR) during 2025, from the [Bureau of Transportation Statistics](https://www.transtats.bts.gov/TableInfo.asp?QO_fu146_anzr=b0-gvzr&gnoyr_VQ=FGJ). A full calendar year avoids treating one season as typical. These are reporting-carrier records, not all international flights or a forecast for your next trip. The economic trade-off is practical: departure time is one choice travelers can compare when reliability matters alongside fare and convenience.
+
+## 1. Read the clock you can actually book
+
+I group flights by **scheduled**, not actual, local departure hour. A delayed morning flight should not become an afternoon observation. Following BTS, an arrival at least 15 minutes late counts as delayed. Cancellations and diversions are retained as distinct outcomes, not discarded as missing arrival times.
+
+The default **disruption rate** combines arrival delay, cancellation, and diversion, divided by records with a classified outcome. Arrival-delay rates alone use reported, non-cancelled, non-diverted arrivals; cancellation rates use all scheduled records. @@UNKNOWN_SENTENCE@@ These measures answer different questions.
+
+For all three airports together, the 06:00–08:59 window had a **@@MORNING@@** disruption rate, versus **@@EVENING@@** at 18:00–20:59: a difference of **@@DIFF@@ percentage points**. Those windows were chosen before inspecting the results, not selected as the best and worst hours.
+
+@@EXPLORER@@
+
+## 4. Check that the story is not just different routes
+
+The interactive views hold your selected airport and reporting airline fixed, but their routes can still differ across hours. As a separate check, I compare morning and evening within the **same origin, destination, reporting airline, and month**, requiring at least 30 classified outcomes in each window. Both windows receive identical pooled-cell weights.
+
+The check retains **@@CELLS@@ comparable groups** covering **@@MATCH_N@@ classified outcomes**:
+
+| Comparison | 06:00–08:59 | 18:00–20:59 |
+|---|---:|---:|
+| Pooled disruption rate | @@MORNING@@ | @@EVENING@@ |
+| Common-group standardized rate | @@MATCH_M@@ | @@MATCH_E@@ |
+
+The common-group check @@MATCH_INTERPRETATION@@. Its retained records represent only **@@MATCH_SHARE@@ of all classified outcomes** in the annual dataset; routes without enough records in both windows are excluded, so this check cannot represent every route. It is not a randomized comparison: flight schedules, passenger choices, weather, and other conditions are not held constant. The data do not identify why the pattern occurs.
+
+## Takeaway: check the pattern behind the average
+
+In these 2025 records, @@TAKEAWAY@@. The hourly view shows the overall timing pattern; the calendar reveals how it varies by month; the outcome breakdown shows whether delay, cancellation, or diversion accounts for the recorded disruption share. No single pooled percentage supplies all three answers.
+
+For a traveler, the useful step is to **compare the available time windows for the relevant airport, airline, and season**, rather than rely on a universal “best departure time.” These historical flight-level rates are not passenger-weighted probabilities or a causal benefit from changing your ticket. They exclude fares and missed-connection costs, so this is not a calculation of the cheapest or most valuable flight.
+
+These are descriptive rates without confidence intervals or significance tests. The 100-record plotting threshold limits sparse displays; it does not establish statistical significance or justify precise rankings of neighboring hours. The results do not quantify uncertainty about future flights.
+
+## Data and reproducibility
+
+The [replication guide](https://github.com/ruibao1129/6400-rb/blob/main/blog/posts/post7/README.md) identifies the cached NYC subset, original monthly downloads, definitions, and commands. Python computes additive counts; Plotly renders the interactive views locally without a server or CDN. Sparse hourly groups are hidden rather than presented as precise rankings. See [BTS definitions](https://www.transtats.bts.gov/TableInfo.asp?QO_fu146_anzr=b0-gvzr&gnoyr_VQ=FGJ) and [the complete analysis](https://github.com/ruibao1129/6400-rb/blob/main/blog/posts/post7/code/analyze.py).

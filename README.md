@@ -12,6 +12,7 @@
 | Post 4: Food prices | [Read](https://ruibao1129.github.io/6400-rb/blog/posts/post4/) | [Start here: Post 4 README](blog/posts/post4/README.md) |
 | Post 5: Philadelphia rent burden | [Read](https://ruibao1129.github.io/6400-rb/blog/posts/post5/) | [Start here: Post 5 README](blog/posts/post5/README.md) |
 | Post 6: Intergenerational earnings and SQL | [Read](https://ruibao1129.github.io/6400-rb/blog/posts/post6/) | [Start here: Post 6 README](blog/posts/post6/README.md) |
+| Post 7: Flight timing and reliability | [Read](https://ruibao1129.github.io/6400-rb/blog/posts/post7/) | [Start here: Post 7 README](blog/posts/post7/README.md) |
 
 ## Repository layout
 

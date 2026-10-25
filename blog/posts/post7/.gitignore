@@ -1,0 +1,6 @@
+__pycache__/
+.quarto/
+index_files/
+README.html
+README_files/
+.venv/

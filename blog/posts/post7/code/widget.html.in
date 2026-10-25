@@ -1,0 +1,40 @@
+<style>
+.b7-widget{margin:1.5rem 0 2rem;border-top:3px solid #2A9D8F;padding-top:1rem;min-width:0}
+.b7-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;background:#f4f8f8;padding:1rem;border-radius:8px}
+.b7-controls label{font-size:.9rem;font-weight:600;display:block}.b7-controls select{display:block;width:100%;max-width:100%;padding:.45rem;margin-top:.25rem;color:#243746;background:white;border:1px solid #b5c7cd;border-radius:4px;font-size:.9rem}
+.b7-context{font-weight:600;margin:.8rem 0 .3rem}.b7-note{font-size:.86rem;color:#4b5d66;line-height:1.5}
+.b7-chart{width:100%;min-width:0}.b7-widget button{padding:.35rem .8rem;border:1px solid #355C7D;background:white;color:#243746;border-radius:4px}
+#b7-hour{height:350px}#b7-heat{height:410px}#b7-outcomes{height:420px}
+.b7-widget h3{font-size:1.35rem;margin-top:1.4rem}.b7-widget h2{font-size:1.65rem;margin-top:1.8rem}.b7-widget .b7-subheading{margin-top:1rem}
+@media(max-width:540px){.b7-controls{grid-template-columns:1fr}.b7-note{font-size:.82rem}#b7-outcomes{height:520px}}
+</style>
+<div class="b7-widget">
+<p><strong>Explore the record, not just the average.</strong> Start with all airports, then select an airport, reporting airline, and month. Switch the outcome to distinguish arrival delay from cancellation. Hover or tap for counts; click a calendar cell to select its month. Use Reset to return to the full year.</p>
+<div class="b7-controls">
+<label for="b7-airport">Departure airport<select id="b7-airport"><option value="ALL">All three airports</option><option value="EWR">EWR — Newark</option><option value="JFK">JFK — John F. Kennedy</option><option value="LGA">LGA — LaGuardia</option></select></label>
+<label for="b7-carrier">Reporting / operating airline<select id="b7-carrier"><option value="ALL">All reporting airlines</option></select></label>
+<label for="b7-month">Month (hourly view and outcome breakdown)<select id="b7-month"><option value="ALL">Full year</option></select></label>
+<label for="b7-metric">Outcome (hourly view and calendar)<select id="b7-metric"><option value="disruption">Delayed arrival, cancellation or diversion</option><option value="arrival">Arrival delay of 15+ minutes</option><option value="cancel">Cancellation</option><option value="departure">Departure delay of 15+ minutes</option></select></label>
+<div><button id="b7-reset" type="button">Reset all filters</button></div>
+</div>
+<p id="b7-context" class="b7-context"></p>
+<p id="b7-summary" class="b7-note" aria-live="polite"></p>
+<p id="b7-definition" class="b7-note"></p>
+<h3 class="b7-subheading">View 1. How does the hourly rate change?</h3>
+<div id="b7-hour" class="b7-chart" role="img" aria-label="Interactive historical outcome rate by scheduled departure hour"></div>
+<p class="b7-note">Source: BTS Reporting Carrier On-Time Performance, 2025; author’s calculations. Flight-weighted rates, not averages of airline percentages. Blank hours have fewer than 100 eligible records.</p>
+<h2>2. Is the annual pattern also the monthly pattern?</h2>
+<p>The calendar uses the same selected outcome and airport/airline filters, but always shows all 12 months. @@SEASONAL@@ Darker cells indicate higher rates, not more flights. The fixed 0–100% color scale allows comparisons across selections.</p>
+<p id="b7-heat-context" class="b7-note"></p>
+<div id="b7-heat" class="b7-chart" role="img" aria-label="Interactive month by scheduled departure hour heatmap"></div>
+<p class="b7-note">Source: BTS, 2025; author’s calculations. Grey or blank cells are unavailable or below the 100-eligible-record threshold, never assumed to have zero delays.</p>
+<h2>3. Does the flight arrive late—or not arrive as planned?</h2>
+<p>A delay rate among completed flights leaves cancellations out. Across the full dataset, @@CANCEL@@ of records were cancelled and @@DIVERT@@ were diverted. The stacked view restores those outcomes to the denominator: all scheduled records in each hour band, for the chosen airport, airline, and month.</p>
+<div id="b7-outcomes" class="b7-chart" role="img" aria-label="Interactive stacked shares of on-time arrival, delayed arrival, cancellation, diversion, and unclassified outcomes"></div>
+<p class="b7-note">Source: BTS, 2025; author’s calculations. Arrival &lt;15 minutes late includes early arrivals. All five categories sum to 100%; hour bands with fewer than 100 scheduled records are blank. Changing the outcome selector does not change this five-category breakdown.</p>
+<span id="b7-status" class="b7-note" role="status"></span>
+<noscript><p>JavaScript is required for the interactive charts. The downloadable counts and static preview are available in the repository.</p><img src="figures/hourly_preview.png" alt="Full-year disruption rates by scheduled departure hour for EWR, JFK and LGA"></noscript>
+</div>
+<script src="assets/plotly.min.js"></script>
+<script src="assets/explorer-data.js"></script>
+<script src="assets/explorer.js"></script>
