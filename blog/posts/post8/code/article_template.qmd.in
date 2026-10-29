@@ -1,0 +1,50 @@
+---
+title: "Was Your Delivery Slow—or Was Your Sample Unlucky?"
+subtitle: "Bootstrap intervals and hypothesis tests using real Meituan deliveries."
+author: "Rui Bao"
+date: "2026-10-29"
+categories: [statistics, economics, simulation]
+image: figures/delivery_distribution.png
+format:
+  html:
+    toc: false
+resources:
+  - assets/
+  - figures/
+execute:
+  enabled: false
+---
+
+Dinner took forever. Your last few orders felt slow, too. **How much can a handful of deliveries tell you about average waiting time?** The answer requires separating individual experiences, uncertainty about a mean, and evidence against a benchmark.
+
+## 1. Real orders, uneven waits
+
+Meituan is a Chinese food-delivery platform, comparable to DoorDash or Uber Eats. I use its [official INFORMS TSL research dataset](https://github.com/meituan/Meituan-INFORMS-TSL-Research-Challenge), retaining **@@N@@ completed, non-prebook orders dated October 17–24, 2022**. Waiting time is delivery arrival minus order creation, in minutes—not just the courier’s travel time. Rejected assignment attempts are not separate completed orders; zero timestamps mean unavailable.
+
+The retained reference set averages **@@MEAN@@ minutes**, with a median of **@@MEDIAN@@**. Yet **@@OVER45@@** exceed 45 minutes. An average near half an hour can coexist with many frustrating waits.
+
+I retain @@LONG_N@@ waits over 120 minutes, including a maximum of @@MAX@@. These extreme timestamps cannot be independently validated. Excluding waits over 120 minutes changes the mean to @@SENS_MEAN@@ minutes, a small change; the main analysis keeps them.
+
+![Distribution of real order-to-arrival times. The final bar pools all waits of 120 minutes or longer; no long waits are removed. Source: Meituan; author’s calculations.](figures/delivery_distribution.png)
+
+For the experiments, treat these recorded durations as a fixed **empirical population**, drawing independently with replacement. We pretend the analyst sees only a small sample; the full reference set supplies the known mean for checking coverage, not for constructing that sample’s interval or test. The observations are real; the repeated samples are simulated.
+
+## 2. One sample, many possible averages
+
+The default example uses a fixed-seed sample of 100 orders and a 95% confidence level. Its mean is **@@SAMPLE_MEAN@@ minutes**. Resample those same 100 observations with replacement 1,999 times, always keeping sample size 100, and calculate each resample’s mean. These are not new orders: the bootstrap approximates sampling uncertainty using the observed sample.
+
+The middle 95% of bootstrap means gives a **percentile interval of @@LO@@–@@HI@@ minutes**. Switch the controls to compare settings: chart summaries update, while prose examples retain their stated settings.
+
+@@WIDGET@@
+
+## Takeaway: a slow dinner is not a statistical verdict
+
+**More representative observations—not more resamples of the same few orders—provide more information about the service.** The first figure shows why individual waits vary. The bootstrap quantifies uncertainty from one sample; repeated sampling checks its coverage; the null simulation asks whether an observed mean is unusually high under a stated benchmark.
+
+As an illustration, the default 100-order sample gives a 95% interval of **@@LO@@–@@HI@@ minutes**, and @@RESULT@@. This is an example of interpreting uncertainty, not a verdict on the platform.
+
+Real orders can share couriers, merchants and demand conditions. The independent-draw experiment deliberately removes that dependence; its coverage is not a guarantee for convenience samples or correlated customer histories. The data describe this historical release, not all customers. Without a comparison across periods, they cannot establish whether service has become slower or why.
+
+## Sources and reproducibility
+
+This research was supported by data provided by Meituan. To respect the publisher’s redistribution restrictions, raw order records are not included in this repository. The [replication guide](https://github.com/ruibao1129/6400-rb/blob/main/blog/posts/post8/README.md) provides the official download link and code to obtain the exact data version used, plus cleaning rules, seeds and saved outputs. Methods: [percentile bootstrap documentation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html) and [Hesterberg’s discussion of bootstrap accuracy](https://pmc.ncbi.nlm.nih.gov/articles/PMC4784504/).

@@ -1,0 +1,31 @@
+{
+  "source_waybills": 654343,
+  "source_unique_orders": 568546,
+  "rejected_waybills_excluded": 85797,
+  "prebook_orders_excluded": 22181,
+  "missing_or_nonpositive_time_excluded": 1,
+  "retained_orders": 546364,
+  "dates": [
+    20221017,
+    20221018,
+    20221019,
+    20221020,
+    20221021,
+    20221022,
+    20221023,
+    20221024
+  ],
+  "reference_mean": 29.646738712653104,
+  "median": 27.9,
+  "p90": 45.8,
+  "max": 645.4166666666666,
+  "share_over_45": 0.10948744792848723,
+  "share_over_30": 0.4298837405099897,
+  "orders_over_120": 81,
+  "seed": 20261029,
+  "benchmark": 30.0,
+  "bootstrap_resamples": 1999,
+  "coverage_experiments": 1000,
+  "null_simulations": 9999,
+  "sensitivity_mean_excluding_over_120": 29.62277805947955
+}

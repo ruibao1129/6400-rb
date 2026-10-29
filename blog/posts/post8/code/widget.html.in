@@ -1,0 +1,37 @@
+<style>
+.b8-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;padding:1rem;background:#f2f7f7;border-top:3px solid #2A9D8F;border-radius:5px}
+.b8-controls label{font-weight:600;font-size:.95rem}.b8-controls select{display:block;width:100%;padding:.5rem;margin-top:.4rem;border:1px solid #b5c7cd;background:white;color:#243746;border-radius:4px}
+.b8-controls button{padding:.4rem .8rem;background:white;border:1px solid #355C7D;border-radius:4px;color:#243746}
+.b8-note{font-size:.88rem;color:#485c66;line-height:1.5}.b8-summary{border-left:3px solid #2A9D8F;padding-left:.8rem;margin-top:1rem}
+.b8-chart{width:100%;min-width:0}#b8-bootstrap{height:370px}#b8-coverage{height:510px}#b8-null{height:380px}
+.b8-sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:540px){.b8-controls{grid-template-columns:1fr}.b8-note{font-size:.82rem}}
+</style>
+<div class="b8-controls">
+<label for="b8-n">Sample size (all three interactive views)<select id="b8-n"><option value="20">20 deliveries</option><option value="100" selected>100 deliveries</option><option value="400">400 deliveries</option></select></label>
+<label for="b8-level">Two-sided interval confidence (first two views)<select id="b8-level"><option value="90">90%</option><option value="95" selected>95%</option><option value="99">99%</option></select></label>
+<div><button id="b8-reset" type="button">Reset to n = 100, 95%</button></div>
+</div>
+<p class="b8-note">Change sample size to compare nested, fixed-seed samples. Change confidence to see the width–coverage trade-off. These are precomputed, reproducible experiments, not fresh simulations each time you click. Hover or tap for details.</p>
+<p id="b8-bootstrap-summary" class="b8-summary" aria-live="polite"></p>
+<div id="b8-bootstrap" class="b8-chart" role="img" aria-label="Bootstrap distribution of sample means and a percentile confidence interval"></div>
+<p class="b8-note">Figure 2. Green bars: resampled means; green boundaries and shading: selected interval; dotted blue line: original sample mean. Source: author’s resampling of real Meituan deliveries.</p>
+
+<h2>3. Does “95%” actually work 95% of the time?</h2>
+<p>Now draw 1,000 new samples from the full reference distribution. For each, restart the bootstrap and construct a new interval. Because we know the reference mean, we can count successes. At n = 100, the 95% procedure covers it in <strong>@@COVER100@@</strong> of experiments; at n = 20 and 400, coverage is @@COVER20@@ and @@COVER400@@. Small samples need not achieve the label’s promise.</p>
+<p id="b8-coverage-summary" class="b8-summary" aria-live="polite"></p>
+<div id="b8-coverage" class="b8-chart" role="img" aria-label="Repeated-sample bootstrap confidence intervals covering or missing the known empirical reference mean"></div>
+<p class="b8-note">Figure 3. Green intervals cover the fixed reference mean; orange ones miss. Dashed blue line: reference mean. More Monte Carlo repetitions stabilize the estimated coverage; they do not repair a poorly calibrated interval. The first 60 experiments are displayed without selection.</p>
+<p>The 95% describes repeated use of the procedure, not a 95% probability assigned to the fixed mean after seeing one interval. Nor is it a range containing 95% of individual delivery times. A narrower interval from a larger sample does not make your next dinner arrive more predictably.</p>
+
+<h2>4. Is there evidence that the mean exceeds 30 minutes?</h2>
+<p>Use a one-sided test: H₀: μ = 30 versus H₁: μ &gt; 30. Thirty minutes is an illustrative benchmark, not a platform guarantee. Subtract the sample mean from each sampled duration and add 30, imposing the null before resampling. Generate 9,999 null samples and calculate T = sample mean − 30. This sample-centered bootstrap test approximates the null distribution; it is not an exact test for every possible delivery-time distribution.</p>
+<p id="b8-null-summary" class="b8-summary" aria-live="polite"></p>
+<div id="b8-null" class="b8-chart" role="img" aria-label="Simulated null distribution, observed statistic and a one-sided five-percent rejection region"></div>
+<p class="b8-note">Figure 4. Green line: observed statistic. Dashed orange line: approximate 95th percentile of the null distribution; the right tail is the 5% rejection region. Bin coloring approximates that boundary; p is calculated from individual simulated statistics, not histogram bars. Source: sample-centered empirical-null simulation. The test stays at α = 0.05 when interval confidence changes.</p>
+<p>The p-value counts null statistics at least as large as observed, using (extreme count + 1)/(9,999 + 1). For the default 100-order sample, p = <strong>@@P@@</strong>, so @@TEST@@. This is not the probability that H₀ is true, and failing to reject does not prove equality. The one-sided test and two-sided interval are different procedures.</p>
+<span id="b8-status" class="b8-sr-only" role="status" aria-live="polite" aria-atomic="true"></span>
+<noscript><p>Enable JavaScript for interactive views. Static versions appear below.</p><img src="figures/bootstrap.png" alt="Default bootstrap distribution"><img src="figures/coverage.png" alt="Default confidence interval coverage"><img src="figures/null.png" alt="Default simulated null distribution"></noscript>
+<script src="assets/plotly.min.js"></script>
+<script src="assets/explorer-data.js"></script>
+<script src="assets/explorer.js"></script>
